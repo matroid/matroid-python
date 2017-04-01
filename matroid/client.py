@@ -254,13 +254,13 @@ class MatroidAPI(object):
 
     try:
       headers = {'Authorization': self.token.authorization_header()}
-      params = {'videoId': video_id, 'threshold': threshold}
+      params = {'videoId': video_id, 'threshold': threshold, 'format': response_format}
       return requests.request(method, endpoint, **{'headers': headers, 'params': params})
     except Exception as e:
       raise error.APIConnectionError(message=e)
 
   @api_call(error.InvalidQueryError)
-  def create_detector(self, zip_file, name, detector_type='general'):
+  def create_detector(self, zip_file, name, detector_type):
     """
     Create a new detector with the contents of the zip file
 
@@ -277,6 +277,8 @@ class MatroidAPI(object):
         dog/
           odie.tiff
     """
+    MAX_LOCAL_ZIP_SIZE = 300 * 1024 * 1024
+
     (endpoint, method) = self.endpoints['create_detector']
 
     try:
@@ -284,6 +286,11 @@ class MatroidAPI(object):
       data = {'name': name, 'detector_type': detector_type}
       with self.filereader.get_file(zip_file) as file_to_upload:
         files = {'file': file_to_upload}
+        file_size = os.fstat(file_to_upload.fileno()).st_size
+
+        if file_size > MAX_LOCAL_ZIP_SIZE:
+          raise error.InvalidQueryError(message='File %s is larger than the limit of %d megabytes' % (file_to_upload.name, self.bytes_to_mb(MAX_LOCAL_ZIP_SIZE)))
+
         return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
     except Exception as e:
       raise error.APIConnectionError(message=e)
@@ -415,11 +422,11 @@ class MatroidAPI(object):
 
     def get_file(self, file_input):
       """Extracts file from file path or returns the file if file is passed in"""
-      if isinstance(file_input, file):
-        return file_input
-      elif isinstance(file_input, str):
+      if isinstance(file_input, str):
         # try to read the file
-        local_file = open(file_input)
+        local_file = open(file_input, 'rb')
+        return local_file
+      else:
         return local_file
 
 Matroid = MatroidAPI
