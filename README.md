@@ -71,6 +71,9 @@ api.train_detector(detector_id)
 
 # Check on training progress
 api.detector_info(detector_id)
+
+# Check your Matroid Credits balance
+api.account_info()
 ```
 
 ## API Response samples
@@ -142,7 +145,8 @@ api.detector_info(detector_id)
 #### Sample video classification results
 ```
 {
-  "progress": 54,
+  "download_progress": 100,
+  "classification_progress": 8,
   "status": "Video Download Complete. Classifying Video",
   "label_dict": {"0":"cat","1":"dog"},
   "state": "running",
@@ -154,7 +158,8 @@ api.detector_info(detector_id)
 }
 
 {
-  "progress": 100,
+  "download_progress": 100,
+  "classification_progress": 100,
   "status": "Classification success",
   "label_dict": {"0":"cat","1":"dog"},
   "state": "success",
