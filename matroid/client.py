@@ -422,11 +422,11 @@ class MatroidAPI(object):
 
     def get_file(self, file_input):
       """Extracts file from file path or returns the file if file is passed in"""
-      if isinstance(file_input, file):
-        return file_input
-      elif isinstance(file_input, str):
+      if isinstance(file_input, str):
         # try to read the file
-        local_file = open(file_input)
+        local_file = open(file_input, 'rb')
+        return local_file
+      else:
         return local_file
 
 Matroid = MatroidAPI
