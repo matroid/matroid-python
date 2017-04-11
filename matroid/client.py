@@ -264,35 +264,18 @@ class MatroidAPI(object):
     """
     Create a new detector with the contents of the zip file
 
-    detector_type: general, facial_recognition, or facial_characteristics
+    detector_type: general, face_detector, or facial_characteristics
     name: the detector's display name
     zip_file: a zip file containing the images to be used in the detector creation
               the root folder should contain only directories which will become the labels for detection
-              each of these directories should contain only images corresponding to that label.
-
-              However, there is an exception if you want to add negative examples to a label.
-              In that case, put the negative images for the label in a folder called "negative" inside the corresponding label.
-
-              To include bounding boxes, include one file called bbox.csv in the top level directory.
-              Each line of this file should be formatted as follows:
-                0.25, 0.3, 0.75, 0.8, cat, positive, image.jpg
-                0.25, 0.4, 0.55, 0.7, dog, positive, picture.jpg
-                0.0, 0.1, 0.2, 0.3, cat, negative, raccoon.jpg
-
-              Column definitions:
-                top left X coordinate, top left Y coordinate, bottom right X coordinate, bottom right Y coordinate, label, positive or negative example, file name
-
-              Max 300 MB zip file upload
-
+              each of these directories should contain only a images corresponding to that label
+              Max 1 GB zip file upload
       structure example:
         cat/
           garfield.jpg
           nermal.png
         dog/
-          odie.TIFF
-          negative/
-            lobo.jpg
-        bbox.csv
+          odie.tiff
     """
     MAX_LOCAL_ZIP_SIZE = 300 * 1024 * 1024
 
