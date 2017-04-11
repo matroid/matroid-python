@@ -268,7 +268,7 @@ class MatroidAPI(object):
     name: the detector's display name
     zip_file: a zip file containing the images to be used in the detector creation
               the root folder should contain only directories which will become the labels for detection
-              each of these directories should contain only a images corresponding to that label.
+              each of these directories should contain only images corresponding to that label.
 
               However, there is an exception if you want to add negative examples to a label.
               In that case, put the negative images for the label in a folder called "negative" inside the corresponding label.
