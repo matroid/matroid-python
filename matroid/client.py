@@ -282,7 +282,7 @@ class MatroidAPI(object):
               Column definitions:
                 top left X coordinate, top left Y coordinate, bottom right X coordinate, bottom right Y coordinate, label, positive or negative example, file name
 
-              Max 1 GB zip file upload
+              Max 300 MB zip file upload
 
       structure example:
         cat/
