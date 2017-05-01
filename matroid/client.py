@@ -439,11 +439,10 @@ class MatroidAPI(object):
 
     def get_file(self, file_input):
       """Extracts file from file path or returns the file if file is passed in"""
+      local_file = file_input
       if isinstance(file_input, str):
-        # try to read the file
         local_file = open(file_input, 'rb')
-        return local_file
-      else:
-        return local_file
+
+      return local_file
 
 Matroid = MatroidAPI
