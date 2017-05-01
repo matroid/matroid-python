@@ -120,10 +120,6 @@ class MatroidAPI(object):
 
     (endpoint, method) = self.endpoints['classify_image']
 
-    if image_url and image_file:
-      raise error.InvalidQueryError(
-          message='Cannot classify a URL and local file in the same request')
-
     if not image_url and not image_file:
       raise error.InvalidQueryError(
           message='Missing required parameter: image_file or image_url')
@@ -133,6 +129,8 @@ class MatroidAPI(object):
     try:
       headers = {'Authorization': self.token.authorization_header()}
       data = {'detector_id': detector_id}
+      if image_url:
+        data['url'] = image_url
       if image_file:
         if isinstance(image_file, list):
           return batch_file_classify(image_file)
@@ -145,8 +143,7 @@ class MatroidAPI(object):
               raise error.InvalidQueryError(message='File %s is larger than the limit of %d megabytes' % (file_to_upload.name, self.bytes_to_mb(MAX_LOCAL_IMAGE_SIZE)))
 
             return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
-      elif image_url:
-        data['url'] = image_url
+      else:
         return requests.request(method, endpoint, **{'headers': headers, 'data': data})
     except IOError as e:
       raise e
