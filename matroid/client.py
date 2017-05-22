@@ -38,6 +38,7 @@ class MatroidAPI(object):
     options (dict):
       set json_format to False to return API results as strings instead of objects
       set print_output to True to print the API results to the screen in addition to returning them
+      set access_token with your auth token e.g., 43174a480adebf5b8e2bf39c0dcb53f1, to preload the token instead of requesting it from the server
     """
 
     if not client_id:
@@ -58,6 +59,14 @@ class MatroidAPI(object):
     self.json_format = options.get('json_format', True)
     self.print_output = options.get('print_output', False)
     self.filereader = self.FileReader()
+
+    token = options.get('access_token')
+
+    if token:
+      token_type = 'Bearer'
+      # if the token's lifetime is shorter than this, the client will request a refresh automatically
+      lifetime_in_seconds = 7 * 24 * 60 * 60
+      self.token = self.Token(token_type, token, lifetime_in_seconds)
 
     self.endpoints = {
         'token': (self.base_url + '/oauth/token', 'POST'),
