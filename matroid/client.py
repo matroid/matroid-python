@@ -64,6 +64,7 @@ class MatroidAPI(object):
 
     if token:
       token_type = 'Bearer'
+      # if the token's lifetime is shorter than this, the client will request a refresh automatically
       lifetime_in_seconds = 7 * 24 * 60 * 60
       self.token = self.Token(token_type, token, lifetime_in_seconds)
 
