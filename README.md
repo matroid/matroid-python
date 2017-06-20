@@ -54,6 +54,21 @@ classifying_youtube_video = api.classify_video(detector_id = 'test', video_url =
 # Get video results
 video_results = api.get_video_results(video_id = classifying_video['video_id'], threshold = 30, format = 'json')
 
+# Register feed on Matroid
+registered_feed = api.create_feed(options = {})
+
+# Monitor feed
+options = {
+  'start_time': '2017-06-20T20:56:19.096Z',
+  'end_time': '2017-06-21T20:00:00.000Z',
+  'thresholds': {
+    '0': 0.5,
+    '1': 0.7
+  }
+  'endpoint': 'http://mydomain.fake:9000/matroid_detections'
+}
+monitored_feed = api.monitor_feed(feed_id = registered_feed['feed_id'], detector_id = 'test', **options)
+
 # Create and train a detector
 """
   zip_file: a zip file containing the images to be used in the detector creation
@@ -170,6 +185,21 @@ api.account_info()
        "7.5": {"0":45},
        "10": {"1":99}
    }
+}
+```
+
+#### Sample feed creation
+```
+{
+  "feed_id": "58489472ff22bb2d3f95728c"
+}
+```
+
+#### Sample feed monitoring
+```
+{
+  "feed_id": "58489472ff22bb2d3f95728c",
+  "feed_task_id": "68489472ff22bb2d3f95728c",
 }
 ```
 
