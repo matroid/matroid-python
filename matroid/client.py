@@ -75,6 +75,8 @@ class MatroidAPI(object):
         'classify_image': (self.base_url + '/detectors/:key/classify_image', 'POST'),
         'classify_video': (self.base_url + '/detectors/:key/classify_video', 'POST'),
         'get_video_results': (self.base_url + '/videos/:key', 'GET'),
+        'create_feed': (self.base_url + '/feeds', 'POST'),
+        'monitor_feed': (self.base_url + '/feeds/:feed_id/monitor/:detector_id', 'POST'),
         'train_detector': (self.base_url + '/detectors/:key/finalize', 'POST'),
         'detector_info': (self.base_url + '/detectors/:key', 'GET'),
         'account_info': (self.base_url + '/account', 'GET')
@@ -347,6 +349,38 @@ class MatroidAPI(object):
     try:
       headers = {'Authorization': self.token.authorization_header()}
       return requests.request(method, endpoint, **{'headers': headers})
+    except Exception as e:
+      raise error.APIConnectionError(message=e)
+
+  @api_call(error.InvalidQueryError)
+  def create_feed(self, feed_url, feed_name):
+    (endpoint, method) = self.endpoints['create_feed']
+
+    try:
+      headers = { 'Authorization': self.token.authorization_header() }
+      data = {
+        'name': feed_name,
+        'url': feed_url
+      }
+      return requests.request(method, endpoint, **{'headers': headers, 'data': data})
+    except Exception as e:
+      raise error.APIConnectionError(message=e)
+
+  @api_call(error.InvalidQueryError)
+  def monitor_feed(self, feed_id, detector_id, **options):
+    (endpoint, method) = self.endpoints['monitor_feed']
+    endpoint = endpoint.replace(':detector_id', detector_id)
+    endpoint = endpoint.replace(':feed_id', feed_id)
+
+    try:
+      headers = { 'Authorization': self.token.authorization_header() }
+      data = {
+        'thresholds': options.get('thresholds'),
+        'startTime': options.get('start_time'),
+        'endTime': options.get('end_time'),
+        'endpoint': options.get('endpoint')
+      }
+      return requests.request(method, endpoint, **{'headers': headers, 'data': data})
     except Exception as e:
       raise error.APIConnectionError(message=e)
 
