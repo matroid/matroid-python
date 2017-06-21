@@ -68,6 +68,7 @@ options = {
   'endpoint': 'http://mydomain.fake:9000/matroid_detections'
 }
 monitored_feed = api.monitor_feed(feed_id = registered_feed['feed_id'], detector_id = 'test', **options)
+# Parameters sent to endpoint: name, detectedAt, detector, screenshotUrl, clipUrl, detections
 
 # Create and train a detector
 """
