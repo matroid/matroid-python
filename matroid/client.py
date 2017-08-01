@@ -7,7 +7,7 @@ import requests
 
 from matroid import error
 
-BASE_URL = 'https://www.matroid.com/api/0.1'
+BASE_URL = 'https://www.matroid.com/api/v1'
 DEFAULT_GRANT_TYPE = 'client_credentials'
 
 def api_call(default_error):
@@ -75,8 +75,8 @@ class MatroidAPI(object):
         'classify_image': (self.base_url + '/detectors/:key/classify_image', 'POST'),
         'classify_video': (self.base_url + '/detectors/:key/classify_video', 'POST'),
         'get_video_results': (self.base_url + '/videos/:key', 'GET'),
-        'create_feed': (self.base_url + '/feeds', 'POST'),
-        'monitor_feed': (self.base_url + '/feeds/:feed_id/monitor/:detector_id', 'POST'),
+        'register_stream': (self.base_url + '/feeds', 'POST'),
+        'monitor_stream': (self.base_url + '/feeds/:feed_id/monitor/:detector_id', 'POST'),
         'train_detector': (self.base_url + '/detectors/:key/finalize', 'POST'),
         'detector_info': (self.base_url + '/detectors/:key', 'GET'),
         'account_info': (self.base_url + '/account', 'GET')
@@ -353,8 +353,8 @@ class MatroidAPI(object):
       raise error.APIConnectionError(message=e)
 
   @api_call(error.InvalidQueryError)
-  def create_feed(self, feed_url, feed_name):
-    (endpoint, method) = self.endpoints['create_feed']
+  def register_stream(self, feed_url, feed_name):
+    (endpoint, method) = self.endpoints['register_stream']
 
     try:
       headers = { 'Authorization': self.token.authorization_header() }
@@ -367,8 +367,8 @@ class MatroidAPI(object):
       raise error.APIConnectionError(message=e)
 
   @api_call(error.InvalidQueryError)
-  def monitor_feed(self, feed_id, detector_id, **options):
-    (endpoint, method) = self.endpoints['monitor_feed']
+  def monitor_stream(self, feed_id, detector_id, **options):
+    (endpoint, method) = self.endpoints['monitor_stream']
     endpoint = endpoint.replace(':detector_id', detector_id)
     endpoint = endpoint.replace(':feed_id', feed_id)
 
