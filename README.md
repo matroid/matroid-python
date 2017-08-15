@@ -54,20 +54,20 @@ classifying_youtube_video = api.classify_video(detector_id = 'test', video_url =
 # Get video results
 video_results = api.get_video_results(video_id = classifying_video['video_id'], threshold = 30, format = 'json')
 
-# Register feed on Matroid
-registered_feed = api.create_feed(options = {})
+# Register stream on Matroid
+registered_stream = api.create_stream(options = {})
 
-# Monitor feed
+# Monitor stream
 options = {
   'start_time': '2017-06-20T20:56:19.096Z',
   'end_time': '2017-06-21T20:00:00.000Z',
   'thresholds': {
-    '0': 0.5,
-    '1': 0.7
+    'cat': 0.5,
+    'dog': 0.7
   }
   'endpoint': 'http://mydomain.fake:9000/matroid_detections'
 }
-monitored_feed = api.monitor_feed(feed_id = registered_feed['feed_id'], detector_id = 'test', **options)
+monitored_stream = api.monitor_stream(stream_id = registered_stream['stream_id'], detector_id = 'test', **options)
 # Parameters sent to endpoint: name, detectedAt, detector, screenshotUrl, clipUrl, detections
 
 # Create and train a detector
@@ -189,18 +189,18 @@ api.account_info()
 }
 ```
 
-#### Sample feed creation
+#### Sample stream creation
 ```
 {
-  "feed_id": "58489472ff22bb2d3f95728c"
+  "stream_id": "58489472ff22bb2d3f95728c"
 }
 ```
 
-#### Sample feed monitoring
+#### Sample stream monitoring
 ```
 {
-  "feed_id": "58489472ff22bb2d3f95728c",
-  "feed_task_id": "68489472ff22bb2d3f95728c",
+  "stream_id": "58489472ff22bb2d3f95728c",
+  "monitoring_id": "68489472ff22bb2d3f95728c",
 }
 ```
 
