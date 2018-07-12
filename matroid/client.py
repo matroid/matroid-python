@@ -70,7 +70,7 @@ class MatroidAPI(object):
 
     self.endpoints = {
         'token': (self.base_url + '/oauth/token', 'POST'),
-        'detectors': (self.base_url + '/detectors', 'GET'),
+        'detectors': (self.base_url + '/detectors/search', 'GET'),
         'create_detector': (self.base_url + '/detectors', 'POST'),
         'classify_image': (self.base_url + '/detectors/:key/classify_image', 'POST'),
         'classify_video': (self.base_url + '/detectors/:key/classify_video', 'POST'),
@@ -83,13 +83,13 @@ class MatroidAPI(object):
     }
 
   @api_call(error.InvalidQueryError)
-  def list_detectors(self):
+  def list_detectors(self, **query):
     """Lists the available detectors"""
     (endpoint, method) = self.endpoints['detectors']
-
     try:
       headers = {'Authorization': self.token.authorization_header()}
-      return requests.request(method, endpoint, **{'headers': headers})
+      params = {x: str(query[x]).lower() for x in query}
+      return requests.request(method, endpoint, **{'headers': headers, 'params': params})
     except Exception as e:
       raise error.APIConnectionError(message=e)
 
