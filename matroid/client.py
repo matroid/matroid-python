@@ -94,7 +94,7 @@ class MatroidAPI(object):
       raise error.APIConnectionError(message=e)
 
   @api_call(error.InvalidQueryError)
-  def classify_image(self, detector_id, image_file=None, image_url=None):
+  def classify_image(self, detector_id, image_file=None, image_url=None, **options):
     """
     Classify an image with a detector
 
@@ -140,6 +140,8 @@ class MatroidAPI(object):
     try:
       headers = {'Authorization': self.token.authorization_header()}
       data = {'detector_id': detector_id}
+      data.update(options)
+
       if image_url:
         data['url'] = image_url
       if image_file:

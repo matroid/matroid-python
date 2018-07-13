@@ -37,7 +37,7 @@ api = Matroid(client_id = 'abc', client_secret = '123')
 detectors_to_use = api.list_detectors()
 
 # Classifying a picture from a URL
-logo_classification_result = api.classify_image(detector_id = 'test', image_url = 'https://www.matroid.com/images/logo2.png')
+logo_classification_result = api.classify_image(detector_id = 'test', image_url = 'https://www.matroid.com/images/logo2.png', num_results = 5)
 
 # Classifying a picture from a file path
 stadium_classification_result = api.classify_image(detector_id = 'test', image_file = '/Users/matroid/Desktop/stadium.jpg')
