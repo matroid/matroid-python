@@ -1,7 +1,7 @@
 import os
 import sys
 import pprint
-from unittest.mock import Mock, patch
+# from unittest.mock import Mock, patch
 from nose.tools import assert_is_not_none
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import matroid
