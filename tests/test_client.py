@@ -1,6 +1,5 @@
 import os
 import sys
-# import unittest
 import pprint
 from unittest.mock import Mock, patch
 from nose.tools import assert_is_not_none
