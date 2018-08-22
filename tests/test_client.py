@@ -75,8 +75,10 @@ def test_detector_info(mock_get):
     assert_is_not_none(detector)
     assert(detector['detector']['name'] == detectors[0]['name'])
 
+@patch('matroid.client.requests.get')
 @patch('matroid.client.requests.post')
-def test_classify_cat_image(mock_post):
+def test_classify_cat_image(mock_get, mock_post):
+    mock_get.return_value.ok = True
     mock_post.return_value.ok = True
     client = MatroidAPI(options={'json_format': True})
     detectors = client.list_detectors(**{'published': True, 'name': 'Yolo VOC detector'})
