@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import datetime
+import json
 
 import requests
 
@@ -72,15 +73,173 @@ class MatroidAPI(object):
         'token': (self.base_url + '/oauth/token', 'POST'),
         'detectors': (self.base_url + '/detectors/search', 'GET'),
         'create_detector': (self.base_url + '/detectors', 'POST'),
+        'train_detector': (self.base_url + '/detectors/:key/finalize', 'POST'),
+        'delete_detector': (self.base_url + '/detectors/:detector_id', 'DELETE'),
+        'detector_info': (self.base_url + '/detectors/:key', 'GET'),
         'classify_image': (self.base_url + '/detectors/:key/classify_image', 'POST'),
         'classify_video': (self.base_url + '/detectors/:key/classify_video', 'POST'),
         'get_video_results': (self.base_url + '/videos/:key', 'GET'),
         'register_stream': (self.base_url + '/streams', 'POST'),
         'monitor_stream': (self.base_url + '/streams/:stream_id/monitor/:detector_id', 'POST'),
-        'train_detector': (self.base_url + '/detectors/:key/finalize', 'POST'),
-        'detector_info': (self.base_url + '/detectors/:key', 'GET'),
-        'account_info': (self.base_url + '/account', 'GET')
+        'account_info': (self.base_url + '/account', 'GET'),
+        'saliency_map': (self.base_url + '/detectors/:detector_id/get_saliency_map', 'POST'),
+        'localize': (self.base_url + '/localize', 'POST'),
+        'monitorings': (self.base_url + '/monitorings', 'GET'),
+        'streams': (self.base_url + '/streams', 'GET'),
+        'create_monitor': (self.base_url + '/streams/:feed_id/monitor/:detector_id', 'POST'),
+        'delete_monitor': (self.base_url + '/monitorings/:monitor_id', 'DELETE'),
+        'kill_monitor': (self.base_url + '/monitorings/:monitor_id/kill', 'POST'),
     }
+
+  @api_call(error.InvalidQueryError)
+  def delete_monitor(self, monitor_id):
+    (endpoint, method) = self.endpoints['delete_monitor']
+    endpoint = endpoint.replace(':monitor_id', monitor_id)
+
+    try:
+      headers = {'Authorization': self.token.authorization_header()}
+      return requests.request(method, endpoint, **{'headers': headers})
+    except Exception as e:
+      raise error.APIConnectionError(message=e)
+
+  @api_call(error.InvalidQueryError)
+  def kill_monitor(self, monitor_id):
+    (endpoint, method) = self.endpoints['kill_monitor']
+    endpoint = endpoint.replace(':monitor_id', monitor_id)
+
+    try:
+      headers = {'Authorization': self.token.authorization_header()}
+      return requests.request(method, endpoint, **{'headers': headers})
+    except Exception as e:
+      raise error.APIConnectionError(message=e)
+
+  @api_call(error.InvalidQueryError)
+  def create_monitor(self, feed_id, detector_id, thresholds, **options):
+    (endpoint, method) = self.endpoints['create_monitor']
+    endpoint = endpoint.replace(':feed_id', feed_id)
+    endpoint = endpoint.replace(':detector_id', detector_id)
+
+    try:
+      headers = {'Authorization': self.token.authorization_header()}
+      data = {x: options[x] for x in options}
+      data['thresholds'] = thresholds
+      return requests.request(method, endpoint, **{'headers': headers, 'data': data})
+    except Exception as e:
+      raise error.APIConnectionError(message=e)
+
+  @api_call(error.InvalidQueryError)
+  def list_monitorings(self, **query):
+    (endpoint, method) = self.endpoints['monitorings']
+    try:
+      headers = {'Authorization': self.token.authorization_header()}
+      params = {x: str(query[x]).lower() for x in query}
+      return requests.request(method, endpoint, **{'headers': headers, 'params': params})
+    except Exception as e:
+      raise error.APIConnectionError(message=e)
+
+  @api_call(error.InvalidQueryError)
+  def list_streams(self, **query):
+    (endpoint, method) = self.endpoints['streams']
+    try:
+      headers = {'Authorization': self.token.authorization_header()}
+      params = {x: str(query[x]).lower() for x in query}
+      return requests.request(method, endpoint, **{'headers': headers, 'params': params})
+    except Exception as e:
+      raise error.APIConnectionError(message=e)
+
+  @api_call(error.InvalidQueryError)
+  def localize(self, localizer_id, localizer_label, **options):
+    """Locates an object in an image using a specified localizing detector"""
+    MAX_LOCAL_IMAGE_SIZE = 50 * 1024 * 1024
+    (endpoint, method) = self.endpoints['localize']
+    image_count = 0
+    if 'image_file' in options:
+      if isinstance(options['image_file'], str) or isinstance(options['image_file'], list) and options['image_file'][0]:
+        image_count += 1
+    if 'image_url' in options:
+      if isinstance(options['image_url'], str) or isinstance(options['image_url'], list) and options['image_url'][0]:
+        image_count += 1
+    if image_count == 0:
+      raise error.InvalidQueryError(message='Must provide at least one of: image_file or image_url')
+
+    files = []
+    urls = []
+    try:
+      headers = {'Authorization': self.token.authorization_header()}
+      data = {'localizer': localizer_id, 'localizerLabel': localizer_label}
+      if 'confidence' in options:
+        data['confidence'] = options['confidence']
+      if 'image_file' in options:
+        total_batch_size = 0
+        image_file = [options['image_file']]
+        if isinstance(options['image_file'], list):
+          image_file = options['image_file']
+
+        for file in image_file:
+          file_obj = self.filereader.get_file(file)
+          file_size = os.fstat(file_obj.fileno()).st_size
+
+          if file_size > MAX_LOCAL_IMAGE_SIZE:
+            raise error.InvalidQueryError(message='File %s is larger than the limit of %d megabytes' % (file_obj.name, self.bytes_to_mb(MAX_LOCAL_IMAGE_BATCH_SIZE)))
+
+          files.append(('file', file_obj))
+          total_batch_size += file_size
+
+        if total_batch_size > MAX_LOCAL_IMAGE_SIZE:
+          raise error.InvalidQueryError(message='Max batch upload size is %d megabytes.' % (self.bytes_to_mb(MAX_LOCAL_IMAGE_SIZE)))
+
+      if 'image_url' in options:
+        if isinstance(options['image_url'], list):
+          data['urls'] = options['image_url']
+        else:
+          data['url'] = options['image_url']
+
+      return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
+
+    except Exception as e:
+       raise error.APIConnectionError(message=e)
+    finally:
+      for file_tuple in files:
+        (key, file) = file_tuple
+        file.close()
+
+  @api_call(error.InvalidQueryError)
+  def saliency_map(self, detector_id, class_idx, **options):
+    """Produces a saliency map of a given image for a detector"""
+    MAX_LOCAL_IMAGE_SIZE = 50 * 1024 * 1024
+    (endpoint, method) = self.endpoints['saliency_map']
+    endpoint = endpoint.replace(':detector_id', detector_id)
+    image_count = 0
+    if 'image_file' in options:
+      image_count += 1
+    if 'image_url' in options:
+      image_count += 1
+    if 'image_id' in options:
+      image_count += 1
+    if image_count == 0 or image_count > 1:
+      raise error.InvalidQueryError(message='Must provide one of (and only one): image_file, image_url, or image_id')
+
+    try:
+      headers = {'Authorization': self.token.authorization_header()}
+      data = {'detector_id': detector_id, 'class_idx': class_idx}
+      if 'image_file' in options:
+        with self.filereader.get_file(options['image_file']) as file_to_upload:
+          files = {'file': file_to_upload}
+          file_size = os.fstat(file_to_upload.fileno()).st_size
+          if file_size > MAX_LOCAL_IMAGE_SIZE:
+            raise error.InvalidQueryError(message='File %s is larger than the limit of %d megabytes' % (file_to_upload.name, self.bytes_to_mb(MAX_LOCAL_IMAGE_SIZE)))
+          return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
+
+      if 'image_url' in options:
+        data['url'] = options['image_url']
+        return requests.request(method, endpoint, **{'headers': headers, 'data': data})
+
+      if 'image_id' in options:
+        data['imageId'] = options['image_id']
+        return requests.request(method, endpoint, **{'headers': headers, 'data': data})
+
+    except Exception as e:
+      raise error.APIConnectionError(message=e)
 
   @api_call(error.InvalidQueryError)
   def list_detectors(self, **query):
@@ -340,6 +499,20 @@ class MatroidAPI(object):
       return requests.request(method, endpoint, **{'headers': headers, 'data': data})
     except Exception as e:
       raise error.APIConnectionError(message=e)
+
+  @api_call(error.InvalidQueryError)
+  def delete_detector(self, detector_id):
+    """Remove a detector from Matroid along with classes and images."""
+    (endpoint, method) = self.endpoints['delete_detector']
+
+    endpoint = endpoint.replace(':detector_id', detector_id)
+
+    try:
+      headers = {'Authorization': self.token.authorization_header()}
+      return requests.request(method, endpoint, **{'headers': headers})
+    except Exception as e:
+      raise error.APIConnectionError(message=e)
+
 
   @api_call(error.InvalidQueryError)
   def detector_info(self, detector_id):
