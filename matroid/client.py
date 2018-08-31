@@ -84,7 +84,7 @@ class MatroidAPI(object):
         'account_info': (self.base_url + '/account', 'GET'),
         'saliency_map': (self.base_url + '/detectors/:detector_id/get_saliency_map', 'POST'),
         'localize': (self.base_url + '/localize', 'POST'),
-        'monitorings': (self.base_url + '/monitorings', 'GET'),
+        'monitors': (self.base_url + '/monitorings', 'GET'),
         'streams': (self.base_url + '/streams', 'GET'),
         'create_monitor': (self.base_url + '/streams/:feed_id/monitor/:detector_id', 'POST'),
         'delete_monitor': (self.base_url + '/monitorings/:monitor_id', 'DELETE'),
@@ -128,8 +128,8 @@ class MatroidAPI(object):
       raise error.APIConnectionError(message=e)
 
   @api_call(error.InvalidQueryError)
-  def list_monitorings(self, **query):
-    (endpoint, method) = self.endpoints['monitorings']
+  def list_monitors(self, **query):
+    (endpoint, method) = self.endpoints['monitors']
     try:
       headers = {'Authorization': self.token.authorization_header()}
       params = {x: str(query[x]).lower() for x in query}

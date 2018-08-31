@@ -141,39 +141,39 @@ def test_list_streams():
     streams = client.list_streams()
     assert_is_not_none(streams)
 
-def test_list_monitorings():
+def test_list_monitors():
     client = MatroidAPI(options={'json_format': True}, base_url=BASE_URL)
-    monitorings = client.list_monitorings()
+    monitorings = client.list_monitors()
     assert_is_not_none(monitorings)
 
 
-def test_list_monitorings_by_state():
+def test_list_monitors_by_state():
     client = MatroidAPI(options={'json_format': True}, base_url=BASE_URL)
-    monitorings = client.list_monitorings(state='scheduled')
+    monitorings = client.list_monitors(state='scheduled')
     assert_is_not_none(monitorings)
     assert_true(all(monitor['state'] == 'scheduled' for monitor in monitorings),
                 'Expected to find only "scheduled" states')
-    monitorings = client.list_monitorings(state='ready')
+    monitorings = client.list_monitors(state='ready')
     assert_is_not_none(monitorings)
     assert_true(all(monitor['state'] == 'ready' for monitor in monitorings),
                 'Expected to find only "ready" states')
-    monitorings = client.list_monitorings(state='failed')
+    monitorings = client.list_monitors(state='failed')
     assert_is_not_none(monitorings)
     assert_true(all(monitor['state'] == 'failed' for monitor in monitorings),
                 'Expected to find only "failed" states')
 
-def test_list_monitorings_by_id():
+def test_list_monitors_by_id():
     client = MatroidAPI(options={'json_format': True}, base_url=BASE_URL)
-    monitorings = client.list_monitorings()
+    monitorings = client.list_monitors()
     assert_is_not_none(monitorings)
     a_monitor = monitorings[0]
     assert_is_not_none(a_monitor)
 
-    monitorings_by_monitoring_id = client.list_monitorings(monitoring_id=a_monitor['monitoring_id'])
+    monitorings_by_monitoring_id = client.list_monitors(monitoring_id=a_monitor['monitoring_id'])
     assert_true(all(monitor['monitoring_id'] == a_monitor['monitoring_id'] for monitor in monitorings_by_monitoring_id),
                 'Expected to find monitoring by monitoring_id')
 
-    monitorings_by_stream_id = client.list_monitorings(stream_id=a_monitor['stream_id'])
+    monitorings_by_stream_id = client.list_monitors(stream_id=a_monitor['stream_id'])
     assert_true(all(monitor['stream_id'] == a_monitor['stream_id'] for monitor in monitorings_by_stream_id),
                 'Expected to find monitoring by stream_id')
 
@@ -191,7 +191,7 @@ def test_create_monitor():
     stream_id = stream['stream_id']
     thresholds = {'dog': 0.5, 'cat': 0.5}
     new_monitor = client.create_monitor(stream_id, detector_id, thresholds, name="MY_COOL_NEW_DOG_MONITOR")
-    new_monitoring_list = client.list_monitorings(monitoring_id=new_monitor['monitoring_id'])
+    new_monitoring_list = client.list_monitors(monitoring_id=new_monitor['monitoring_id'])
     assert_true(new_monitor['stream_id'] == stream_id,
                 'Expected new montior to have correct stream id')
     assert_true(len(new_monitoring_list) == 1,
@@ -202,7 +202,7 @@ def test_create_monitor():
 def test_kill_monitor():
     """Depends on the above test to pass!"""
     client = MatroidAPI(options={'json_format': True}, base_url=BASE_URL)
-    monitoring_list = client.list_monitorings(name="MY_COOL_NEW_DOG_MONITOR")
+    monitoring_list = client.list_monitors(name="MY_COOL_NEW_DOG_MONITOR")
     monitor = monitoring_list[0]
     monitoring_id = monitor['monitoring_id']
     result = client.kill_monitor(monitoring_id)
@@ -212,7 +212,7 @@ def test_kill_monitor():
 def test_delete_monitor():
     """Depends on the above test to pass!"""
     client = MatroidAPI(options={'json_format': True}, base_url=BASE_URL)
-    monitoring_list = client.list_monitorings(name="MY_COOL_NEW_DOG_MONITOR")
+    monitoring_list = client.list_monitors(name="MY_COOL_NEW_DOG_MONITOR")
     monitor = monitoring_list[0]
     monitoring_id = monitor['monitoring_id']
     result = client.delete_monitor(monitoring_id)
