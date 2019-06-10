@@ -3,7 +3,7 @@ import time
 import unittest
 import os
 
-from .helpers import set_up_client, print_test_title, print_case_pass, TEST_IMAGE_FILE, EVERYDAY_OBJECT_DETECTOR_ID
+from .tests_helpers import set_up_client, print_test_title, print_case_pass, TEST_IMAGE_FILE, EVERYDAY_OBJECT_DETECTOR_ID
 
 DETECTOR_TEST_ZIP = os.getcwd() + '/test/test_file/cat-dog-lacroix.zip'
 
@@ -65,16 +65,10 @@ class TestDetectorsAndLabels(unittest.TestCase):
             if redo_detector_id:
                 self.delete_detector_test(redo_detector_id, 'redo detector')
 
-    def delete_pending_detectors(self):
-        res = self.api.list_detectors(state='pending')
-        if len(res) == 1:
-            print('Info: found a pending detector, deleting it...')
-            self.api.delete_detector(detector_id=res[0]['id'])
-            print('Info: Deleted pending detector')
-
     def create_detector_test(self, zip_file, name, detector_type):
         res = self.api.create_detector(
             zip_file=zip_file, name=name, detector_type=detector_type)
+        self.assertIsNotNone(res['detector_id'])
 
         print_case_pass('create_detector_test')
         return res['detector_id']
@@ -90,7 +84,7 @@ class TestDetectorsAndLabels(unittest.TestCase):
     def get_annotations_test(self, detector_id, label_id):
         res = self.api.get_annotations(
             detector_id=detector_id, label_id=label_id)
-        self.assertIsNotNone(res)
+        self.assertIsNotNone(res['images'])
 
         print_case_pass('get_annotations_test')
 
@@ -131,13 +125,13 @@ class TestDetectorsAndLabels(unittest.TestCase):
 
     def detector_info_test(self, detector_id):
         res = self.api.detector_info(detector_id=detector_id)
-        self.assertIsNotNone(res)
+        self.assertEqual(res['id'], detector_id)
 
         print_case_pass('detector_info_test')
 
     def list_detectors_test(self):
         res = self.api.list_detectors()
-        self.assertIsNotNone(res)
+        self.assertIsNotNone(res[0]['id'])
 
         print_case_pass('list_detectors_test')
 
@@ -153,7 +147,7 @@ class TestDetectorsAndLabels(unittest.TestCase):
         res = self.api.import_detector(name=name, input_tensor=input_tensor, output_tensor=output_tensor,
                                        detector_type=detector_type, file_proto=file_proto, labels=labels)
 
-        self.assertIsNotNone(res)
+        self.assertIsNotNone(res['detector_id'])
 
         print_case_pass('import_detector_test')
         return res['detector_id']
@@ -163,6 +157,15 @@ class TestDetectorsAndLabels(unittest.TestCase):
         self.assertEqual(res['message'], 'Deleted detector.')
 
         print_case_pass('delete_detector_test - {}'.format(detector_type))
+
+    # helpers
+
+    def delete_pending_detectors(self):
+        res = self.api.list_detectors(state='pending')
+        if len(res) == 1:
+            print('Info: found a pending detector, deleting it...')
+            self.api.delete_detector(detector_id=res[0]['id'])
+            print('Info: Deleted pending detector')
 
     def wait_detector_training(self, detector_id):
         res = self.api.detector_info(detector_id=detector_id)

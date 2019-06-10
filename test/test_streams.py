@@ -3,7 +3,7 @@ import time
 import os
 import unittest
 
-from .helpers import set_up_client, print_test_title, print_case_pass, EVERYDAY_OBJECT_DETECTOR_ID, TEST_VIDEO_URL
+from .tests_helpers import set_up_client, print_test_title, print_case_pass, EVERYDAY_OBJECT_DETECTOR_ID, TEST_VIDEO_URL
 
 
 class TestStreams(unittest.TestCase):

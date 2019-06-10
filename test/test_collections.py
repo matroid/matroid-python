@@ -2,7 +2,7 @@ import unittest
 import time
 from datetime import datetime
 
-from .helpers import set_up_client, print_test_title, print_case_pass, EVERYDAY_OBJECT_DETECTOR_ID, TEST_IMAGE_URL
+from .tests_helpers import set_up_client, print_test_title, print_case_pass, EVERYDAY_OBJECT_DETECTOR_ID, TEST_IMAGE_URL
 
 COLLECTION_NAME = 'py-test-collection-{}'.format(datetime.now())
 S3_BUCKET_URL = 's3://bucket/m-test-public/'
@@ -69,6 +69,8 @@ class TestCollections(unittest.TestCase):
     def get_collection_task_test(self, task_id):
         res = self.api.get_collection_task(task_id=task_id)
         self.assertIsNotNone(res['collectionTask'])
+        collection_task_id = res['collectionTask']['_id']
+        self.assertEqual(collection_task_id, task_id)
 
         print_case_pass('get_collection_task_test')
 
@@ -76,6 +78,8 @@ class TestCollections(unittest.TestCase):
         res = self.api.update_collection_index(
             task_id=task_id, update_index=False)
         self.assertIsNotNone(res['collectionTask'])
+        collection_task_id = res['collectionTask']['_id']
+        self.assertEqual(collection_task_id, task_id)
 
         print_case_pass('update_collection_index_test')
 

@@ -7,142 +7,154 @@ from matroid import error
 MAX_LOCAL_IMAGE_SIZE = 50 * 1024 * 1024
 MAX_LOCAL_IMAGE_BATCH_SIZE = 50 * 1024 * 1024
 
+
 def api_call(default_error):
-  """setup and teardown decorator for API calls"""
-  def decorator(func):
-    def setup_and_teardown(self, *original_args, **original_kwargs):
-      self.retrieve_token()
+    """setup and teardown decorator for API calls"""
+    def decorator(func):
+        def setup_and_teardown(self, *original_args, **original_kwargs):
+            self.retrieve_token()
 
-      response = func(self, *original_args, **original_kwargs)
+            response = func(self, *original_args, **original_kwargs)
 
-      try:
-        self.check_errors(response, default_error)
-      except error.TokenExpirationError:
-        self.retrieve_token(options={'request_from_server': True})
-        return func(self, *original_args, **original_kwargs)
-      else:
-        return self.format_response(response)
-    return setup_and_teardown
-  return decorator
+            try:
+                self.check_errors(response, default_error)
+            except error.TokenExpirationError:
+                self.retrieve_token(options={'request_from_server': True})
+                return func(self, *original_args, **original_kwargs)
+            else:
+                return self.format_response(response)
+        return setup_and_teardown
+    return decorator
+
 
 def bytes_to_mb(self, bytes):
-  return bytes / 1024 / 1024
+    return bytes / 1024 / 1024
+
 
 def check_errors(self, response=None, UserErr=None):
-  """Raise specific errors depending on how the API call failed"""
-  status = response.status_code
-  code = None
-  try:
-    code = response.json().get('code')
-  except:
-    pass
+    """Raise specific errors depending on how the API call failed"""
+    status = response.status_code
+    code = None
+    try:
+        code = response.json().get('code')
+    except:
+        pass
 
-  if status == 429 and code == 'rate_err':
-    raise error.RateLimitError(response)
-  elif status == 402 and code == 'payment_err':
-    raise error.PaymentError(response)
-  elif status / 100 == 4:
-    if code == 'token_expiration_err':
-      raise error.TokenExpirationError(response)
-    elif UserErr:
-      raise UserErr(response)
-    else:
-      raise error.APIError(response)
-  elif code == 'media_err':
-    raise error.MediaError(response)
-  elif status / 100 == 5 and code == 'server_err':
-    raise error.ServerError(response)
-  elif status / 100 != 2:
-    raise error.APIError(response)
+    if status == 429 and code == 'rate_err':
+        raise error.RateLimitError(response)
+    elif status == 402 and code == 'payment_err':
+        raise error.PaymentError(response)
+    elif status / 100 == 4:
+        if code == 'token_expiration_err':
+            raise error.TokenExpirationError(response)
+        elif UserErr:
+            raise UserErr(response)
+        else:
+            raise error.APIError(response)
+    elif code == 'media_err':
+        raise error.MediaError(response)
+    elif status / 100 == 5 and code == 'server_err':
+        raise error.ServerError(response)
+    elif status / 100 != 2:
+        raise error.APIError(response)
+
 
 def format_response(self, response):
-  """Format the output according to the options (json, print to screen)"""
-  if self.print_output:
-    print(response.text)
-  if self.json_format:
-    return response.json()
-  else:
-    return response.text
+    """Format the output according to the options (json, print to screen)"""
+    if self.print_output:
+        print(response.text)
+    if self.json_format:
+        return response.json()
+    else:
+        return response.text
+
 
 def save_token(self, response):
-  """Extracts the access token from the API response"""
-  res = response.json()
+    """Extracts the access token from the API response"""
+    res = response.json()
 
-  if isinstance(res, str):
-    print(response.text)
-    raise error.APIError(message='Could not parse the response')
+    if isinstance(res, str):
+        print(response.text)
+        raise error.APIError(message='Could not parse the response')
 
-  access_token = res['access_token']
-  token_type = res['token_type']
-  expires_in = res['expires_in']
+    access_token = res['access_token']
+    token_type = res['token_type']
+    expires_in = res['expires_in']
 
-  if not access_token or not token_type or not expires_in:
-    raise error.APIError(
-        message='Required parameters not found in the response')
+    if not access_token or not token_type or not expires_in:
+        raise error.APIError(
+            message='Required parameters not found in the response')
 
-  self.token = self.Token(token_type, access_token, expires_in)
+    self.token = self.Token(token_type, access_token, expires_in)
+
 
 def batch_file_request(uploaded_files, method, endpoint, headers, data, file_keyword='file'):
-  filereader = FileReader()
+    filereader = FileReader()
 
-  try:
-    files = []
-    total_batch_size = 0
-    for file in uploaded_files:
-      file_obj = filereader.get_file(file)
-      file_size = check_file_size(file_obj)
+    try:
+        files = []
+        total_batch_size = 0
+        for file in uploaded_files:
+            file_obj = filereader.get_file(file)
+            file_size = check_file_size(file_obj)
 
-      files.append((file_keyword, file_obj))
-      total_batch_size += file_size
+            files.append((file_keyword, file_obj))
+            total_batch_size += file_size
 
-    if total_batch_size > MAX_LOCAL_IMAGE_BATCH_SIZE:
-      raise error.InvalidQueryError(message='Max batch upload size is %d megabytes.' % (bytes_to_mb(MAX_LOCAL_IMAGE_BATCH_SIZE)))
+        if total_batch_size > MAX_LOCAL_IMAGE_BATCH_SIZE:
+            raise error.InvalidQueryError(message='Max batch upload size is %d megabytes.' % (
+                bytes_to_mb(MAX_LOCAL_IMAGE_BATCH_SIZE)))
 
-    return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
-  finally:
-    for file_tuple in files:
-      (key, file) = file_tuple
-      file.close()
+        return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
+    finally:
+        for file_tuple in files:
+            (key, file) = file_tuple
+            file.close()
+
 
 def check_file_size(file):
-  file_size = os.fstat(file.fileno()).st_size
+    file_size = os.fstat(file.fileno()).st_size
 
-  if file_size > MAX_LOCAL_IMAGE_SIZE:
-    raise error.InvalidQueryError(message='File %s is larger than the limit of %d megabytes' % (file.name, bytes_to_mb(MAX_LOCAL_IMAGE_SIZE)))
+    if file_size > MAX_LOCAL_IMAGE_SIZE:
+        raise error.InvalidQueryError(message='File %s is larger than the limit of %d megabytes' % (
+            file.name, bytes_to_mb(MAX_LOCAL_IMAGE_SIZE)))
 
-  return file_size
+    return file_size
+
 
 class Token(object):
-  """Represents an OAuth access token"""
+    """Represents an OAuth access token"""
 
-  def __init__(self, token_type, token_str, expiration):
-    self.token_type = token_type
-    self.token_str = token_str
-    self.born = datetime.datetime.now()
-    self.lifetime = expiration
+    def __init__(self, token_type, token_str, expiration):
+        self.token_type = token_type
+        self.token_str = token_str
+        self.born = datetime.datetime.now()
+        self.lifetime = expiration
 
-  def authorization_header(self):
-    return self.token_type + " " + self.token_str
+    def authorization_header(self):
+        return self.token_type + " " + self.token_str
 
-  def expired(self):
-    return self.born + datetime.timedelta(0, int(self.lifetime)) < datetime.datetime.now()
+    def expired(self):
+        return self.born + datetime.timedelta(0, int(self.lifetime)) < datetime.datetime.now()
+
 
 class FileReader(object):
-  """Reads files for classification input"""
+    """Reads files for classification input"""
 
-  def __init__(self):
-    pass
+    def __init__(self):
+        pass
 
-  def get_file(self, file_input):
-    """Extracts file from file path or returns the file if file is passed in"""
-    local_file = file_input
-    if isinstance(file_input, str):
-      local_file = open(file_input, 'rb')
+    def get_file(self, file_input):
+        """Extracts file from file path or returns the file if file is passed in"""
+        local_file = file_input
+        if isinstance(file_input, str):
+            local_file = open(file_input, 'rb')
 
-    return local_file
+        return local_file
+
 
 def get_endpoints(base_url):
-  end_points = {
+    end_points = {
         # accounts
         'token': (base_url + '/oauth/token', 'POST'),
         'account_info': (base_url + '/account', 'GET'),
@@ -189,4 +201,4 @@ def get_endpoints(base_url):
         'update_collection_index':  (base_url + '/collection-tasks/:key', 'PUT')
     }
 
-  return end_points
+    return end_points

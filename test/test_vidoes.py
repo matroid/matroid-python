@@ -1,6 +1,6 @@
 import unittest
 
-from .helpers import set_up_client, print_test_title, print_case_pass, TEST_IMAGE_URL, EVERYDAY_OBJECT_DETECTOR_ID, YOUTUBE_VIDEO_URL
+from .tests_helpers import set_up_client, print_test_title, print_case_pass, TEST_IMAGE_URL, EVERYDAY_OBJECT_DETECTOR_ID, YOUTUBE_VIDEO_URL
 
 
 class TestVideos(unittest.TestCase):

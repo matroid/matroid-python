@@ -74,11 +74,11 @@ def localize_image(self, localizer, localizer_label, **options):
         }
 
         image_id = options.get('image_id')
+        image_ids = options.get('image_ids')
         if image_id:
-            if isinstance(image_id, list):
-                data['imagesIds'] = image_id
-            else:
-                data['imageId'] = image_id
+            data['imageId'] = image_id
+        else:
+            data['imagesIds'] = image_ids
 
         if files:
             if not isinstance(files, list):
