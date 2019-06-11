@@ -34,7 +34,7 @@ class TestDetectorsAndLabels(unittest.TestCase):
         try:
             detector_id = self.create_detector_test(
                 zip_file=DETECTOR_TEST_ZIP, name=detector_name, detector_type='general')
-            time.sleep(3)
+            self.wait_detector_ready_for_edit(detector_id)
             label_id = self.create_label_with_images_test(
                 name=label_name, detector_id=detector_id, image_files=TEST_IMAGE_FILE)
             self.get_annotations_test(
@@ -179,3 +179,13 @@ class TestDetectorsAndLabels(unittest.TestCase):
             res = self.api.detector_info(detector_id=detector_id)
 
         print('Info: detector is ready')
+
+    def wait_detector_ready_for_edit(self, detector_id):
+        print('Info: wait for pending detector to be ready for editing')
+        res = self.api.detector_info(detector_id=detector_id)
+
+        while (res['processing']):
+            res = self.api.detector_info(detector_id=detector_id)
+            time.sleep(2)
+
+        print('Info: detector is ready for editing.')
