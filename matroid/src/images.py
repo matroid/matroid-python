@@ -4,7 +4,7 @@ import requests
 from matroid import error
 from matroid.src.helpers import api_call, batch_file_request
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Images-Classify
 @api_call(error.InvalidQueryError)
 def classify_image(self, detector_id, file=None, url=None, **options):
   """
@@ -47,7 +47,7 @@ def classify_image(self, detector_id, file=None, url=None, **options):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Images-PostLocalize
 @api_call(error.InvalidQueryError)
 def localize_image(self, localizer, localizer_label, **options):
   (endpoint, method) = self.endpoints['localize_image']

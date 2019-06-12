@@ -4,7 +4,7 @@ import requests
 from matroid import error
 from matroid.src.helpers import api_call
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectors
 @api_call(error.InvalidQueryError)
 def create_detector(self, zip_file, name, detector_type):
   """
@@ -59,7 +59,7 @@ def create_detector(self, zip_file, name, detector_type):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-DeleteDetectorsDetector_id
 @api_call(error.InvalidQueryError)
 def delete_detector(self, detector_id):
   """
@@ -76,21 +76,7 @@ def delete_detector(self, detector_id):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
-@api_call(error.InvalidQueryError)
-def detector_info(self, detector_id):
-  """Get information about detector"""
-  (endpoint, method) = self.endpoints['detector_info']
-
-  endpoint = endpoint.replace(':key', detector_id)
-
-  try:
-    headers = {'Authorization': self.token.authorization_header()}
-    return requests.request(method, endpoint, **{'headers': headers})
-  except Exception as e:
-    raise error.APIConnectionError(message=e)
-
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsDetector_idFinalize
 @api_call(error.InvalidQueryError)
 def train_detector(self, detector_id, name=None, detector_type=None):
   """Begin training the detector"""
@@ -110,7 +96,21 @@ def train_detector(self, detector_id, name=None, detector_type=None):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
+# https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-GetDetectorsDetector_id
+@api_call(error.InvalidQueryError)
+def detector_info(self, detector_id):
+  """Get information about detector"""
+  (endpoint, method) = self.endpoints['detector_info']
 
+  endpoint = endpoint.replace(':key', detector_id)
+
+  try:
+    headers = {'Authorization': self.token.authorization_header()}
+    return requests.request(method, endpoint, **{'headers': headers})
+  except Exception as e:
+    raise error.APIConnectionError(message=e)
+
+# https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsUpload
 @api_call(error.InvalidQueryError)
 def import_detector(self, name, **options):
   """
@@ -166,7 +166,7 @@ def import_detector(self, name, **options):
       if isinstance(file_obj, file):
           file_obj.close()
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsDetector_idRedo
 @api_call(error.InvalidQueryError)
 def redo_detector(self, detector_id):
   """
@@ -183,7 +183,7 @@ def redo_detector(self, detector_id):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-Search
 @api_call(error.InvalidQueryError)
 def list_detectors(self, **query):
   """Lists the available detectors"""

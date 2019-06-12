@@ -3,7 +3,7 @@ import requests
 from matroid import error
 from matroid.src.helpers import api_call
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Accounts-RefreshToken
 def retrieve_token(self, options={}):
   """
   Generates an OAuth token. The API client will intelligently refresh the Access Token for you
@@ -38,7 +38,7 @@ def retrieve_token(self, options={}):
 
   return response.json()
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Accounts-GetAccount
 @api_call(error.InvalidQueryError)
 def account_info(self):
   """Get user account and credits information"""

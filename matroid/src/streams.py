@@ -4,7 +4,7 @@ import json
 from matroid import error
 from matroid.src.helpers import api_call
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Streams-PostStreams
 @api_call(error.InvalidQueryError)
 def create_stream(self, stream_url, stream_name):
   (endpoint, method) = self.endpoints['create_stream']
@@ -19,7 +19,7 @@ def create_stream(self, stream_url, stream_name):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Streams-DeleteMonitoringsMonitoring_id
 @api_call(error.InvalidQueryError)
 def delete_monitoring(self, monitoring_id):
   (endpoint, method) = self.endpoints['delete_monitoring']
@@ -31,7 +31,7 @@ def delete_monitoring(self, monitoring_id):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Streams-DeleteStreamsStream_id
 @api_call(error.InvalidQueryError)
 def delete_stream(self, stream_id):
   (endpoint, method) = self.endpoints['delete_stream']
@@ -43,7 +43,7 @@ def delete_stream(self, stream_id):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Streams-GetMonitoringsMonitoring_idQuery
 @api_call(error.InvalidQueryError)
 def get_monitoring_result(self, monitoring_id, **options):
   (endpoint, method) = self.endpoints['get_monitoring_result']
@@ -65,7 +65,7 @@ def get_monitoring_result(self, monitoring_id, **options):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Streams-PostMonitoringsMonitoring_idKill
 @api_call(error.InvalidQueryError)
 def kill_monitoring(self, monitoring_id):
   (endpoint, method) = self.endpoints['kill_monitoring']
@@ -77,7 +77,7 @@ def kill_monitoring(self, monitoring_id):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Streams-PostStreamsStream_idMonitorDetector_id
 @api_call(error.InvalidQueryError)
 def monitor_stream(self, stream_id, detector_id, **options):
   (endpoint, method) = self.endpoints['monitor_stream']
@@ -97,7 +97,7 @@ def monitor_stream(self, stream_id, detector_id, **options):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Streams-GetMonitoringsQuery
 @api_call(error.InvalidQueryError)
 def search_monitorings(self, **options):
   (endpoint, method) = self.endpoints['search_monitorings']
@@ -117,7 +117,7 @@ def search_monitorings(self, **options):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
+# https://staging.dev.matroid.com/docs/api/index.html#api-Streams-GetStreamsQuery
 @api_call(error.InvalidQueryError)
 def search_streams(self, **options):
   (endpoint, method) = self.endpoints['search_streams']
