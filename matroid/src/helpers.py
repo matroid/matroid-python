@@ -7,7 +7,6 @@ from matroid import error
 MAX_LOCAL_IMAGE_SIZE = 50 * 1024 * 1024
 MAX_LOCAL_IMAGE_BATCH_SIZE = 50 * 1024 * 1024
 
-
 def api_call(default_error):
   """setup and teardown decorator for API calls"""
   def decorator(func):
@@ -26,10 +25,8 @@ def api_call(default_error):
     return setup_and_teardown
   return decorator
 
-
 def bytes_to_mb(self, bytes):
   return bytes / 1024 / 1024
-
 
 def check_errors(self, response=None, UserErr=None):
   """Raise specific errors depending on how the API call failed"""
@@ -58,7 +55,6 @@ def check_errors(self, response=None, UserErr=None):
   elif status / 100 != 2:
     raise error.APIError(response)
 
-
 def format_response(self, response):
   """Format the output according to the options (json, print to screen)"""
   if self.print_output:
@@ -67,7 +63,6 @@ def format_response(self, response):
     return response.json()
   else:
     return response.text
-
 
 def save_token(self, response):
   """Extracts the access token from the API response"""
@@ -86,7 +81,6 @@ def save_token(self, response):
       message='Required parameters not found in the response')
 
   self.token = self.Token(token_type, access_token, expires_in)
-
 
 def batch_file_request(uploaded_files, method, endpoint, headers, data, file_keyword='file'):
   filereader = FileReader()
@@ -111,7 +105,6 @@ def batch_file_request(uploaded_files, method, endpoint, headers, data, file_key
       (key, file) = file_tuple
       file.close()
 
-
 def check_file_size(file):
   file_size = os.fstat(file.fileno()).st_size
 
@@ -120,7 +113,6 @@ def check_file_size(file):
       file.name, bytes_to_mb(MAX_LOCAL_IMAGE_SIZE)))
 
   return file_size
-
 
 class Token(object):
   """Represents an OAuth access token"""
@@ -137,7 +129,6 @@ class Token(object):
   def expired(self):
     return self.born + datetime.timedelta(0, int(self.lifetime)) < datetime.datetime.now()
 
-
 class FileReader(object):
   """Reads files for classification input"""
 
@@ -151,7 +142,6 @@ class FileReader(object):
       local_file = open(file_input, 'rb')
 
     return local_file
-
 
 def get_endpoints(base_url):
   end_points = {

@@ -2,7 +2,6 @@ import pytest
 
 from matroid.client import Matroid
 
-
 def pytest_addoption(parser):
   parser.addoption("--base_url", action="store",
     default="", help="enter your base_url for the test, default: https://www.matroid.com/api/v1")
@@ -18,3 +17,7 @@ def set_up_client(request):
   client_secret = request.config.getoption('--client_secret')
 
   return Matroid(base_url, client_id, client_secret)
+
+@pytest.fixture(scope="module")
+def set_up_wrong_permission_client(request):
+  return Matroid(client_id='invalid-id', client_secret='invalid-secret')

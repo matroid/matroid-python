@@ -38,7 +38,6 @@ class TestStreams(object):
         self.delete_stream_test(stream_id=stream_id)
 
   # test cases
-
   def create_stream_test(self, stream_url, stream_name):
     res = self.api.create_stream(
       stream_url=stream_url,
@@ -70,31 +69,25 @@ class TestStreams(object):
     res = self.api.search_monitorings(stream_id=stream_id)
     assert(res[0]['monitoring_id'] == monitoring_id)
 
-
   def search_streams_test(self):
     res = self.api.search_streams(permission='private')
     assert(res[0]['stream_id'] != None)
-
 
   def get_monitoring_result_test(self, monitoring_id):
     res = self.api.get_monitoring_result(monitoring_id=monitoring_id)
     assert(res != None)
 
-
   def kill_monitoring_test(self, monitoring_id):
     res = self.api.kill_monitoring(monitoring_id=monitoring_id)
     assert(res['message'] == 'Successfully killed monitoring.')
-
 
   def delete_monitoring_test(self, monitoring_id):
     res = self.api.delete_monitoring(monitoring_id=monitoring_id)
     assert(res['message'] == 'Successfully deleted monitoring.')
 
-
   def delete_stream_test(self, stream_id):
     res = self.api.delete_stream(stream_id=stream_id)
     assert(res['message'] == 'Successfully deleted stream.')
-
 
   # helpers
   def wait_for_monitoring_stop(self, monitoring_id):

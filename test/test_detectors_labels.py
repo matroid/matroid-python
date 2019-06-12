@@ -8,7 +8,6 @@ from matroid.error import APIConnectionError, InvalidQueryError
 
 DETECTOR_TEST_ZIP = os.getcwd() + '/test/test_file/cat-dog-lacroix.zip'
 
-
 class TestDetectorsAndLabels(object):
   def test_detector_and_labels(self, set_up_client):
     detector_id = None
@@ -47,16 +46,17 @@ class TestDetectorsAndLabels(object):
       self.update_label_with_images_test(
         detector_id=detector_id, label_id=label_id, image_files=TEST_IMAGE_FILE)
       self.delete_label_test(detector_id=detector_id, label_id=label_id)
-      # self.train_detector_test(detector_id=detector_id)
+      self.train_detector_test(detector_id=detector_id)
 
-      # self.wait_detector_training(detector_id)
+      self.wait_detector_training(detector_id)
 
       self.detector_info_test(detector_id=detector_id)
       self.list_detectors_test()
       redo_detector_id = self.redo_detector_test(
         detector_id=EVERYDAY_OBJECT_DETECTOR_ID)
-      # import_detector_id = self.import_detector_test(name=import_detector_name, input_tensor=input_tensor,
-                                                      # output_tensor=output_tensor, detector_type='facial_recognition', file_proto=file_proto, labels=labels)
+      import_detector_id = self.import_detector_test(name=import_detector_name, input_tensor=input_tensor,
+                                                      output_tensor=output_tensor, detector_type='facial_recognition',
+                                                      file_proto=file_proto, labels=labels)
     finally:
       if detector_id:
         self.delete_detector_test(detector_id, 'main detector')
@@ -96,7 +96,6 @@ class TestDetectorsAndLabels(object):
       detector_id=detector_id, label_id=label_id)
     assert(res['images'] != None)
 
-
   def get_label_images_test(self, detector_id, label_id):
     res = self.api.get_label_images(
       detector_id=detector_id, label_id=label_id)
@@ -113,33 +112,27 @@ class TestDetectorsAndLabels(object):
       {'id': image_id, 'bbox': bbox}])
     assert(res['message'] == 'successfully updated 1 images')
 
-
   def update_label_with_images_test(self, detector_id, label_id, image_files):
     res = self.api.update_label_with_images(
         detector_id=detector_id, label_id=label_id, image_files=image_files)
     assert('successfully uploaded 1 images to label' in res['message'])
-
 
   def delete_label_test(self, detector_id, label_id):
     res = self.api.delete_label(
         detector_id=detector_id, label_id=label_id)
     assert(res['message'] == 'Successfully deleted the label')
 
-
   def train_detector_test(self, detector_id):
     res = self.api.train_detector(detector_id=detector_id)
     assert(res['message'] == 'training began successfully')
-
 
   def detector_info_test(self, detector_id):
     res = self.api.detector_info(detector_id=detector_id)
     assert(res['id'] == detector_id)
 
-
   def list_detectors_test(self):
     res = self.api.list_detectors()
     assert(res[0]['id'] != None)
-
 
   def redo_detector_test(self, detector_id):
     res = self.api.redo_detector(detector_id=detector_id)
@@ -160,9 +153,7 @@ class TestDetectorsAndLabels(object):
     res = self.api.delete_detector(detector_id=detector_id)
     assert(res['message'] == 'Deleted detector.')
 
-
   # helpers
-
   def delete_pending_detectors(self):
     res = self.api.list_detectors(state='pending')
     if len(res) == 1:

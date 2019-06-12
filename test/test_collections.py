@@ -8,7 +8,6 @@ from matroid.error import InvalidQueryError
 COLLECTION_NAME = 'py-test-collection-{}'.format(datetime.now())
 S3_BUCKET_URL = 's3://bucket/m-test-public/'
 
-
 class TestCollections(object):
   def test_collections(self, set_up_client):
     collection_id = None
@@ -64,20 +63,17 @@ class TestCollections(object):
     res = self.api.delete_collection(collection_id=collection_id)
     assert(res['message'] == 'Successfully deleted')
 
-
   def get_collection_test(self, collection_id):
     res = self.api.get_collection(collection_id=collection_id)
     collection = res['collection']
     assert(collection['_id'] == collection_id)
     assert(collection['name'] == COLLECTION_NAME)
 
-
   def get_collection_task_test(self, task_id):
     res = self.api.get_collection_task(task_id=task_id)
     assert(res['collectionTask'] != None)
     collection_task_id = res['collectionTask']['_id']
     assert(collection_task_id == task_id)
-
 
   def update_collection_index_test(self, task_id):
     res = self.api.update_collection_index(
@@ -86,19 +82,16 @@ class TestCollections(object):
     collection_task_id = res['collectionTask']['_id']
     assert(collection_task_id == task_id)
 
-
   def query_by_detection_scores_test(self, task_id):
     print(task_id)
     res = self.api.query_by_detection_scores(
         task_id=task_id, thresholds={'cat': 0.5}, num_results=5)
     assert(res['results'] != None)
 
-
   def query_by_image_test(self, task_id, url):
     res = self.api.query_by_image(task_id=task_id, bounding_box={
                                   "top": 0.1, "left": 0.1, "height": 0.8, "width": 0.8},  task_type='collection', num_results=1, url=url)
     assert(res['results'] != None)
-
 
   def kill_collection_index_test(self, task_id):
     res = self.api.kill_collection_index(
@@ -107,18 +100,15 @@ class TestCollections(object):
     assert(collection_task != None)
     assert(collection_task['_id'] == task_id)
 
-
   def delete_collection_task_test(self, task_id):
     res = self.api.delete_collection_task(task_id=task_id)
     assert(res['message'] == 'Successfully deleted')
-
 
   def delete_collection_test(self, collection_id):
     res = self.api.delete_collection(collection_id=collection_id)
     assert(res['message'] == 'Successfully deleted')
 
   # helpers
-
   def wait_for_collection_index_stop(self, task_id):
     print('Info: waiting for collection task to stop')
     res = self.api.get_collection_task(task_id=task_id)

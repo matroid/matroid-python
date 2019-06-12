@@ -56,7 +56,7 @@ def get_annotations(self, **options):
 
   if not detector_id and not label_ids and not image_id:
     raise error.InvalidQueryError(
-      message='Missing required parameter: detector_id or label_ids o rimage_id')
+      message='Missing required parameter: detector_id or label_ids or image_id')
 
   try:
     headers = {'Authorization': self.token.authorization_header()}

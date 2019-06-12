@@ -1,5 +1,6 @@
 import pytest
 
+from matroid.error import AuthorizationError
 
 class TestAccounts(object):
   def test_accounts(self, set_up_client):
@@ -17,4 +18,11 @@ class TestAccounts(object):
 
   def retrieve_token(self):
     res = self.api.retrieve_token()
-    assert(res != None)
+    assert (res != None)
+    
+  def test_with_wrong_permission(self, set_up_wrong_permission_client):
+    with pytest.raises(AuthorizationError) as e:
+      api = set_up_wrong_permission_client
+      api.retrieve_token()
+    assert ('authorization_err' in str(e))
+
