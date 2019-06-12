@@ -53,7 +53,7 @@ def create_detector(self, zip_file, name, detector_type):
 
       if file_size > MAX_LOCAL_ZIP_SIZE:
         raise error.InvalidQueryError(message='File %s is larger than the limit of %d megabytes' % (
-          file_to_upload.name, self.bytes_to_mb(MAX_LOCAL_ZIP_SIZE)))
+            file_to_upload.name, self.bytes_to_mb(MAX_LOCAL_ZIP_SIZE)))
 
       return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
   except Exception as e:
@@ -119,7 +119,7 @@ def import_detector(self, name, **options):
   (endpoint, method) = self.endpoints['import_detector']
 
   data = {
-    'name': name,
+      'name': name,
   }
 
   def get_data_info():
@@ -131,21 +131,21 @@ def import_detector(self, name, **options):
     file_paths = {'file_detector': options.get('file_detector')}
   elif options.get('file_proto') and options.get('file_label'):
     file_paths = {
-      'file_proto': options.get('file_proto'),
-      'file_label': options.get('file_label'),
-      'file_label_ind': options.get('file_label_ind')
+        'file_proto': options.get('file_proto'),
+        'file_label': options.get('file_label'),
+        'file_label_ind': options.get('file_label_ind')
     }
     get_data_info()
   elif options.get('file_proto') and options.get('labels'):
     file_paths = {
-      'file_proto': options.get('file_proto'),
+        'file_proto': options.get('file_proto'),
     }
     data['labels'] = options.get('labels')
     data['label_inds'] = options.get('label_inds')
     get_data_info()
   else:
     raise error.InvalidQueryError(
-      message='Invalid parameter combination')
+        message='Invalid parameter combination')
 
   file_objs = {}
   for file_keyword, file_path in file_paths.items():
@@ -164,7 +164,7 @@ def import_detector(self, name, **options):
   finally:
     for file_keyword, file_obj in file_objs.items():
       if isinstance(file_obj, file):
-          file_obj.close()
+        file_obj.close()
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsDetector_idRedo
 @api_call(error.InvalidQueryError)

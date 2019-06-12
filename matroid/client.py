@@ -8,6 +8,7 @@ from src.helpers import api_call
 BASE_URL = 'https://www.matroid.com/api/v1'
 DEFAULT_GRANT_TYPE = 'client_credentials'
 
+
 class MatroidAPI(object):
   from src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader
   from src.accounts import account_info, retrieve_token
@@ -57,7 +58,8 @@ class MatroidAPI(object):
       # if the token's lifetime is shorter than this, the client will request a refresh automatically
       lifetime_in_seconds = 7 * 24 * 60 * 60
       self.token = self.Token(token_type, token, lifetime_in_seconds)
-    
+
     self.endpoints = get_endpoints(self.base_url)
+
 
 Matroid = MatroidAPI

@@ -15,8 +15,8 @@ def create_collection_index(self, collection_id, detector_id, file_types):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'detectorId': detector_id,
-      'fileTypes': file_types
+        'detectorId': detector_id,
+        'fileTypes': file_types
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -31,9 +31,9 @@ def create_collection(self, name, url, source_type):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'name': name,
-      'url': url,
-      'sourceType': source_type
+        'name': name,
+        'url': url,
+        'sourceType': source_type
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -101,7 +101,7 @@ def kill_collection_index(self, task_id, include_collection_info):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'includeCollectionInfo': 'true' if include_collection_info else ''
+        'includeCollectionInfo': 'true' if include_collection_info else ''
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -121,8 +121,8 @@ def query_by_detection_scores(self, task_id, thresholds, num_results):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'thresholds': json.dumps(thresholds),
-      'numResults': num_results
+        'thresholds': json.dumps(thresholds),
+        'numResults': num_results
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -140,15 +140,15 @@ def query_by_image(self, task_id, task_type, bounding_box=None, url=None, file=N
 
   if not file and not url:
     raise error.InvalidQueryError(
-      message='Missing required parameter: file or url')
+        message='Missing required parameter: file or url')
 
   try:
     file_to_upload = None
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'boundingBox': json.dumps(bounding_box),
-      'taskType': task_type,
-      'numResults': options.get('num_results')
+        'boundingBox': json.dumps(bounding_box),
+        'taskType': task_type,
+        'numResults': options.get('num_results')
     }
 
     if file:
@@ -178,7 +178,7 @@ def update_collection_index(self, task_id, update_index):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'updateIndex': 'true' if update_index else 'false'
+        'updateIndex': 'true' if update_index else 'false'
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:

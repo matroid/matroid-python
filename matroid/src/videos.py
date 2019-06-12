@@ -20,15 +20,15 @@ def classify_video(self, detector_id, url=None, file=None):
 
   if not url and not file:
     raise error.InvalidQueryError(
-      message='Missing required parameter: url or file')
+        message='Missing required parameter: url or file')
 
   if url and file:
     raise error.InvalidQueryError(
-      message='Cannot classify a URL and local file in the same request')
+        message='Cannot classify a URL and local file in the same request')
 
   if isinstance(file, list):
     raise error.InvalidQueryError(
-      message='Only one video can be uploaded at a time')
+        message='Only one video can be uploaded at a time')
 
   endpoint = endpoint.replace(':key', detector_id)
 
@@ -45,7 +45,7 @@ def classify_video(self, detector_id, url=None, file=None):
 
         if file_size > MAX_LOCAL_VIDEO_SIZE:
           raise error.InvalidQueryError(message='File %s is larger than the limit of %d megabytes' % (
-            file_to_upload.name, self.bytes_to_mb(MAX_LOCAL_VIDEO_SIZE)))
+              file_to_upload.name, self.bytes_to_mb(MAX_LOCAL_VIDEO_SIZE)))
 
         return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
   except error.InvalidQueryError as e:
@@ -75,10 +75,10 @@ def get_video_results(self, video_id, threshold=1, format='json', annotations=Fa
   try:
     headers = {'Authorization': self.token.authorization_header()}
     params = {
-      'videoId': video_id,
-      'threshold': threshold,
-      'format': format,
-      'annotations': 'true' if annotations else 'false'
+        'videoId': video_id,
+        'threshold': threshold,
+        'format': format,
+        'annotations': 'true' if annotations else 'false'
     }
     return requests.request(method, endpoint, **{'headers': headers, 'params': params})
   except Exception as e:

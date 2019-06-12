@@ -9,7 +9,7 @@ class APIError(Exception):
         super(APIError, self).__init__(response.text)
       except AttributeError:
         super(APIError, self).__init__(
-          'No response or error message provided')
+            'No response or error message provided')
 
     if response:
       self.response = response

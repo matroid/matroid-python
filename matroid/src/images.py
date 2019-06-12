@@ -19,7 +19,7 @@ def classify_image(self, detector_id, file=None, url=None, **options):
 
   if not url and not file:
     raise error.InvalidQueryError(
-      message='Missing required parameter: file or url')
+        message='Missing required parameter: file or url')
 
   endpoint = endpoint.replace(':key', detector_id)
 
@@ -57,20 +57,20 @@ def localize_image(self, localizer, localizer_label, **options):
 
   if not files and not urls:
     raise error.InvalidQueryError(
-      message='Missing required parameter: files or urls')
+        message='Missing required parameter: files or urls')
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'localizer': localizer,
-      'localizerLabel': localizer_label,
-      'confidence': options.get('confidence'),
-      'files': files,
-      'urls': urls,
-      'update': options.get('update'),
-      'maxFaces': options.get('maxFaces'),
-      'confidence': options.get('confidence'),
-      'labelId': options.get('label_id')
+        'localizer': localizer,
+        'localizerLabel': localizer_label,
+        'confidence': options.get('confidence'),
+        'files': files,
+        'urls': urls,
+        'update': options.get('update'),
+        'maxFaces': options.get('maxFaces'),
+        'confidence': options.get('confidence'),
+        'labelId': options.get('label_id')
     }
 
     image_id = options.get('image_id')

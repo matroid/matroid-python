@@ -87,11 +87,11 @@ def monitor_stream(self, stream_id, detector_id, **options):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'thresholds': json.dumps(options.get('thresholds')),
-      'startTime': options.get('start_time'),
-      'endTime': options.get('end_time'),
-      'endpoint': options.get('endpoint'),
-      'taskName': options.get('task_name')
+        'thresholds': json.dumps(options.get('thresholds')),
+        'startTime': options.get('start_time'),
+        'endTime': options.get('end_time'),
+        'endpoint': options.get('endpoint'),
+        'taskName': options.get('task_name')
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -125,9 +125,9 @@ def search_streams(self, **options):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     params = {
-      'stream_id': options.get('stream_id'),
-      'name': options.get('name'),
-      'permission': options.get('permission')
+        'stream_id': options.get('stream_id'),
+        'name': options.get('name'),
+        'permission': options.get('permission')
     }
     return requests.request(method, endpoint, **{'headers': headers, 'params': params})
   except Exception as e:

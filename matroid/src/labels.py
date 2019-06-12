@@ -14,9 +14,9 @@ def create_label(self, detector_id, name, image_files, **options):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'name': name,
-      'destination': options.get('destination'),
-      'bboxes': options.get('bboxes'),
+        'name': name,
+        'destination': options.get('destination'),
+        'bboxes': options.get('bboxes'),
     }
 
     if not isinstance(image_files, list):
@@ -56,14 +56,14 @@ def get_annotations(self, **options):
 
   if not detector_id and not label_ids and not image_id:
     raise error.InvalidQueryError(
-      message='Missing required parameter: detector_id or label_ids or image_id')
+        message='Missing required parameter: detector_id or label_ids or image_id')
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
     params = {
-      'detector_id': detector_id,
-      'label_ids': label_ids,
-      'image_id': image_id,
+        'detector_id': detector_id,
+        'label_ids': label_ids,
+        'image_id': image_id,
     }
     return requests.request(method, endpoint, **{'headers': headers, 'params': params})
   except Exception as e:
@@ -92,8 +92,8 @@ def update_annotations(self, detector_id, label_id, images, **options):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'images': json.dumps(images),
-      'destination': options.get('destination')
+        'images': json.dumps(images),
+        'destination': options.get('destination')
     }
 
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
@@ -111,8 +111,8 @@ def update_label_with_images(self, detector_id, label_id, image_files, **options
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-      'destination': options.get('destination'),
-      'bboxes': options.get('bboxes'),
+        'destination': options.get('destination'),
+        'bboxes': options.get('bboxes'),
     }
 
     if not isinstance(image_files, list):

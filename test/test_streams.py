@@ -7,6 +7,7 @@ import pytest
 from data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_VIDEO_URL, RAMDOM_MONGO_ID
 from matroid.error import InvalidQueryError
 
+
 class TestStreams(object):
   def test_stream(self, set_up_client):
     stream_id = None
@@ -22,11 +23,11 @@ class TestStreams(object):
     # start testing
     try:
       stream_id = self.create_stream_test(
-        stream_url=TEST_VIDEO_URL, stream_name=stream_name)
+          stream_url=TEST_VIDEO_URL, stream_name=stream_name)
       monitoring_id = self.monitor_stream_test(
-        stream_id=stream_id, detector_id=EVERYDAY_OBJECT_DETECTOR_ID, thresholds=thresholds, task_name=task_name)
+          stream_id=stream_id, detector_id=EVERYDAY_OBJECT_DETECTOR_ID, thresholds=thresholds, task_name=task_name)
       self.search_monitorings_test(
-        stream_id=stream_id, monitoring_id=monitoring_id)
+          stream_id=stream_id, monitoring_id=monitoring_id)
       self.search_streams_test()
       self.get_monitoring_result_test(monitoring_id=monitoring_id)
     finally:
@@ -40,11 +41,11 @@ class TestStreams(object):
   # test cases
   def create_stream_test(self, stream_url, stream_name):
     res = self.api.create_stream(
-      stream_url=stream_url,
-      stream_name=stream_name
+        stream_url=stream_url,
+        stream_name=stream_name
     )
     assert (res['stream_id'] != None)
-    
+
     with pytest.raises(InvalidQueryError) as e:
       self.api.create_stream(stream_url=stream_url, stream_name=stream_name)
     assert ('invalid_query_err' in str(e))

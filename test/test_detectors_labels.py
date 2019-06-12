@@ -8,6 +8,7 @@ from matroid.error import APIConnectionError, InvalidQueryError
 
 DETECTOR_TEST_ZIP = os.getcwd() + '/test/test_file/cat-dog-lacroix.zip'
 
+
 class TestDetectorsAndLabels(object):
   def test_detector_and_labels(self, set_up_client):
     detector_id = None
@@ -33,18 +34,18 @@ class TestDetectorsAndLabels(object):
     try:
       self.delete_pending_detectors()
       detector_id = self.create_detector_test(
-        zip_file=DETECTOR_TEST_ZIP, name=detector_name, detector_type='general')
+          zip_file=DETECTOR_TEST_ZIP, name=detector_name, detector_type='general')
       self.wait_detector_ready_for_edit(detector_id)
       label_id = self.create_label_with_images_test(
-        name=label_name, detector_id=detector_id, image_files=TEST_IMAGE_FILE)
+          name=label_name, detector_id=detector_id, image_files=TEST_IMAGE_FILE)
       self.get_annotations_test(
-        detector_id=detector_id, label_id=label_id)
+          detector_id=detector_id, label_id=label_id)
       image_id = self.get_label_images_test(
-        detector_id=detector_id, label_id=label_id)
+          detector_id=detector_id, label_id=label_id)
       self.update_annotations_test(
-        detector_id=detector_id, label_id=label_id, image_id=image_id, bbox=bbox)
+          detector_id=detector_id, label_id=label_id, image_id=image_id, bbox=bbox)
       self.update_label_with_images_test(
-        detector_id=detector_id, label_id=label_id, image_files=TEST_IMAGE_FILE)
+          detector_id=detector_id, label_id=label_id, image_files=TEST_IMAGE_FILE)
       self.delete_label_test(detector_id=detector_id, label_id=label_id)
       self.train_detector_test(detector_id=detector_id)
 
@@ -53,16 +54,16 @@ class TestDetectorsAndLabels(object):
       self.detector_info_test(detector_id=detector_id)
       self.list_detectors_test()
       redo_detector_id = self.redo_detector_test(
-        detector_id=EVERYDAY_OBJECT_DETECTOR_ID)
+          detector_id=EVERYDAY_OBJECT_DETECTOR_ID)
       import_detector_id = self.import_detector_test(name=import_detector_name, input_tensor=input_tensor,
-                                                      output_tensor=output_tensor, detector_type='facial_recognition',
-                                                      file_proto=file_proto, labels=labels)
+                                                     output_tensor=output_tensor, detector_type='facial_recognition',
+                                                     file_proto=file_proto, labels=labels)
     finally:
       if detector_id:
         self.delete_detector_test(detector_id, 'main detector')
       if import_detector_id:
         self.delete_detector_test(
-          import_detector_id, 'imported detector')
+            import_detector_id, 'imported detector')
       if redo_detector_id:
         self.delete_detector_test(redo_detector_id, 'redo detector')
 
@@ -70,11 +71,11 @@ class TestDetectorsAndLabels(object):
     with pytest.raises(APIConnectionError) as e:
       invalid_zip_path = os.getcwd() + '/test/test_file/invalid.zip'
       self.api.create_detector(
-        zip_file=invalid_zip_path, name=name, detector_type=detector_type)
+          zip_file=invalid_zip_path, name=name, detector_type=detector_type)
     assert ('No such file or directory' in str(e))
 
     res = self.api.create_detector(
-      zip_file=zip_file, name=name, detector_type=detector_type)
+        zip_file=zip_file, name=name, detector_type=detector_type)
     assert(res['detector_id'] != None)
 
     return res['detector_id']
@@ -93,23 +94,24 @@ class TestDetectorsAndLabels(object):
 
   def get_annotations_test(self, detector_id, label_id):
     res = self.api.get_annotations(
-      detector_id=detector_id, label_id=label_id)
+        detector_id=detector_id, label_id=label_id)
     assert(res['images'] != None)
 
   def get_label_images_test(self, detector_id, label_id):
     res = self.api.get_label_images(
-      detector_id=detector_id, label_id=label_id)
+        detector_id=detector_id, label_id=label_id)
     assert(res['images'] != None)
 
     return res['images'][0]['image_id']
 
   def update_annotations_test(self, detector_id, label_id, image_id, bbox):
     with pytest.raises(InvalidQueryError) as e:
-      self.api.update_annotations(detector_id=detector_id, label_id=label_id, images=[])
+      self.api.update_annotations(
+          detector_id=detector_id, label_id=label_id, images=[])
     assert ('invalid_query_err' in str(e))
 
     res = self.api.update_annotations(detector_id=detector_id, label_id=label_id, images=[
-      {'id': image_id, 'bbox': bbox}])
+        {'id': image_id, 'bbox': bbox}])
     assert(res['message'] == 'successfully updated 1 images')
 
   def update_label_with_images_test(self, detector_id, label_id, image_files):
@@ -143,7 +145,7 @@ class TestDetectorsAndLabels(object):
 
   def import_detector_test(self, name, input_tensor, output_tensor, detector_type, file_proto, labels):
     res = self.api.import_detector(name=name, input_tensor=input_tensor, output_tensor=output_tensor,
-                                    detector_type=detector_type, file_proto=file_proto, labels=labels)
+                                   detector_type=detector_type, file_proto=file_proto, labels=labels)
 
     assert(res['detector_id'] != None)
 
@@ -187,7 +189,8 @@ class TestDetectorsAndLabels(object):
     max_tries = 15
     while (res['processing']):
       if tried_num > max_tries:
-        pytest.fail('Timeout when waiting for detector to be ready for editing')
+        pytest.fail(
+            'Timeout when waiting for detector to be ready for editing')
 
       res = self.api.detector_info(detector_id=detector_id)
       time.sleep(2)

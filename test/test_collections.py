@@ -8,6 +8,7 @@ from matroid.error import InvalidQueryError
 COLLECTION_NAME = 'py-test-collection-{}'.format(datetime.now())
 S3_BUCKET_URL = 's3://bucket/m-test-public/'
 
+
 class TestCollections(object):
   def test_collections(self, set_up_client):
     collection_id = None
@@ -36,11 +37,12 @@ class TestCollections(object):
   # test cases
   def create_collection_test(self):
     with pytest.raises(InvalidQueryError) as e:
-      self.api.create_collection(name='invalid-collection', url='invalid-url', source_type='s3')
+      self.api.create_collection(
+          name='invalid-collection', url='invalid-url', source_type='s3')
     assert ('invalid_query_err' in str(e))
 
     res = self.api.create_collection(
-      name=COLLECTION_NAME, url=S3_BUCKET_URL, source_type='s3')
+        name=COLLECTION_NAME, url=S3_BUCKET_URL, source_type='s3')
     collection_id = res['collection']['_id']
     assert(collection_id != None)
 
@@ -49,11 +51,11 @@ class TestCollections(object):
   def create_collection_index_test(self, collection_id):
     with pytest.raises(InvalidQueryError) as e:
       self.api.create_collection_index(
-        collection_id=collection_id, detector_id=RAMDOM_MONGO_ID, file_types='images')
+          collection_id=collection_id, detector_id=RAMDOM_MONGO_ID, file_types='images')
     assert ('invalid_query_err' in str(e))
 
     res = self.api.create_collection_index(
-      collection_id=collection_id, detector_id=EVERYDAY_OBJECT_DETECTOR_ID, file_types='images')
+        collection_id=collection_id, detector_id=EVERYDAY_OBJECT_DETECTOR_ID, file_types='images')
     task_id = res['collectionTask']['_id']
     assert(task_id != None)
 
@@ -77,7 +79,7 @@ class TestCollections(object):
 
   def update_collection_index_test(self, task_id):
     res = self.api.update_collection_index(
-      task_id=task_id, update_index=False)
+        task_id=task_id, update_index=False)
     assert(res['collectionTask'] != None)
     collection_task_id = res['collectionTask']['_id']
     assert(collection_task_id == task_id)
@@ -95,7 +97,7 @@ class TestCollections(object):
 
   def kill_collection_index_test(self, task_id):
     res = self.api.kill_collection_index(
-      task_id=task_id, include_collection_info=False)
+        task_id=task_id, include_collection_info=False)
     collection_task = res['collectionTask']
     assert(collection_task != None)
     assert(collection_task['_id'] == task_id)
