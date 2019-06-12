@@ -4,8 +4,8 @@ import os
 import sys
 import pytest
 
-from data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_VIDEO_URL
-
+from data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_VIDEO_URL, RAMDOM_MONGO_ID
+from matroid.error import InvalidQueryError
 
 class TestStreams(object):
   def test_stream(self, set_up_client):
@@ -44,12 +44,22 @@ class TestStreams(object):
       stream_url=stream_url,
       stream_name=stream_name
     )
-    assert(res['stream_id'] != None)
+    assert (res['stream_id'] != None)
+    
+    with pytest.raises(InvalidQueryError) as e:
+      self.api.create_stream(stream_url=stream_url, stream_name=stream_name)
+    assert ('invalid_query_err' in str(e))
 
     return res['stream_id']
 
   def monitor_stream_test(self, stream_id, detector_id, thresholds, task_name):
     end_time = '5 minutes'
+
+    with pytest.raises(InvalidQueryError) as e:
+      self.api.monitor_stream(stream_id=RAMDOM_MONGO_ID, detector_id=detector_id,
+                              thresholds=thresholds, end_time=end_time, task_name=task_name)
+    assert ('invalid_query_err' in str(e))
+
     res = self.api.monitor_stream(stream_id=stream_id, detector_id=detector_id,
                                   thresholds=thresholds, end_time=end_time, task_name=task_name)
     assert(res['monitoring_id'] != None)
@@ -86,13 +96,20 @@ class TestStreams(object):
     assert(res['message'] == 'Successfully deleted stream.')
 
 
-  # Helpers
+  # helpers
   def wait_for_monitoring_stop(self, monitoring_id):
     print('Info: waiting for monitoring to stop')
     res = self.api.search_monitorings(monitoring_id=monitoring_id)
 
+    num_tried = 0
+    max_tries = 15
     while (res[0]['state'] != 'failed' and res[0]['state'] != 'scheduled'):
+      if num_tried > max_tries:
+        pytest.fail('Timeout when waiting for monitoring to stop')
+
       res = self.api.search_monitorings(monitoring_id=monitoring_id)
       time.sleep(2)
+
+      num_tried += 1
 
     print('Info: monitoring stopped.')

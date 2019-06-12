@@ -2,7 +2,8 @@ import time
 from datetime import datetime
 import pytest
 
-from data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_IMAGE_URL
+from data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_IMAGE_URL, RAMDOM_MONGO_ID
+from matroid.error import InvalidQueryError
 
 COLLECTION_NAME = 'py-test-collection-{}'.format(datetime.now())
 S3_BUCKET_URL = 's3://bucket/m-test-public/'
@@ -35,6 +36,10 @@ class TestCollections(object):
 
   # test cases
   def create_collection_test(self):
+    with pytest.raises(InvalidQueryError) as e:
+      self.api.create_collection(name='invalid-collection', url='invalid-url', source_type='s3')
+    assert ('invalid_query_err' in str(e))
+
     res = self.api.create_collection(
       name=COLLECTION_NAME, url=S3_BUCKET_URL, source_type='s3')
     collection_id = res['collection']['_id']
@@ -43,6 +48,11 @@ class TestCollections(object):
     return collection_id
 
   def create_collection_index_test(self, collection_id):
+    with pytest.raises(InvalidQueryError) as e:
+      self.api.create_collection_index(
+        collection_id=collection_id, detector_id=RAMDOM_MONGO_ID, file_types='images')
+    assert ('invalid_query_err' in str(e))
+
     res = self.api.create_collection_index(
       collection_id=collection_id, detector_id=EVERYDAY_OBJECT_DETECTOR_ID, file_types='images')
     task_id = res['collectionTask']['_id']
@@ -107,15 +117,21 @@ class TestCollections(object):
     res = self.api.delete_collection(collection_id=collection_id)
     assert(res['message'] == 'Successfully deleted')
 
-
   # helpers
 
   def wait_for_collection_index_stop(self, task_id):
     print('Info: waiting for collection task to stop')
     res = self.api.get_collection_task(task_id=task_id)
 
+    tried_num = 0
+    max_tries = 15
     while (res['collectionTask']['state'] != 'failed'):
+      if tried_num > max_tries:
+        pytest.fail('Timeout when waiting for collection index to stop')
+
       res = self.api.get_collection_task(task_id=task_id)
       time.sleep(2)
+
+      tried_num += 1
 
     print('Info: collection task stopped.')

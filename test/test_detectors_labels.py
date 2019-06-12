@@ -3,7 +3,8 @@ import time
 from datetime import datetime
 import pytest
 
-from data import TEST_IMAGE_FILE, EVERYDAY_OBJECT_DETECTOR_ID
+from data import TEST_IMAGE_FILE, EVERYDAY_OBJECT_DETECTOR_ID, RAMDOM_MONGO_ID
+from matroid.error import APIConnectionError, InvalidQueryError
 
 DETECTOR_TEST_ZIP = os.getcwd() + '/test/test_file/cat-dog-lacroix.zip'
 
@@ -46,16 +47,16 @@ class TestDetectorsAndLabels(object):
       self.update_label_with_images_test(
         detector_id=detector_id, label_id=label_id, image_files=TEST_IMAGE_FILE)
       self.delete_label_test(detector_id=detector_id, label_id=label_id)
-      self.train_detector_test(detector_id=detector_id)
+      # self.train_detector_test(detector_id=detector_id)
 
-      self.wait_detector_training(detector_id)
+      # self.wait_detector_training(detector_id)
 
       self.detector_info_test(detector_id=detector_id)
       self.list_detectors_test()
       redo_detector_id = self.redo_detector_test(
         detector_id=EVERYDAY_OBJECT_DETECTOR_ID)
-      import_detector_id = self.import_detector_test(name=import_detector_name, input_tensor=input_tensor,
-                                                      output_tensor=output_tensor, detector_type='facial_recognition', file_proto=file_proto, labels=labels)
+      # import_detector_id = self.import_detector_test(name=import_detector_name, input_tensor=input_tensor,
+                                                      # output_tensor=output_tensor, detector_type='facial_recognition', file_proto=file_proto, labels=labels)
     finally:
       if detector_id:
         self.delete_detector_test(detector_id, 'main detector')
@@ -66,6 +67,12 @@ class TestDetectorsAndLabels(object):
         self.delete_detector_test(redo_detector_id, 'redo detector')
 
   def create_detector_test(self, zip_file, name, detector_type):
+    with pytest.raises(APIConnectionError) as e:
+      invalid_zip_path = os.getcwd() + '/test/test_file/invalid.zip'
+      self.api.create_detector(
+        zip_file=invalid_zip_path, name=name, detector_type=detector_type)
+    assert ('No such file or directory' in str(e))
+
     res = self.api.create_detector(
       zip_file=zip_file, name=name, detector_type=detector_type)
     assert(res['detector_id'] != None)
@@ -73,6 +80,11 @@ class TestDetectorsAndLabels(object):
     return res['detector_id']
 
   def create_label_with_images_test(self, name, detector_id, image_files):
+    with pytest.raises(InvalidQueryError) as e:
+      self.api.create_label(detector_id=RAMDOM_MONGO_ID,
+                            name=name, image_files=image_files)
+    assert ('invalid_query_err' in str(e))
+
     res = self.api.create_label(detector_id=detector_id,
                                 name=name, image_files=image_files)
     assert('successfully uploaded 1 images to label' in res['message'])
@@ -93,6 +105,10 @@ class TestDetectorsAndLabels(object):
     return res['images'][0]['image_id']
 
   def update_annotations_test(self, detector_id, label_id, image_id, bbox):
+    with pytest.raises(InvalidQueryError) as e:
+      self.api.update_annotations(detector_id=detector_id, label_id=label_id, images=[])
+    assert ('invalid_query_err' in str(e))
+
     res = self.api.update_annotations(detector_id=detector_id, label_id=label_id, images=[
       {'id': image_id, 'bbox': bbox}])
     assert(res['message'] == 'successfully updated 1 images')
@@ -157,13 +173,18 @@ class TestDetectorsAndLabels(object):
   def wait_detector_training(self, detector_id):
     res = self.api.detector_info(detector_id=detector_id)
 
-    print ('Info: waiting for training detectors')
-    indicator = ''
+    print ('Info: waiting for detectors training')
+    indicator = '.'
+    max_indicator_length = 48
     while res['state'] != 'trained':
-      indicator += '.'
+      if len(indicator) > max_indicator_length:
+        pytest.fail('Timeout when waiting for detector training')
+
       print(indicator)
       time.sleep(5)
       res = self.api.detector_info(detector_id=detector_id)
+
+      indicator += '.'
 
     print('Info: detector is ready')
 
@@ -171,8 +192,15 @@ class TestDetectorsAndLabels(object):
     print('Info: wait for pending detector to be ready for editing')
     res = self.api.detector_info(detector_id=detector_id)
 
+    tried_num = 0
+    max_tries = 15
     while (res['processing']):
+      if tried_num > max_tries:
+        pytest.fail('Timeout when waiting for detector to be ready for editing')
+
       res = self.api.detector_info(detector_id=detector_id)
       time.sleep(2)
+
+      tried_num += 1
 
     print('Info: detector is ready for editing.')
