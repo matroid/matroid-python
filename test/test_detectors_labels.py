@@ -182,7 +182,7 @@ class TestDetectorsAndLabels(object):
     print('Info: detector is ready')
 
   def wait_detector_ready_for_edit(self, detector_id):
-    print('Info: wait for pending detector to be ready for editing')
+    print('Info: waiting for pending detector to be ready for editing')
     res = self.api.detector_info(detector_id=detector_id)
 
     tried_num = 0

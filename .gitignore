@@ -1,9 +1,13 @@
 *.py[cod]
 __pycache__/
-.pytest_cache/
 *.jpg
 .pypirc
 *.egg-info
 dist
 setup.cfg
+
+# pytest
+.pytest_cache/
+
+# editor
 .vscode/
