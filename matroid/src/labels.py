@@ -16,7 +16,7 @@ def create_label(self, detector_id, name, image_files, **options):
     data = {
         'name': name,
         'destination': options.get('destination'),
-        'bboxes': options.get('bboxes'),
+        'bboxes': json.dumps(options.get('bboxes')),
     }
 
     if not isinstance(image_files, list):
