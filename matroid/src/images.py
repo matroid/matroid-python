@@ -50,35 +50,57 @@ def classify_image(self, detector_id, file=None, url=None, **options):
 # https://staging.dev.matroid.com/docs/api/index.html#api-Images-PostLocalize
 @api_call(error.InvalidQueryError)
 def localize_image(self, localizer, localizer_label, **options):
+  """
+  Note: this API is very similar to Images/Classify;
+  however, it can be used to update bounding boxes of existing training images
+  by supplying update=true, labelId, and one of imageId or imageIds, and it has
+  access to the internal face localizer
+  (localizer="DEFAULT_FACE" and localizerLabel="face").
+  """
   (endpoint, method) = self.endpoints['localize_image']
 
-  files = options.get('file')
-  urls = options.get('url')
+  data = {
+      'localizer': localizer,
+      'localizerLabel': localizer_label,
+  }
 
-  if not files and not urls:
-    raise error.InvalidQueryError(
-        message='Missing required parameter: files or urls')
+  update = options.get('update')
 
-  try:
-    headers = {'Authorization': self.token.authorization_header()}
-    data = {
-        'localizer': localizer,
-        'localizerLabel': localizer_label,
-        'confidence': options.get('confidence'),
-        'files': files,
-        'urls': urls,
-        'update': options.get('update'),
-        'maxFaces': options.get('maxFaces'),
-        'confidence': options.get('confidence'),
-        'labelId': options.get('label_id')
-    }
-
+  if update:
     image_id = options.get('image_id')
     image_ids = options.get('image_ids')
+
+    if not image_id and not image_ids:
+      raise error.InvalidQueryError(
+          message='Missing required parameter for update: image_id or image_ids')
+
     if image_id:
       data['imageId'] = image_id
     else:
-      data['imagesIds'] = image_ids
+      data['imageIds'] = image_ids
+  else:
+    files = options.get('file')
+    urls = options.get('url')
+
+    if not files and not urls:
+      raise error.InvalidQueryError(
+          message='Missing required parameter: files or urls')
+
+    data.update({'files': files,
+                 'urls': urls, })
+
+  try:
+    headers = {'Authorization': self.token.authorization_header()}
+
+    data.update({'confidence': options.get('confidence'),
+                 'update': 'true' if update else '',
+                 'maxFaces': options.get('max_faces'),
+                 'confidence': options.get('confidence'),
+                 'labelId': options.get('label_id')
+                 })
+
+    if update:
+      return requests.request(method, endpoint, **{'headers': headers, 'data': data})
 
     if files:
       if not isinstance(files, list):
