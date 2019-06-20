@@ -151,8 +151,8 @@ def get_endpoints(base_url):
     # detectors
     'create_detector': (base_url + '/detectors', 'POST'),
     'delete_detector': (base_url + '/detectors/:key', 'DELETE'),
-    'train_detector': (base_url + '/detectors/:key/finalize', 'POST'),
-    'detector_info': (base_url + '/detectors/:key', 'GET'),
+    'finalize_detector': (base_url + '/detectors/:key/finalize', 'POST'),
+    'get_detector_info': (base_url + '/detectors/:key', 'GET'),
     'import_detector': (base_url + '/detectors/upload', 'POST'),
     'redo_detector': (base_url + '/detectors/:key/redo', 'POST'),
     'detectors': (base_url + '/detectors/search', 'GET'),
@@ -172,7 +172,7 @@ def get_endpoints(base_url):
     'search_monitorings': (base_url + '/monitorings', 'GET'),
     'search_streams': (base_url + '/streams', 'GET'),
     # labels
-    'create_label': (base_url + '/detectors/:key/labels', 'POST'),
+    'create_label_with_images': (base_url + '/detectors/:key/labels', 'POST'),
     'delete_label': (base_url + '/detectors/:detector_id/labels/:label_id', 'DELETE'),
     'get_annotations': (base_url + '/images/annotations', 'GET'),
     'get_label_images': (base_url + '/detectors/:detector_id/labels/:label_id', 'GET'),
@@ -186,8 +186,8 @@ def get_endpoints(base_url):
     'get_collection_task':  (base_url + '/collection-tasks/:key', 'GET'),
     'get_collection':  (base_url + '/collections/:key', 'GET'),
     'kill_collection_index': (base_url + '/collection-tasks/:key/kill', 'POST'),
-    'query_by_detection_scores': (base_url + '/collection-tasks/:key/scores-query', 'POST'),
-    'query_by_image': (base_url + '/collection-tasks/:key/image-query', 'POST'),
+    'query_collection_by_scores': (base_url + '/collection-tasks/:key/scores-query', 'POST'),
+    'query_collection_by_image': (base_url + '/collection-tasks/:key/image-query', 'POST'),
     'update_collection_index':  (base_url + '/collection-tasks/:key', 'PUT')
   }
 

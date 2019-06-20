@@ -78,9 +78,9 @@ def delete_detector(self, detector_id):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsDetector_idFinalize
 @api_call(error.InvalidQueryError)
-def train_detector(self, detector_id, name=None, detector_type=None):
+def finalize_detector(self, detector_id, name=None, detector_type=None):
   """Begin training the detector"""
-  (endpoint, method) = self.endpoints['train_detector']
+  (endpoint, method) = self.endpoints['finalize_detector']
 
   endpoint = endpoint.replace(':key', detector_id)
 
@@ -98,9 +98,9 @@ def train_detector(self, detector_id, name=None, detector_type=None):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-GetDetectorsDetector_id
 @api_call(error.InvalidQueryError)
-def detector_info(self, detector_id):
+def get_detector_info(self, detector_id):
   """Get information about detector"""
-  (endpoint, method) = self.endpoints['detector_info']
+  (endpoint, method) = self.endpoints['get_detector_info']
 
   endpoint = endpoint.replace(':key', detector_id)
 
@@ -185,7 +185,7 @@ def redo_detector(self, detector_id):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-Search
 @api_call(error.InvalidQueryError)
-def list_detectors(self, **query):
+def search_detectors(self, **query):
   """Lists the available detectors"""
   (endpoint, method) = self.endpoints['detectors']
 

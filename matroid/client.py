@@ -12,12 +12,12 @@ DEFAULT_GRANT_TYPE = 'client_credentials'
 class MatroidAPI(object):
   from src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader
   from src.accounts import account_info, retrieve_token
-  from src.detectors import create_detector, delete_detector, train_detector, detector_info, import_detector, redo_detector, list_detectors
+  from src.detectors import create_detector, delete_detector, finalize_detector, get_detector_info, import_detector, redo_detector, search_detectors
   from src.images import classify_image, localize_image
   from src.videos import classify_video, get_video_results
   from src.streams import create_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams
-  from src.labels import create_label, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images
-  from src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_by_detection_scores, query_by_image, update_collection_index
+  from src.labels import create_label_with_images, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images
+  from src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index
 
   def __init__(self, base_url=BASE_URL, client_id=None, client_secret=None, options={}):
     """

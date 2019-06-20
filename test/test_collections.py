@@ -84,15 +84,15 @@ class TestCollections(object):
     collection_task_id = res['collectionTask']['_id']
     assert(collection_task_id == task_id)
 
-  def query_by_detection_scores_test(self, task_id):
+  def query_collection_by_scores_test(self, task_id):
     print(task_id)
-    res = self.api.query_by_detection_scores(
+    res = self.api.query_collection_by_scores(
         task_id=task_id, thresholds={'cat': 0.5}, num_results=5)
     assert(res['results'] != None)
 
-  def query_by_image_test(self, task_id, url):
-    res = self.api.query_by_image(task_id=task_id, bounding_box={
-                                  "top": 0.1, "left": 0.1, "height": 0.8, "width": 0.8},  task_type='collection', num_results=1, url=url)
+  def query_collection_by_image_test(self, task_id, url):
+    res = self.api.query_collection_by_image(task_id=task_id, bounding_box={
+        "top": 0.1, "left": 0.1, "height": 0.8, "width": 0.8},  task_type='collection', num_results=1, url=url)
     assert(res['results'] != None)
 
   def kill_collection_index_test(self, task_id):

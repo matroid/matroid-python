@@ -6,9 +6,9 @@ from matroid.src.helpers import api_call, batch_file_request
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Labels-PostDetectorsDetector_idLabels
 @api_call(error.InvalidQueryError)
-def create_label(self, detector_id, name, image_files, **options):
+def create_label_with_images(self, detector_id, name, image_files, **options):
   """Create a label. Requires processing=false. Creates label asynchronously (turn processing to true)"""
-  (endpoint, method) = self.endpoints['create_label']
+  (endpoint, method) = self.endpoints['create_label_with_images']
   endpoint = endpoint.replace(':key', detector_id)
 
   try:
@@ -16,8 +16,10 @@ def create_label(self, detector_id, name, image_files, **options):
     data = {
         'name': name,
         'destination': options.get('destination'),
-        'bboxes': json.dumps(options.get('bboxes')),
     }
+
+    if options.get('bboxes'):
+      data['bboxes'] = json.dumps(options.get('bboxes'))
 
     if not isinstance(image_files, list):
       image_files = [image_files]

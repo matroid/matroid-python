@@ -110,12 +110,12 @@ def kill_collection_index(self, task_id, include_collection_info):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostApiVersionCollectionTasksTaskidScoresQuery
 @api_call(error.InvalidQueryError)
-def query_by_detection_scores(self, task_id, thresholds, num_results):
+def query_collection_by_scores(self, task_id, thresholds, num_results):
   """
   Query against a collection index using a set of labels and scores as a query.
   Takes in a map of thresholds, and returns media in the collection with detections above those thresholds
   """
-  (endpoint, method) = self.endpoints['query_by_detection_scores']
+  (endpoint, method) = self.endpoints['query_collection_by_scores']
   endpoint = endpoint.replace(':key', task_id)
 
   try:
@@ -130,12 +130,12 @@ def query_by_detection_scores(self, task_id, thresholds, num_results):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostApiCollectionTasksTaskidImageQuery
 @api_call(error.InvalidQueryError)
-def query_by_image(self, task_id, task_type, bounding_box=None, url=None, file=None, **options):
+def query_collection_by_image(self, task_id, task_type, bounding_box=None, url=None, file=None, **options):
   """
   Query against a collection index (CollectionManagerTask) using an image as key.
   Takes in an image file or url and returns similar media from the collection.
   """
-  (endpoint, method) = self.endpoints['query_by_image']
+  (endpoint, method) = self.endpoints['query_collection_by_image']
   endpoint = endpoint.replace(':key', task_id)
 
   if not file and not url:

@@ -3,22 +3,23 @@
 Use our Python client to access the Matroid API for image and video classification. The client has been tested in Python 2.7 and Python 3.5.
 
 ## Full documentation
-Navigate to any detector's page, such as the [Famous Places Detector](https://www.matroid.com/detector/58d010c75bcac50d00ad85ed?tab=api), and click on the "Overview" tab.
-The "Overview" section contains the full specifications for each REST endpoint.
+
+Navigate to any detector's page, such as the [Famous Places Detector](https://www.matroid.com/detector/58d010c75bcac50d00ad85ed?tab=api), and click on the "Overview" tab. The "Overview" section contains the full specifications for each REST endpoint.
 
 ## Installation
+
 ```
 pip install matroid
 ```
 
-You can pass in your API credentials directly to the API client or save them as environment variables where the client will use them automatically.
-Here is a bash example:
+You can pass in your API credentials directly to the API client or save them as environment variables where the client will use them automatically. Here is a bash example:
 
 ```
 nano .bash_profile
 ```
 
 Inside your `.bash_profile`, add the following lines, replacing the placeholder with the real values from the [API documentation's](https://www.matroid.com/detector/58d010c75bcac50d00ad85ed?tab=api) "Account Info" section
+
 ```
 export MATROID_CLIENT_ID=PLACEHOLDER
 export MATROID_CLIENT_SECRET=PLACEHOLDER
@@ -27,6 +28,7 @@ export MATROID_CLIENT_SECRET=PLACEHOLDER
 Then run `source ~/.bash_profile` on the command line to ensure the environment variables are loaded.
 
 ## Example API client usage
+
 ```
 import matroid
 from matroid.client import Matroid
@@ -34,7 +36,7 @@ from matroid.client import Matroid
 api = Matroid(client_id = 'abc', client_secret = '123')
 
 # List available detectors
-detectors_to_use = api.list_detectors()
+detectors_to_use = api.search_detectors()
 
 # Classifying a picture from a URL
 logo_classification_result = api.classify_image(detector_id = 'test', image_url = 'https://www.matroid.com/images/logo2.png', num_results = 5)
@@ -83,17 +85,19 @@ monitored_stream = api.monitor_stream(stream_id = registered_stream['stream_id']
         odie.tiff
 """
 detector_id = api.create_detector(zip_file = '/home/matroid/catdog.zip', detector_type = 'general')['detector_id']
-api.train_detector(detector_id)
+api.finalize_detector(detector_id)
 
 # Check on training progress
-api.detector_info(detector_id)
+api.get_detector_info(detector_id)
 
 # Check your Matroid Credits balance
 api.account_info()
 ```
 
 ## API Response samples
+
 #### Sample detectors listing
+
 ```
 [
   {
@@ -107,6 +111,7 @@ api.account_info()
 ```
 
 #### Sample Image Classification
+
 ```
 {
   "results": [
@@ -152,6 +157,7 @@ api.account_info()
 ```
 
 #### Sample video classification tracking ID
+
 ```
 {
   "video_id": "58489472ff22bb2d3f95728c"
@@ -159,6 +165,7 @@ api.account_info()
 ```
 
 #### Sample video classification results
+
 ```
 {
   "download_progress": 100,
@@ -223,6 +230,7 @@ api.account_info()
 ```
 
 #### Sample stream creation
+
 ```
 {
   "stream_id": "58489472ff22bb2d3f95728c"
@@ -230,6 +238,7 @@ api.account_info()
 ```
 
 #### Sample stream monitoring
+
 ```
 {
   "stream_id": "58489472ff22bb2d3f95728c",
@@ -238,6 +247,7 @@ api.account_info()
 ```
 
 #### Sample detector creation ID
+
 ```
 {
   "detector_id": "58489472ff22bb2d3f95728c"
@@ -245,6 +255,7 @@ api.account_info()
 ```
 
 #### Sample detector information and training progress response
+
 ```
 {
   "detector": {
