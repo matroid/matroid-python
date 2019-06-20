@@ -192,6 +192,7 @@ def list_detectors(self, **query):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     params = {x: str(query[x]).lower() for x in query}
+
     return requests.request(method, endpoint, **{'headers': headers, 'params': params})
   except Exception as e:
     raise error.APIConnectionError(message=e)

@@ -181,7 +181,7 @@ def get_endpoints(base_url):
     # collections
     'create_collection_index':  (base_url + '/collections/:key/collection-tasks', 'POST'),
     'create_collection':  (base_url + '/collections', 'POST'),
-    'delete_collection_task':  (base_url + '/collection-tasks/:key', 'DELETE'),
+    'delete_collection_index':  (base_url + '/collection-tasks/:key', 'DELETE'),
     'delete_collection':  (base_url + '/collections/:key', 'DELETE'),
     'get_collection_task':  (base_url + '/collection-tasks/:key', 'GET'),
     'get_collection':  (base_url + '/collections/:key', 'GET'),

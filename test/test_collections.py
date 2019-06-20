@@ -30,7 +30,7 @@ class TestCollections(object):
       if task_id:
         self.kill_collection_index_test(task_id)
         self.wait_for_collection_index_stop(task_id)
-        self.delete_collection_task_test(task_id)
+        self.delete_collection_index_test(task_id)
       if collection_id:
         self.delete_collection_test(collection_id)
 
@@ -102,8 +102,8 @@ class TestCollections(object):
     assert(collection_task != None)
     assert(collection_task['_id'] == task_id)
 
-  def delete_collection_task_test(self, task_id):
-    res = self.api.delete_collection_task(task_id=task_id)
+  def delete_collection_index_test(self, task_id):
+    res = self.api.delete_collection_index(task_id=task_id)
     assert(res['message'] == 'Successfully deleted')
 
   def delete_collection_test(self, collection_id):

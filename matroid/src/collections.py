@@ -41,9 +41,9 @@ def create_collection(self, name, url, source_type):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-DeleteCollectionTasksTaskid
 @api_call(error.InvalidQueryError)
-def delete_collection_task(self, task_id):
+def delete_collection_index(self, task_id):
   """Deletes a completed collection mananger task"""
-  (endpoint, method) = self.endpoints['delete_collection_task']
+  (endpoint, method) = self.endpoints['delete_collection_index']
   endpoint = endpoint.replace(':key', task_id)
 
   try:
