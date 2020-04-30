@@ -83,11 +83,11 @@ class TestDetectorsAndLabels(object):
   def create_label_with_images_with_images_test(self, name, detector_id, image_files):
     with pytest.raises(InvalidQueryError) as e:
       self.api.create_label_with_images(detector_id=RAMDOM_MONGO_ID,
-                            name=name, image_files=image_files)
+                                        name=name, image_files=image_files)
     assert ('invalid_query_err' in str(e))
 
     res = self.api.create_label_with_images(detector_id=detector_id,
-                                name=name, image_files=image_files)
+                                            name=name, image_files=image_files)
     assert('successfully uploaded 1 images to label' in res['message'])
 
     return res['label_id']
@@ -191,6 +191,8 @@ class TestDetectorsAndLabels(object):
       if tried_num > max_tries:
         pytest.fail(
             'Timeout when waiting for detector to be ready for editing')
+      elif res['state'] == 'failed':
+        pytest.fail('Detector training failed')
 
       res = self.api.get_detector_info(detector_id=detector_id)
       time.sleep(2)
