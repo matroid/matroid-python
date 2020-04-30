@@ -29,10 +29,7 @@ def classify_image(self, detector_id, file=None, url=None, **options):
     data.update(options)
 
     if url:
-      if isinstance(url, list):
-        data['urls'] = url
-      else:
-        data['url'] = url
+      data['url'] = url
     if file:
       if not isinstance(file, list):
         file = [file]
