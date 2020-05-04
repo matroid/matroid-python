@@ -5,6 +5,7 @@ import pytest
 
 from data import TEST_IMAGE_FILE, EVERYDAY_OBJECT_DETECTOR_ID, RAMDOM_MONGO_ID
 from matroid.error import APIConnectionError, InvalidQueryError
+from test.helper import print_test_pass
 
 DETECTOR_TEST_ZIP = os.getcwd() + '/test/test_file/cat-dog-lacroix.zip'
 
@@ -42,10 +43,13 @@ class TestDetectorsAndLabels(object):
           detector_id=detector_id, label_id=label_id)
       image_id = self.get_label_images_test(
           detector_id=detector_id, label_id=label_id)
-      self.update_annotations_test(
-          detector_id=detector_id, label_id=label_id, image_id=image_id, bbox=bbox)
+      print('get lable done')
+      # self.update_annotations_test(
+      #     detector_id=detector_id, label_id=label_id, image_id=image_id, bbox=bbox)
+      print('annotation test done')
       self.update_label_with_images_test(
           detector_id=detector_id, label_id=label_id, image_files=TEST_IMAGE_FILE)
+      print('update label done')
       self.delete_label_test(detector_id=detector_id, label_id=label_id)
       self.finalize_detector_test(detector_id=detector_id)
 
@@ -78,6 +82,7 @@ class TestDetectorsAndLabels(object):
         zip_file=zip_file, name=name, detector_type=detector_type)
     assert(res['detector_id'] != None)
 
+    print_test_pass()
     return res['detector_id']
 
   def create_label_with_images_with_images_test(self, name, detector_id, image_files):
@@ -90,18 +95,21 @@ class TestDetectorsAndLabels(object):
                                             name=name, image_files=image_files)
     assert('successfully uploaded 1 images to label' in res['message'])
 
+    print_test_pass()
     return res['label_id']
 
   def get_annotations_test(self, detector_id, label_id):
     res = self.api.get_annotations(
         detector_id=detector_id, label_id=label_id)
-    assert(res['images'] != None)
+    assert (res['images'] != None)
+    print_test_pass()
 
   def get_label_images_test(self, detector_id, label_id):
     res = self.api.get_label_images(
         detector_id=detector_id, label_id=label_id)
     assert(res['images'] != None)
 
+    print_test_pass()
     return res['images'][0]['image_id']
 
   def update_annotations_test(self, detector_id, label_id, image_id, bbox):
@@ -112,35 +120,42 @@ class TestDetectorsAndLabels(object):
 
     res = self.api.update_annotations(detector_id=detector_id, label_id=label_id, images=[
         {'id': image_id, 'bbox': bbox}])
-    assert(res['message'] == 'successfully updated 1 images')
+    assert (res['message'] == 'successfully updated 1 images')
+    print_test_pass()
 
   def update_label_with_images_test(self, detector_id, label_id, image_files):
     res = self.api.update_label_with_images(
         detector_id=detector_id, label_id=label_id, image_files=image_files)
-    assert('successfully uploaded 1 images to label' in res['message'])
+    assert ('successfully uploaded 1 images to label' in res['message'])
+    print_test_pass()
 
   def delete_label_test(self, detector_id, label_id):
     res = self.api.delete_label(
         detector_id=detector_id, label_id=label_id)
-    assert(res['message'] == 'Successfully deleted the label')
+    assert (res['message'] == 'Successfully deleted the label')
+    print_test_pass()
 
   def finalize_detector_test(self, detector_id):
     res = self.api.finalize_detector(detector_id=detector_id)
-    assert(res['message'] == 'training began successfully')
+    assert (res['message'] == 'training began successfully')
+    print_test_pass()
 
   def get_detector_info_test(self, detector_id):
     res = self.api.get_detector_info(detector_id=detector_id)
-    assert(res['id'] == detector_id)
+    assert (res['id'] == detector_id)
+    print_test_pass()
 
   def search_detectors_test(self):
     res = self.api.search_detectors()
-    assert(res[0]['id'] != None)
+    assert (res[0]['id'] != None)
+    print_test_pass()
 
   def redo_detector_test(self, detector_id):
     res = self.api.redo_detector(detector_id=detector_id)
     redo_detector_id = res['detector_id']
     assert(redo_detector_id != None)
 
+    print_test_pass()
     return redo_detector_id
 
   def import_detector_test(self, name, input_tensor, output_tensor, detector_type, file_proto, labels):
@@ -149,11 +164,13 @@ class TestDetectorsAndLabels(object):
 
     assert(res['detector_id'] != None)
 
+    print_test_pass()
     return res['detector_id']
 
   def delete_detector_test(self, detector_id, detector_type):
     res = self.api.delete_detector(detector_id=detector_id)
-    assert(res['message'] == 'Deleted detector.')
+    assert (res['message'] == 'Deleted detector.')
+    print_test_pass()
 
   # helpers
   def delete_pending_detectors(self):
@@ -172,6 +189,8 @@ class TestDetectorsAndLabels(object):
     while res['state'] != 'trained':
       if len(indicator) > max_indicator_length:
         pytest.fail('Timeout when waiting for detector training')
+      elif res['state'] == 'failed':
+        pytest.fail('Detector training failed')
 
       print(indicator)
       time.sleep(5)
@@ -187,14 +206,14 @@ class TestDetectorsAndLabels(object):
 
     tried_num = 0
     max_tries = 15
+
     while (res['processing']):
       if tried_num > max_tries:
         pytest.fail(
             'Timeout when waiting for detector to be ready for editing')
-      elif res['state'] == 'failed':
-        pytest.fail('Detector training failed')
 
       res = self.api.get_detector_info(detector_id=detector_id)
+
       time.sleep(2)
 
       tried_num += 1

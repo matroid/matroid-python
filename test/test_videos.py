@@ -2,6 +2,7 @@ import pytest
 
 from data import TEST_IMAGE_URL, EVERYDAY_OBJECT_DETECTOR_ID, TEST_VIDEO_URL, RAMDOM_MONGO_ID
 from matroid.error import InvalidQueryError
+from test.helper import print_test_pass
 
 
 class TestVideos(object):
@@ -26,6 +27,7 @@ class TestVideos(object):
     video_id = res['video_id']
     assert(video_id != None)
 
+    print_test_pass()
     return video_id
 
   def get_video_results_test(self, video_id, threshold):
@@ -35,4 +37,6 @@ class TestVideos(object):
 
     res = self.api.get_video_results(
         video_id=video_id, threshold=threshold)
-    assert(res != None)
+    assert (res != None)
+
+    print_test_pass()

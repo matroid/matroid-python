@@ -2,6 +2,7 @@ import pytest
 
 from data import TEST_IMAGE_URL, TEST_IMAGE_URL_DOG, TEST_IMAGE_FILE, TEST_IMAGE_FILE_DOG, EVERYDAY_OBJECT_DETECTOR_ID
 from matroid.error import InvalidQueryError
+from test.helper import print_test_pass
 
 
 class TestImages(object):
@@ -36,9 +37,13 @@ class TestImages(object):
 
     res = self.api.classify_image(detector_id=detector_id, url=urls)
     assert(len(res['results']) == 2)
-    assert(res['results'][0]['predictions'] != None)
+    assert (res['results'][0]['predictions'] != None)
+
+    print_test_pass()
 
   def localize_image_test(self, localizer, localizer_label, url):
     res = self.api.localize_image(
         localizer=localizer, localizer_label=localizer_label, url=url)
-    assert(res['results'][0]['predictions'] != None)
+    assert (res['results'][0]['predictions'] != None)
+
+    print_test_pass()

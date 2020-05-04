@@ -4,6 +4,7 @@ import pytest
 
 from data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_IMAGE_URL, RAMDOM_MONGO_ID
 from matroid.error import InvalidQueryError
+from test.helper import print_test_pass
 
 COLLECTION_NAME = 'py-test-collection-{}'.format(datetime.now())
 S3_BUCKET_URL = 's3://bucket/m-test-public/'
@@ -46,6 +47,7 @@ class TestCollections(object):
     collection_id = res['collection']['_id']
     assert(collection_id != None)
 
+    print_test_pass()
     return collection_id
 
   def create_collection_index_test(self, collection_id):
@@ -57,8 +59,9 @@ class TestCollections(object):
     res = self.api.create_collection_index(
         collection_id=collection_id, detector_id=EVERYDAY_OBJECT_DETECTOR_ID, file_types='images')
     task_id = res['collectionTask']['_id']
-    assert(task_id != None)
+    assert (task_id != None)
 
+    print_test_pass()
     return task_id
 
   def delete_collection_test(self, collection_id):
@@ -69,46 +72,54 @@ class TestCollections(object):
     res = self.api.get_collection(collection_id=collection_id)
     collection = res['collection']
     assert(collection['_id'] == collection_id)
-    assert(collection['name'] == COLLECTION_NAME)
+    assert (collection['name'] == COLLECTION_NAME)
+    print_test_pass()
 
   def get_collection_task_test(self, task_id):
     res = self.api.get_collection_task(task_id=task_id)
     assert(res['collectionTask'] != None)
     collection_task_id = res['collectionTask']['_id']
-    assert(collection_task_id == task_id)
+    assert (collection_task_id == task_id)
+    print_test_pass()
 
   def update_collection_index_test(self, task_id):
     res = self.api.update_collection_index(
         task_id=task_id, update_index=False)
     assert(res['collectionTask'] != None)
     collection_task_id = res['collectionTask']['_id']
-    assert(collection_task_id == task_id)
+    assert (collection_task_id == task_id)
+    print_test_pass()
 
   def query_collection_by_scores_test(self, task_id):
     print(task_id)
     res = self.api.query_collection_by_scores(
         task_id=task_id, thresholds={'cat': 0.5}, num_results=5)
-    assert(res['results'] != None)
+    assert (res['results'] != None)
+    print_test_pass()
 
   def query_collection_by_image_test(self, task_id, url):
     res = self.api.query_collection_by_image(task_id=task_id, bounding_box={
         "top": 0.1, "left": 0.1, "height": 0.8, "width": 0.8},  task_type='collection', num_results=1, url=url)
-    assert(res['results'] != None)
+    assert (res['results'] != None)
+    print_test_pass()
 
   def kill_collection_index_test(self, task_id):
     res = self.api.kill_collection_index(
         task_id=task_id, include_collection_info=False)
     collection_task = res['collectionTask']
     assert(collection_task != None)
-    assert(collection_task['_id'] == task_id)
+    assert (collection_task['_id'] == task_id)
+    print_test_pass()
 
   def delete_collection_index_test(self, task_id):
     res = self.api.delete_collection_index(task_id=task_id)
-    assert(res['message'] == 'Successfully deleted')
+    assert (res['message'] == 'Successfully deleted')
+    print_test_pass()
 
   def delete_collection_test(self, collection_id):
     res = self.api.delete_collection(collection_id=collection_id)
-    assert(res['message'] == 'Successfully deleted')
+    assert (res['message'] == 'Successfully deleted')
+    print_test_pass()
 
   # helpers
   def wait_for_collection_index_stop(self, task_id):
