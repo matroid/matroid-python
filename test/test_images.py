@@ -24,20 +24,25 @@ class TestImages(object):
     with pytest.raises(InvalidQueryError) as e:
       self.api.classify_image(detector_id=detector_id, url='invalid-url')
     assert ('invalid_query_err' in str(e))
+    print('Classify invalid url test passed')
 
     res = self.api.classify_image(detector_id=detector_id, url=url)
     assert (res['results'][0]['predictions'] != None)
+    print('Classify one url test passed')
 
     res = self.api.classify_image(detector_id=detector_id, file=file)
-    assert(res['results'][0]['predictions'] != None)
+    assert (res['results'][0]['predictions'] != None)
+    print('Classify one file test passed')
 
     res = self.api.classify_image(detector_id=detector_id, file=files)
     assert(len(res['results']) == 2)
-    assert(res['results'][0]['predictions'] != None)
+    assert (res['results'][0]['predictions'] != None)
+    print('Classify multiple files test passed')
 
     res = self.api.classify_image(detector_id=detector_id, url=urls)
     assert(len(res['results']) == 2)
     assert (res['results'][0]['predictions'] != None)
+    print ('Classify multiple urls test passed')
 
     print_test_pass()
 

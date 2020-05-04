@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 import pytest
 
-from data import TEST_IMAGE_FILE, EVERYDAY_OBJECT_DETECTOR_ID, RAMDOM_MONGO_ID
+from data import TEST_IMAGE_FILE, RAMDOM_MONGO_ID
 from matroid.error import APIConnectionError, InvalidQueryError
 from test.helper import print_test_pass
 
@@ -43,13 +43,10 @@ class TestDetectorsAndLabels(object):
           detector_id=detector_id, label_id=label_id)
       image_id = self.get_label_images_test(
           detector_id=detector_id, label_id=label_id)
-      print('get lable done')
       # self.update_annotations_test(
       #     detector_id=detector_id, label_id=label_id, image_id=image_id, bbox=bbox)
-      print('annotation test done')
       self.update_label_with_images_test(
           detector_id=detector_id, label_id=label_id, image_files=TEST_IMAGE_FILE)
-      print('update label done')
       self.delete_label_test(detector_id=detector_id, label_id=label_id)
       self.finalize_detector_test(detector_id=detector_id)
 
@@ -58,7 +55,7 @@ class TestDetectorsAndLabels(object):
       self.get_detector_info_test(detector_id=detector_id)
       self.search_detectors_test()
       redo_detector_id = self.redo_detector_test(
-          detector_id=EVERYDAY_OBJECT_DETECTOR_ID)
+          detector_id=detector_id)
       import_detector_id = self.import_detector_test(name=import_detector_name, input_tensor=input_tensor,
                                                      output_tensor=output_tensor, detector_type='facial_recognition',
                                                      file_proto=file_proto, labels=labels)
