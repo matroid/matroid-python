@@ -6,14 +6,14 @@ from matroid.src.helpers import api_call
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Streams-PostStreams
 @api_call(error.InvalidQueryError)
-def create_stream(self, stream_url, stream_name):
+def create_stream(self, url, name):
   (endpoint, method) = self.endpoints['create_stream']
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-        'name': stream_name,
-        'url': stream_url
+        'name': name,
+        'url': url
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:

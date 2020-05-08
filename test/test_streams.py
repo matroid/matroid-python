@@ -24,7 +24,7 @@ class TestStreams(object):
     # start testing
     try:
       stream_id = self.create_stream_test(
-          stream_url=TEST_VIDEO_URL, stream_name=stream_name)
+          url=TEST_VIDEO_URL, name=stream_name)
       monitoring_id = self.monitor_stream_test(
           stream_id=stream_id, detector_id=EVERYDAY_OBJECT_DETECTOR_ID, thresholds=thresholds, task_name=task_name)
       self.search_monitorings_test(
@@ -40,15 +40,15 @@ class TestStreams(object):
         self.delete_stream_test(stream_id=stream_id)
 
   # test cases
-  def create_stream_test(self, stream_url, stream_name):
+  def create_stream_test(self, url, name):
     res = self.api.create_stream(
-        stream_url=stream_url,
-        stream_name=stream_name
+        url=url,
+        name=name
     )
     assert (res['stream_id'] != None)
 
     with pytest.raises(InvalidQueryError) as e:
-      self.api.create_stream(stream_url=stream_url, stream_name=stream_name)
+      self.api.create_stream(url=url, name=name)
     assert ('invalid_query_err' in str(e))
 
     print_test_pass()
