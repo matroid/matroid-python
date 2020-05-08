@@ -130,7 +130,7 @@ def query_collection_by_scores(self, task_id, thresholds, num_results):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostApiCollectionTasksTaskidImageQuery
 @api_call(error.InvalidQueryError)
-def query_collection_by_image(self, task_id, task_type, bounding_box=None, url=None, file=None, **options):
+def query_collection_by_image(self, task_id, bounding_box=None, url=None, file=None, **options):
   """
   Query against a collection index (CollectionManagerTask) using an image as key.
   Takes in an image file or url and returns similar media from the collection.
@@ -147,7 +147,6 @@ def query_collection_by_image(self, task_id, task_type, bounding_box=None, url=N
     headers = {'Authorization': self.token.authorization_header()}
     data = {
         'boundingBox': json.dumps(bounding_box),
-        'taskType': task_type,
         'numResults': options.get('num_results')
     }
 

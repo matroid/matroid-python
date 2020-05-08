@@ -6,13 +6,13 @@ from matroid.src.helpers import api_call
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectors
 @api_call(error.InvalidQueryError)
-def create_detector(self, zip_file, name, detector_type):
+def create_detector(self, file, name, detector_type):
   """
   Create a new detector with the contents of the zip file
 
   detector_type: general, facial_recognition, or facial_characteristics
   name: the detector's display name
-  zip_file: a zip file containing the images to be used in the detector creation
+  file: a zip file containing the images to be used in the detector creation
             the root folder should contain only directories which will become the labels for detection
             each of these directories should contain only images corresponding to that label.
 
@@ -47,7 +47,7 @@ def create_detector(self, zip_file, name, detector_type):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {'name': name, 'detector_type': detector_type}
-    with self.filereader.get_file(zip_file) as file_to_upload:
+    with self.filereader.get_file(file) as file_to_upload:
       files = {'file': file_to_upload}
       file_size = os.fstat(file_to_upload.fileno()).st_size
 
