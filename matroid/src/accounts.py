@@ -14,14 +14,14 @@ def retrieve_token(self, options={}):
 
   In addition, you would have to refresh manually if another client has expired your access token.
 
-  You can pass the 'request_from_server': True option to make a request
+  You can pass the 'refresh': True option to make a request
   to the server for the access token without invalidating it. This is useful if you are running
   multiple clients with the same token so they don't endlessly refresh each others' tokens
   """
 
   (endpoint, method) = self.endpoints['token']
 
-  if not options.get('expire_token') and not options.get('request_from_server'):
+  if not options.get('expire_token') and not options.get('refresh'):
     if self.token and not self.token.expired():
       return self.token
 
