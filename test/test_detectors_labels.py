@@ -35,7 +35,7 @@ class TestDetectorsAndLabels(object):
     try:
       self.delete_pending_detectors()
       detector_id = self.create_detector_test(
-          zip_file=DETECTOR_TEST_ZIP, name=detector_name, detector_type='general')
+          file=DETECTOR_TEST_ZIP, name=detector_name, detector_type='general')
       self.wait_detector_ready_for_edit(detector_id)
       label_id = self.create_label_with_images_with_images_test(
           name=label_name, detector_id=detector_id, image_files=TEST_IMAGE_FILE)
@@ -68,15 +68,15 @@ class TestDetectorsAndLabels(object):
       if redo_detector_id:
         self.delete_detector_test(redo_detector_id, 'redo detector')
 
-  def create_detector_test(self, zip_file, name, detector_type):
+  def create_detector_test(self, file, name, detector_type):
     with pytest.raises(APIConnectionError) as e:
       invalid_zip_path = os.getcwd() + '/test/test_file/invalid.zip'
       self.api.create_detector(
-          zip_file=invalid_zip_path, name=name, detector_type=detector_type)
+          file=invalid_zip_path, name=name, detector_type=detector_type)
     assert ('No such file or directory' in str(e))
 
     res = self.api.create_detector(
-        zip_file=zip_file, name=name, detector_type=detector_type)
+        file=file, name=name, detector_type=detector_type)
     assert(res['detector_id'] != None)
 
     print_test_pass()
