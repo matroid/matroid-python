@@ -6,7 +6,7 @@ from matroid.src.helpers import api_call
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectors
 @api_call(error.InvalidQueryError)
-def create_detector(self, file, name, detector_type):
+def create_detector(self, file, name, detectorType):
   """
   Create a new detector with the contents of the zip file
 
@@ -46,7 +46,8 @@ def create_detector(self, file, name, detector_type):
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
-    data = {'name': name, 'detector_type': detector_type}
+    data = {'name': name, 'detectorType': detectorType}
+
     with self.filereader.get_file(file) as file_to_upload:
       files = {'file': file_to_upload}
       file_size = os.fstat(file_to_upload.fileno()).st_size
@@ -61,14 +62,14 @@ def create_detector(self, file, name, detector_type):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-DeleteDetectorsDetector_id
 @api_call(error.InvalidQueryError)
-def delete_detector(self, detector_id):
+def delete_detector(self, detectorId):
   """
   Requires processing=false. 
   Note: Users can only delete pending detectors; once finalized, the only way to delete is via the Web UI.
   """
   (endpoint, method) = self.endpoints['delete_detector']
 
-  endpoint = endpoint.replace(':key', detector_id)
+  endpoint = endpoint.replace(':key', detectorId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
@@ -78,19 +79,15 @@ def delete_detector(self, detector_id):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsDetector_idFinalize
 @api_call(error.InvalidQueryError)
-def finalize_detector(self, detector_id, name=None, detector_type=None):
+def finalize_detector(self, detectorId):
   """Begin training the detector"""
   (endpoint, method) = self.endpoints['finalize_detector']
 
-  endpoint = endpoint.replace(':key', detector_id)
+  endpoint = endpoint.replace(':key', detectorId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {}
-    if name:
-      data['name'] = name
-    if detector_type:
-      data['detector_type'] = detector_type
 
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -98,11 +95,11 @@ def finalize_detector(self, detector_id, name=None, detector_type=None):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-GetDetectorsDetector_id
 @api_call(error.InvalidQueryError)
-def get_detector_info(self, detector_id):
+def get_detector_info(self, detectorId):
   """Get information about detector"""
   (endpoint, method) = self.endpoints['get_detector_info']
 
-  endpoint = endpoint.replace(':key', detector_id)
+  endpoint = endpoint.replace(':key', detectorId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
@@ -123,25 +120,25 @@ def import_detector(self, name, **options):
   }
 
   def get_data_info():
-    data['input_tensor'] = options.get('input_tensor'),
-    data['output_tensor'] = options.get('output_tensor'),
-    data['detector_type'] = options.get('detector_type'),
+    data['inputTensor'] = options.get('inputTensor'),
+    data['outputTensor'] = options.get('outputTensor'),
+    data['detectorType'] = options.get('detectorType'),
 
-  if options.get('file_detector'):
-    file_paths = {'file_detector': options.get('file_detector')}
-  elif options.get('file_proto') and options.get('file_label'):
+  if options.get('fileDetector'):
+    file_paths = {'fileDetector': options.get('fileDetector')}
+  elif options.get('fileProto') and options.get('fileLabel'):
     file_paths = {
-        'file_proto': options.get('file_proto'),
-        'file_label': options.get('file_label'),
-        'file_label_ind': options.get('file_label_ind')
+        'fileProto': options.get('fileProto'),
+        'fileLabel': options.get('fileLabel'),
+        'fileLabelInd': options.get('fileLabelInd')
     }
     get_data_info()
-  elif options.get('file_proto') and options.get('labels'):
+  elif options.get('fileProto') and options.get('labels'):
     file_paths = {
-        'file_proto': options.get('file_proto'),
+        'fileProto': options.get('fileProto'),
     }
     data['labels'] = options.get('labels')
-    data['label_inds'] = options.get('label_inds')
+    data['labelInds'] = options.get('labelInds')
     get_data_info()
   else:
     raise error.InvalidQueryError(
@@ -168,14 +165,14 @@ def import_detector(self, name, **options):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsDetector_idRedo
 @api_call(error.InvalidQueryError)
-def redo_detector(self, detector_id):
+def redo_detector(self, detectorId):
   """
   Redo a detector
   Note: a deep copy of the trained detector with different detector_id will be made
   """
   (endpoint, method) = self.endpoints['redo_detector']
 
-  endpoint = endpoint.replace(':key', detector_id)
+  endpoint = endpoint.replace(':key', detectorId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}

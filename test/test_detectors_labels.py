@@ -43,8 +43,8 @@ class TestDetectorsAndLabels(object):
           detector_id=detector_id, label_id=label_id)
       image_id = self.get_label_images_test(
           detector_id=detector_id, label_id=label_id)
-      # self.update_annotations_test(
-      #     detector_id=detector_id, label_id=label_id, image_id=image_id, bbox=bbox)
+      self.update_annotations_test(
+          detector_id=detector_id, label_id=label_id, image_id=image_id, bbox=bbox)
       self.update_label_with_images_test(
           detector_id=detector_id, label_id=label_id, image_files=TEST_IMAGE_FILE)
       self.delete_label_test(detector_id=detector_id, label_id=label_id)
@@ -60,6 +60,7 @@ class TestDetectorsAndLabels(object):
                                                      output_tensor=output_tensor, detector_type='facial_recognition',
                                                      file_proto=file_proto, labels=labels)
     finally:
+      print('abc')
       if detector_id:
         self.delete_detector_test(detector_id, 'main detector')
       if import_detector_id:
@@ -72,11 +73,11 @@ class TestDetectorsAndLabels(object):
     with pytest.raises(APIConnectionError) as e:
       invalid_zip_path = os.getcwd() + '/test/test_file/invalid.zip'
       self.api.create_detector(
-          file=invalid_zip_path, name=name, detector_type=detector_type)
+          file=invalid_zip_path, name=name, detectorType=detector_type)
     assert ('No such file or directory' in str(e))
 
     res = self.api.create_detector(
-        file=file, name=name, detector_type=detector_type)
+        file=file, name=name, detectorType=detector_type)
     assert(res['detector_id'] != None)
 
     print_test_pass()
@@ -133,12 +134,12 @@ class TestDetectorsAndLabels(object):
     print_test_pass()
 
   def finalize_detector_test(self, detector_id):
-    res = self.api.finalize_detector(detector_id=detector_id)
+    res = self.api.finalize_detector(detectorId=detector_id)
     assert (res['message'] == 'training began successfully')
     print_test_pass()
 
   def get_detector_info_test(self, detector_id):
-    res = self.api.get_detector_info(detector_id=detector_id)
+    res = self.api.get_detector_info(detectorId=detector_id)
     assert (res['id'] == detector_id)
     print_test_pass()
 
@@ -148,7 +149,7 @@ class TestDetectorsAndLabels(object):
     print_test_pass()
 
   def redo_detector_test(self, detector_id):
-    res = self.api.redo_detector(detector_id=detector_id)
+    res = self.api.redo_detector(detectorId=detector_id)
     redo_detector_id = res['detector_id']
     assert(redo_detector_id != None)
 
@@ -156,8 +157,8 @@ class TestDetectorsAndLabels(object):
     return redo_detector_id
 
   def import_detector_test(self, name, input_tensor, output_tensor, detector_type, file_proto, labels):
-    res = self.api.import_detector(name=name, input_tensor=input_tensor, output_tensor=output_tensor,
-                                   detector_type=detector_type, file_proto=file_proto, labels=labels)
+    res = self.api.import_detector(name=name, inputTensor=input_tensor, outputTensor=output_tensor,
+                                   detectorType=detector_type, fileProto=file_proto, labels=labels)
 
     assert(res['detector_id'] != None)
 
@@ -165,7 +166,7 @@ class TestDetectorsAndLabels(object):
     return res['detector_id']
 
   def delete_detector_test(self, detector_id, detector_type):
-    res = self.api.delete_detector(detector_id=detector_id)
+    res = self.api.delete_detector(detectorId=detector_id)
     assert (res['message'] == 'Deleted detector.')
     print_test_pass()
 
@@ -174,11 +175,11 @@ class TestDetectorsAndLabels(object):
     res = self.api.search_detectors(state='pending')
     if len(res) == 1:
       print('Info: found a pending detector, deleting it...')
-      self.api.delete_detector(detector_id=res[0]['id'])
+      self.api.delete_detector(detectorId=res[0]['id'])
       print('Info: Deleted pending detector')
 
   def wait_detector_training(self, detector_id):
-    res = self.api.get_detector_info(detector_id=detector_id)
+    res = self.api.get_detector_info(detectorId=detector_id)
 
     print ('Info: waiting for detectors training')
     indicator = '.'
@@ -191,7 +192,7 @@ class TestDetectorsAndLabels(object):
 
       print(indicator)
       time.sleep(5)
-      res = self.api.get_detector_info(detector_id=detector_id)
+      res = self.api.get_detector_info(detectorId=detector_id)
 
       indicator += '.'
 
@@ -199,7 +200,7 @@ class TestDetectorsAndLabels(object):
 
   def wait_detector_ready_for_edit(self, detector_id):
     print('Info: waiting for pending detector to be ready for editing')
-    res = self.api.get_detector_info(detector_id=detector_id)
+    res = self.api.get_detector_info(detectorId=detector_id)
 
     tried_num = 0
     max_tries = 15
@@ -209,7 +210,7 @@ class TestDetectorsAndLabels(object):
         pytest.fail(
             'Timeout when waiting for detector to be ready for editing')
 
-      res = self.api.get_detector_info(detector_id=detector_id)
+      res = self.api.get_detector_info(detectorId=detector_id)
 
       time.sleep(2)
 
