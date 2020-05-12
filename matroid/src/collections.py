@@ -7,16 +7,16 @@ from matroid.src.helpers import api_call
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostApiVersionCollectionsCollectionidCollectionTasks
 @api_call(error.InvalidQueryError)
-def create_collection_index(self, collection_id, detector_id, file_types):
+def create_collection_index(self, collectionId, detectorId, fileTypes):
   """Create an index on a collection with a detector"""
   (endpoint, method) = self.endpoints['create_collection_index']
-  endpoint = endpoint.replace(':key', collection_id)
+  endpoint = endpoint.replace(':key', collectionId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-        'detectorId': detector_id,
-        'fileTypes': file_types
+        'detectorId': detectorId,
+        'fileTypes': fileTypes
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -24,7 +24,7 @@ def create_collection_index(self, collection_id, detector_id, file_types):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostCollections
 @api_call(error.InvalidQueryError)
-def create_collection(self, name, url, source_type):
+def create_collection(self, name, url, sourceType):
   """Creates a new collection from a web or S3 url. Automatically kick off default indexes"""
   (endpoint, method) = self.endpoints['create_collection']
 
@@ -33,7 +33,7 @@ def create_collection(self, name, url, source_type):
     data = {
         'name': name,
         'url': url,
-        'sourceType': source_type
+        'sourceType': sourceType
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -41,10 +41,10 @@ def create_collection(self, name, url, source_type):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-DeleteCollectionTasksTaskid
 @api_call(error.InvalidQueryError)
-def delete_collection_index(self, task_id):
+def delete_collection_index(self, taskId):
   """Deletes a completed collection mananger task"""
   (endpoint, method) = self.endpoints['delete_collection_index']
-  endpoint = endpoint.replace(':key', task_id)
+  endpoint = endpoint.replace(':key', taskId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
@@ -54,10 +54,10 @@ def delete_collection_index(self, task_id):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-DeleteCollectionsCollectionid
 @api_call(error.InvalidQueryError)
-def delete_collection(self, collection_id):
+def delete_collection(self, collectionId):
   """Deletes a collection with no active indexing tasks"""
   (endpoint, method) = self.endpoints['delete_collection']
-  endpoint = endpoint.replace(':key', collection_id)
+  endpoint = endpoint.replace(':key', collectionId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
@@ -67,10 +67,10 @@ def delete_collection(self, collection_id):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-GetCollectionTasksTaskid
 @api_call(error.InvalidQueryError)
-def get_collection_task(self, task_id):
+def get_collection_task(self, taskId):
   """Creates a new collection from a web or S3 url"""
   (endpoint, method) = self.endpoints['get_collection_task']
-  endpoint = endpoint.replace(':key', task_id)
+  endpoint = endpoint.replace(':key', taskId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
@@ -80,10 +80,10 @@ def get_collection_task(self, task_id):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-GetCollectionsCollectionid
 @api_call(error.InvalidQueryError)
-def get_collection(self, collection_id):
+def get_collection(self, collectionId):
   """Get information about a specific collection"""
   (endpoint, method) = self.endpoints['get_collection']
-  endpoint = endpoint.replace(':key', collection_id)
+  endpoint = endpoint.replace(':key', collectionId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
@@ -93,15 +93,15 @@ def get_collection(self, collection_id):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostCollectionTasksTaskidKill
 @api_call(error.InvalidQueryError)
-def kill_collection_index(self, task_id, include_collection_info):
+def kill_collection_index(self, taskId, includeCollectionInfo):
   """Kills an active collection indexing task"""
   (endpoint, method) = self.endpoints['kill_collection_index']
-  endpoint = endpoint.replace(':key', task_id)
+  endpoint = endpoint.replace(':key', taskId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-        'includeCollectionInfo': 'true' if include_collection_info else ''
+        'includeCollectionInfo': 'true' if includeCollectionInfo else ''
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -110,19 +110,19 @@ def kill_collection_index(self, task_id, include_collection_info):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostApiVersionCollectionTasksTaskidScoresQuery
 @api_call(error.InvalidQueryError)
-def query_collection_by_scores(self, task_id, thresholds, num_results):
+def query_collection_by_scores(self, taskId, thresholds, numResults):
   """
   Query against a collection index using a set of labels and scores as a query.
   Takes in a map of thresholds, and returns media in the collection with detections above those thresholds
   """
   (endpoint, method) = self.endpoints['query_collection_by_scores']
-  endpoint = endpoint.replace(':key', task_id)
+  endpoint = endpoint.replace(':key', taskId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
         'thresholds': json.dumps(thresholds),
-        'numResults': num_results
+        'numResults': numResults
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -130,13 +130,13 @@ def query_collection_by_scores(self, task_id, thresholds, num_results):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostApiCollectionTasksTaskidImageQuery
 @api_call(error.InvalidQueryError)
-def query_collection_by_image(self, task_id, bounding_box=None, url=None, file=None, **options):
+def query_collection_by_image(self, taskId, boundingBox=None, url=None, file=None, **options):
   """
   Query against a collection index (CollectionManagerTask) using an image as key.
   Takes in an image file or url and returns similar media from the collection.
   """
   (endpoint, method) = self.endpoints['query_collection_by_image']
-  endpoint = endpoint.replace(':key', task_id)
+  endpoint = endpoint.replace(':key', taskId)
 
   if not file and not url:
     raise error.InvalidQueryError(
@@ -146,7 +146,7 @@ def query_collection_by_image(self, task_id, bounding_box=None, url=None, file=N
     file_to_upload = None
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-        'boundingBox': json.dumps(bounding_box),
+        'boundingBox': json.dumps(boundingBox),
         'numResults': options.get('num_results')
     }
 
@@ -169,15 +169,15 @@ def query_collection_by_image(self, task_id, bounding_box=None, url=None, file=N
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PutApiVersionCollectionTasksTaskid
 @api_call(error.InvalidQueryError)
-def update_collection_index(self, task_id, update_index):
+def update_collection_index(self, taskId, updateIndex):
   """Update a collection index"""
   (endpoint, method) = self.endpoints['update_collection_index']
-  endpoint = endpoint.replace(':key', task_id)
+  endpoint = endpoint.replace(':key', taskId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-        'updateIndex': 'true' if update_index else 'false'
+        'updateIndex': 'true' if updateIndex else 'false'
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:

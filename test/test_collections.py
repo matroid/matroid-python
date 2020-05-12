@@ -17,6 +17,7 @@ class TestCollections(object):
 
     # set up client
     self.api = set_up_client
+    task_killed = False
 
     # start testing
     try:
@@ -25,11 +26,14 @@ class TestCollections(object):
       self.get_collection_test(collection_id)
       self.get_collection_task_test(task_id)
       self.kill_collection_index_test(task_id)
+      task_killed = True
       self.wait_for_collection_index_stop(task_id)
       self.update_collection_index_test(task_id)
+      task_killed = False
     finally:
       if task_id:
-        self.kill_collection_index_test(task_id)
+        if not task_killed:
+          self.kill_collection_index_test(task_id)
         self.wait_for_collection_index_stop(task_id)
         self.delete_collection_index_test(task_id)
       if collection_id:
@@ -39,11 +43,11 @@ class TestCollections(object):
   def create_collection_test(self):
     with pytest.raises(InvalidQueryError) as e:
       self.api.create_collection(
-          name='invalid-collection', url='invalid-url', source_type='s3')
+          name='invalid-collection', url='invalid-url', sourceType='s3')
     assert ('invalid_query_err' in str(e))
 
     res = self.api.create_collection(
-        name=COLLECTION_NAME, url=S3_BUCKET_URL, source_type='s3')
+        name=COLLECTION_NAME, url=S3_BUCKET_URL, sourceType='s3')
     collection_id = res['collection']['_id']
     assert(collection_id != None)
 
@@ -53,11 +57,11 @@ class TestCollections(object):
   def create_collection_index_test(self, collection_id):
     with pytest.raises(InvalidQueryError) as e:
       self.api.create_collection_index(
-          collection_id=collection_id, detector_id=RAMDOM_MONGO_ID, file_types='images')
+          collectionId=collection_id, detectorId=RAMDOM_MONGO_ID, fileTypes='images')
     assert ('invalid_query_err' in str(e))
 
     res = self.api.create_collection_index(
-        collection_id=collection_id, detector_id=EVERYDAY_OBJECT_DETECTOR_ID, file_types='images')
+        collectionId=collection_id, detectorId=EVERYDAY_OBJECT_DETECTOR_ID, fileTypes='images')
     task_id = res['collectionTask']['_id']
     assert (task_id != None)
 
@@ -69,14 +73,14 @@ class TestCollections(object):
     assert(res['message'] == 'Successfully deleted')
 
   def get_collection_test(self, collection_id):
-    res = self.api.get_collection(collection_id=collection_id)
+    res = self.api.get_collection(collectionId=collection_id)
     collection = res['collection']
     assert(collection['_id'] == collection_id)
     assert (collection['name'] == COLLECTION_NAME)
     print_test_pass()
 
   def get_collection_task_test(self, task_id):
-    res = self.api.get_collection_task(task_id=task_id)
+    res = self.api.get_collection_task(taskId=task_id)
     assert(res['collectionTask'] != None)
     collection_task_id = res['collectionTask']['_id']
     assert (collection_task_id == task_id)
@@ -84,7 +88,7 @@ class TestCollections(object):
 
   def update_collection_index_test(self, task_id):
     res = self.api.update_collection_index(
-        task_id=task_id, update_index=False)
+        taskId=task_id, updateIndex=False)
     assert(res['collectionTask'] != None)
     collection_task_id = res['collectionTask']['_id']
     assert (collection_task_id == task_id)
@@ -93,38 +97,38 @@ class TestCollections(object):
   def query_collection_by_scores_test(self, task_id):
     print(task_id)
     res = self.api.query_collection_by_scores(
-        task_id=task_id, thresholds={'cat': 0.5}, num_results=5)
+        taskId=task_id, thresholds={'cat': 0.5}, numResults=5)
     assert (res['results'] != None)
     print_test_pass()
 
   def query_collection_by_image_test(self, task_id, url):
-    res = self.api.query_collection_by_image(task_id=task_id, bounding_box={
-        "top": 0.1, "left": 0.1, "height": 0.8, "width": 0.8},  task_type='collection', num_results=1, url=url)
+    res = self.api.query_collection_by_image(taskId=task_id, boundingBox={
+        "top": 0.1, "left": 0.1, "height": 0.8, "width": 0.8}, numResults=1, url=url)
     assert (res['results'] != None)
     print_test_pass()
 
   def kill_collection_index_test(self, task_id):
     res = self.api.kill_collection_index(
-        task_id=task_id, include_collection_info=False)
+        taskId=task_id, includeCollectionInfo=False)
     collection_task = res['collectionTask']
     assert(collection_task != None)
     assert (collection_task['_id'] == task_id)
     print_test_pass()
 
   def delete_collection_index_test(self, task_id):
-    res = self.api.delete_collection_index(task_id=task_id)
+    res = self.api.delete_collection_index(taskId=task_id)
     assert (res['message'] == 'Successfully deleted')
     print_test_pass()
 
   def delete_collection_test(self, collection_id):
-    res = self.api.delete_collection(collection_id=collection_id)
+    res = self.api.delete_collection(collectionId=collection_id)
     assert (res['message'] == 'Successfully deleted')
     print_test_pass()
 
   # helpers
   def wait_for_collection_index_stop(self, task_id):
     print('Info: waiting for collection task to stop')
-    res = self.api.get_collection_task(task_id=task_id)
+    res = self.api.get_collection_task(taskId=task_id)
 
     tried_num = 0
     max_tries = 15
@@ -132,7 +136,7 @@ class TestCollections(object):
       if tried_num > max_tries:
         pytest.fail('Timeout when waiting for collection index to stop')
 
-      res = self.api.get_collection_task(task_id=task_id)
+      res = self.api.get_collection_task(taskId=task_id)
       time.sleep(2)
 
       tried_num += 1
