@@ -60,7 +60,6 @@ class TestDetectorsAndLabels(object):
                                                      output_tensor=output_tensor, detector_type='facial_recognition',
                                                      file_proto=file_proto, labels=labels)
     finally:
-      print('abc')
       if detector_id:
         self.delete_detector_test(detector_id, 'main detector')
       if import_detector_id:
@@ -85,12 +84,12 @@ class TestDetectorsAndLabels(object):
 
   def create_label_with_images_with_images_test(self, name, detector_id, image_files):
     with pytest.raises(InvalidQueryError) as e:
-      self.api.create_label_with_images(detector_id=RAMDOM_MONGO_ID,
-                                        name=name, image_files=image_files)
+      self.api.create_label_with_images(detectorId=RAMDOM_MONGO_ID,
+                                        name=name, imageFiles=image_files)
     assert ('invalid_query_err' in str(e))
 
-    res = self.api.create_label_with_images(detector_id=detector_id,
-                                            name=name, image_files=image_files)
+    res = self.api.create_label_with_images(detectorId=detector_id,
+                                            name=name, imageFiles=image_files)
     assert('successfully uploaded 1 images to label' in res['message'])
 
     print_test_pass()
@@ -98,13 +97,13 @@ class TestDetectorsAndLabels(object):
 
   def get_annotations_test(self, detector_id, label_id):
     res = self.api.get_annotations(
-        detector_id=detector_id, label_id=label_id)
+        detectorId=detector_id, labelId=label_id)
     assert (res['images'] != None)
     print_test_pass()
 
   def get_label_images_test(self, detector_id, label_id):
     res = self.api.get_label_images(
-        detector_id=detector_id, label_id=label_id)
+        detectorId=detector_id, labelId=label_id)
     assert(res['images'] != None)
 
     print_test_pass()
@@ -113,23 +112,23 @@ class TestDetectorsAndLabels(object):
   def update_annotations_test(self, detector_id, label_id, image_id, bbox):
     with pytest.raises(InvalidQueryError) as e:
       self.api.update_annotations(
-          detector_id=detector_id, label_id=label_id, images=[])
+          detectorId=detector_id, labelId=label_id, images=[])
     assert ('invalid_query_err' in str(e))
 
-    res = self.api.update_annotations(detector_id=detector_id, label_id=label_id, images=[
+    res = self.api.update_annotations(detectorId=detector_id, labelId=label_id, images=[
         {'id': image_id, 'bbox': bbox}])
     assert (res['message'] == 'successfully updated 1 images')
     print_test_pass()
 
   def update_label_with_images_test(self, detector_id, label_id, image_files):
     res = self.api.update_label_with_images(
-        detector_id=detector_id, label_id=label_id, image_files=image_files)
+        detectorId=detector_id, labelId=label_id, imageFiles=image_files)
     assert ('successfully uploaded 1 images to label' in res['message'])
     print_test_pass()
 
   def delete_label_test(self, detector_id, label_id):
     res = self.api.delete_label(
-        detector_id=detector_id, label_id=label_id)
+        detectorId=detector_id, labelId=label_id)
     assert (res['message'] == 'Successfully deleted the label')
     print_test_pass()
 

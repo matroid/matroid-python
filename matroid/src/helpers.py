@@ -7,6 +7,7 @@ from matroid import error
 MAX_LOCAL_IMAGE_SIZE = 50 * 1024 * 1024
 MAX_LOCAL_IMAGE_BATCH_SIZE = 50 * 1024 * 1024
 
+
 def api_call(default_error):
   """setup and teardown decorator for API calls"""
   def decorator(func):
@@ -25,8 +26,10 @@ def api_call(default_error):
     return setup_and_teardown
   return decorator
 
+
 def bytes_to_mb(self, bytes):
   return bytes / 1024 / 1024
+
 
 def check_errors(self, response=None, UserErr=None):
   """Raise specific errors depending on how the API call failed"""
@@ -55,6 +58,7 @@ def check_errors(self, response=None, UserErr=None):
   elif status / 100 != 2:
     raise error.APIError(response)
 
+
 def format_response(self, response):
   """Format the output according to the options (json, print to screen)"""
   if self.print_output:
@@ -63,6 +67,7 @@ def format_response(self, response):
     return response.json()
   else:
     return response.text
+
 
 def save_token(self, response):
   """Extracts the access token from the API response"""
@@ -78,9 +83,10 @@ def save_token(self, response):
 
   if not access_token or not token_type or not expires_in:
     raise error.APIError(
-      message='Required parameters not found in the response')
+        message='Required parameters not found in the response')
 
   self.token = self.Token(token_type, access_token, expires_in)
+
 
 def batch_file_request(uploaded_files, method, endpoint, headers, data, file_keyword='file'):
   filereader = FileReader()
@@ -97,7 +103,7 @@ def batch_file_request(uploaded_files, method, endpoint, headers, data, file_key
 
     if total_batch_size > MAX_LOCAL_IMAGE_BATCH_SIZE:
       raise error.InvalidQueryError(message='Max batch upload size is %d megabytes.' % (
-        bytes_to_mb(MAX_LOCAL_IMAGE_BATCH_SIZE)))
+          bytes_to_mb(MAX_LOCAL_IMAGE_BATCH_SIZE)))
 
     return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
   finally:
@@ -105,14 +111,16 @@ def batch_file_request(uploaded_files, method, endpoint, headers, data, file_key
       (key, file) = file_tuple
       file.close()
 
+
 def check_file_size(file):
   file_size = os.fstat(file.fileno()).st_size
 
   if file_size > MAX_LOCAL_IMAGE_SIZE:
     raise error.InvalidQueryError(message='File %s is larger than the limit of %d megabytes' % (
-      file.name, bytes_to_mb(MAX_LOCAL_IMAGE_SIZE)))
+        file.name, bytes_to_mb(MAX_LOCAL_IMAGE_SIZE)))
 
   return file_size
+
 
 class Token(object):
   """Represents an OAuth access token"""
@@ -129,6 +137,7 @@ class Token(object):
   def expired(self):
     return self.born + datetime.timedelta(0, int(self.lifetime)) < datetime.datetime.now()
 
+
 class FileReader(object):
   """Reads files for classification input"""
 
@@ -143,52 +152,53 @@ class FileReader(object):
 
     return local_file
 
+
 def get_endpoints(base_url):
   end_points = {
-    # accounts
-    'token': (base_url + '/oauth/token', 'POST'),
-    'account_info': (base_url + '/account', 'GET'),
-    # detectors
-    'create_detector': (base_url + '/detectors', 'POST'),
-    'delete_detector': (base_url + '/detectors/:key', 'DELETE'),
-    'finalize_detector': (base_url + '/detectors/:key/finalize', 'POST'),
-    'get_detector_info': (base_url + '/detectors/:key', 'GET'),
-    'import_detector': (base_url + '/detectors/upload', 'POST'),
-    'redo_detector': (base_url + '/detectors/:key/redo', 'POST'),
-    'detectors': (base_url + '/detectors/search', 'GET'),
-    # images
-    'classify_image': (base_url + '/detectors/:key/classify_image', 'POST'),
-    'localize_image': (base_url + '/localize', 'POST'),
-    # videos
-    'classify_video': (base_url + '/detectors/:key/classify_video', 'POST'),
-    'get_video_results': (base_url + '/videos/:key', 'GET'),
-    # streams
-    'create_stream': (base_url + '/streams', 'POST'),
-    'delete_monitoring': (base_url + '/monitorings/:key', 'DELETE'),
-    'delete_stream': (base_url + '/streams/:key', 'DELETE'),
-    'get_monitoring_result': (base_url + '/monitorings/:key', 'GET'),
-    'kill_monitoring': (base_url + '/monitorings/:key/kill', 'POST'),
-    'monitor_stream': (base_url + '/streams/:stream_id/monitor/:detector_id', 'POST'),
-    'search_monitorings': (base_url + '/monitorings', 'GET'),
-    'search_streams': (base_url + '/streams', 'GET'),
-    # labels
-    'create_label_with_images': (base_url + '/detectors/:key/labels', 'POST'),
-    'delete_label': (base_url + '/detectors/:detector_id/labels/:label_id', 'DELETE'),
-    'get_annotations': (base_url + '/images/annotations', 'GET'),
-    'get_label_images': (base_url + '/detectors/:detector_id/labels/:label_id', 'GET'),
-    'update_annotations': (base_url + '/detectors/:detector_id/labels/:label_id', 'PATCH'),
-    'update_label_with_images': (base_url + '/detectors/:detector_id/labels/:label_id/images', 'POST'),
-    # collections
-    'create_collection_index':  (base_url + '/collections/:key/collection-tasks', 'POST'),
-    'create_collection':  (base_url + '/collections', 'POST'),
-    'delete_collection_index':  (base_url + '/collection-tasks/:key', 'DELETE'),
-    'delete_collection':  (base_url + '/collections/:key', 'DELETE'),
-    'get_collection_task':  (base_url + '/collection-tasks/:key', 'GET'),
-    'get_collection':  (base_url + '/collections/:key', 'GET'),
-    'kill_collection_index': (base_url + '/collection-tasks/:key/kill', 'POST'),
-    'query_collection_by_scores': (base_url + '/collection-tasks/:key/scores-query', 'POST'),
-    'query_collection_by_image': (base_url + '/collection-tasks/:key/image-query', 'POST'),
-    'update_collection_index':  (base_url + '/collection-tasks/:key', 'PUT')
+      # accounts
+      'token': (base_url + '/oauth/token', 'POST'),
+      'account_info': (base_url + '/account', 'GET'),
+      # detectors
+      'create_detector': (base_url + '/detectors', 'POST'),
+      'delete_detector': (base_url + '/detectors/:key', 'DELETE'),
+      'finalize_detector': (base_url + '/detectors/:key/finalize', 'POST'),
+      'get_detector_info': (base_url + '/detectors/:key', 'GET'),
+      'import_detector': (base_url + '/detectors/upload', 'POST'),
+      'redo_detector': (base_url + '/detectors/:key/redo', 'POST'),
+      'detectors': (base_url + '/detectors/search', 'GET'),
+      # images
+      'classify_image': (base_url + '/detectors/:key/classify_image', 'POST'),
+      'localize_image': (base_url + '/localize', 'POST'),
+      # videos
+      'classify_video': (base_url + '/detectors/:key/classify_video', 'POST'),
+      'get_video_results': (base_url + '/videos/:key', 'GET'),
+      # streams
+      'create_stream': (base_url + '/streams', 'POST'),
+      'delete_monitoring': (base_url + '/monitorings/:key', 'DELETE'),
+      'delete_stream': (base_url + '/streams/:key', 'DELETE'),
+      'get_monitoring_result': (base_url + '/monitorings/:key', 'GET'),
+      'kill_monitoring': (base_url + '/monitorings/:key/kill', 'POST'),
+      'monitor_stream': (base_url + '/streams/:stream_id/monitor/:detector_id', 'POST'),
+      'search_monitorings': (base_url + '/monitorings', 'GET'),
+      'search_streams': (base_url + '/streams', 'GET'),
+      # labels
+      'create_label_with_images': (base_url + '/detectors/:key/labels', 'POST'),
+      'delete_label': (base_url + '/detectors/:detectorId/labels/:labelId', 'DELETE'),
+      'get_annotations': (base_url + '/images/annotations', 'GET'),
+      'get_label_images': (base_url + '/detectors/:detectorId/labels/:labelId', 'GET'),
+      'update_annotations': (base_url + '/detectors/:detectorId/labels/:labelId', 'PATCH'),
+      'update_label_with_images': (base_url + '/detectors/:detectorId/labels/:labelId/images', 'POST'),
+      # collections
+      'create_collection_index':  (base_url + '/collections/:key/collection-tasks', 'POST'),
+      'create_collection':  (base_url + '/collections', 'POST'),
+      'delete_collection_index':  (base_url + '/collection-tasks/:key', 'DELETE'),
+      'delete_collection':  (base_url + '/collections/:key', 'DELETE'),
+      'get_collection_task':  (base_url + '/collection-tasks/:key', 'GET'),
+      'get_collection':  (base_url + '/collections/:key', 'GET'),
+      'kill_collection_index': (base_url + '/collection-tasks/:key/kill', 'POST'),
+      'query_collection_by_scores': (base_url + '/collection-tasks/:key/scores-query', 'POST'),
+      'query_collection_by_image': (base_url + '/collection-tasks/:key/image-query', 'POST'),
+      'update_collection_index':  (base_url + '/collection-tasks/:key', 'PUT')
   }
 
   return end_points
