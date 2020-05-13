@@ -55,7 +55,7 @@ def classify_video(self, detectorId, url=None, file=None):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Videos-GetVideosVideo_idQuery
 @api_call(error.InvalidQueryError)
-def get_video_results(self, videoId, threshold=1, format='json', annotations=False):
+def get_video_results(self, videoId, **options):
   """
   Get the current classifications for a given video ID
 
@@ -65,7 +65,7 @@ def get_video_results(self, videoId, threshold=1, format='json', annotations=Fal
   """
   (endpoint, method) = self.endpoints['get_video_results']
 
-  if format == 'csv' and self.json_format:
+  if options.get('format') == 'csv' and self.json_format:
     print('cannot return csv format when json_format True is specified upon API object initialization')
     print('requesting JSON format...')
     format = 'json'
@@ -76,10 +76,9 @@ def get_video_results(self, videoId, threshold=1, format='json', annotations=Fal
     headers = {'Authorization': self.token.authorization_header()}
     params = {
         'videoId': videoId,
-        'threshold': threshold,
-        'format': format,
-        'annotations': 'true' if annotations else 'false'
     }
+    params.update(options)
+
     return requests.request(method, endpoint, **{'headers': headers, 'params': params})
   except Exception as e:
     raise error.APIConnectionError(message=e)
