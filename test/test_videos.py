@@ -19,11 +19,11 @@ class TestVideos(object):
 
   def classify_video_test(self, detector_id, url):
     with pytest.raises(InvalidQueryError) as e:
-      self.api.classify_video(detector_id=detector_id, url='invlid-url')
+      self.api.classify_video(detectorId=detector_id, url='invlid-url')
     assert ('invalid_query_err' in str(e))
 
     res = self.api.classify_video(
-        detector_id=detector_id, url=url)
+        detectorId=detector_id, url=url)
     video_id = res['video_id']
     assert(video_id != None)
 
@@ -32,11 +32,11 @@ class TestVideos(object):
 
   def get_video_results_test(self, video_id, threshold):
     with pytest.raises(InvalidQueryError) as e:
-      self.api.classify_video(detector_id=RAMDOM_MONGO_ID, url='invlid-url')
+      self.api.classify_video(detectorId=RAMDOM_MONGO_ID, url='invlid-url')
     assert ('invalid_query_err' in str(e))
 
     res = self.api.get_video_results(
-        video_id=video_id, threshold=threshold)
+        videoId=video_id, threshold=threshold)
     assert (res != None)
 
     print_test_pass()

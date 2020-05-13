@@ -6,11 +6,11 @@ from matroid.src.helpers import api_call
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Videos-PostDetectorsDetector_idClassify_video
 @api_call(error.InvalidQueryError)
-def classify_video(self, detector_id, url=None, file=None):
+def classify_video(self, detectorId, url=None, file=None):
   """
   Classify a video from a url with a detector
 
-  detector_id: a unique id for the detector
+  detectorId: a unique id for the detector
   url: internet URL for the video to classify
   """
 
@@ -30,11 +30,11 @@ def classify_video(self, detector_id, url=None, file=None):
     raise error.InvalidQueryError(
         message='Only one video can be uploaded at a time')
 
-  endpoint = endpoint.replace(':key', detector_id)
+  endpoint = endpoint.replace(':key', detectorId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
-    data = {'detector_id': detector_id}
+    data = {'detectorId': detectorId}
     if url:
       data['url'] = url
       return requests.request(method, endpoint, **{'headers': headers, 'data': data})
@@ -55,11 +55,11 @@ def classify_video(self, detector_id, url=None, file=None):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Videos-GetVideosVideo_idQuery
 @api_call(error.InvalidQueryError)
-def get_video_results(self, video_id, threshold=1, format='json', annotations=False):
+def get_video_results(self, videoId, threshold=1, format='json', annotations=False):
   """
   Get the current classifications for a given video ID
 
-  video_id: a unique id for the classified video
+  videoId: a unique id for the classified video
   threshold: the cutoff for confidence level in the detection at each timestamp
   format: 'csv' or 'json' for the response format
   """
@@ -70,12 +70,12 @@ def get_video_results(self, video_id, threshold=1, format='json', annotations=Fa
     print('requesting JSON format...')
     format = 'json'
 
-  endpoint = endpoint.replace(':key', video_id)
+  endpoint = endpoint.replace(':key', videoId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
     params = {
-        'videoId': video_id,
+        'videoId': videoId,
         'threshold': threshold,
         'format': format,
         'annotations': 'true' if annotations else 'false'
