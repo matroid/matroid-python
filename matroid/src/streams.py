@@ -21,9 +21,9 @@ def create_stream(self, url, name):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Streams-DeleteMonitoringsMonitoring_id
 @api_call(error.InvalidQueryError)
-def delete_monitoring(self, monitoring_id):
+def delete_monitoring(self, monitoringId):
   (endpoint, method) = self.endpoints['delete_monitoring']
-  endpoint = endpoint.replace(':key', monitoring_id)
+  endpoint = endpoint.replace(':key', monitoringId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
@@ -33,9 +33,9 @@ def delete_monitoring(self, monitoring_id):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Streams-DeleteStreamsStream_id
 @api_call(error.InvalidQueryError)
-def delete_stream(self, stream_id):
+def delete_stream(self, streamId):
   (endpoint, method) = self.endpoints['delete_stream']
-  endpoint = endpoint.replace(':key', stream_id)
+  endpoint = endpoint.replace(':key', streamId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
@@ -45,9 +45,9 @@ def delete_stream(self, stream_id):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Streams-GetMonitoringsMonitoring_idQuery
 @api_call(error.InvalidQueryError)
-def get_monitoring_result(self, monitoring_id, **options):
+def get_monitoring_result(self, monitoringId, **options):
   (endpoint, method) = self.endpoints['get_monitoring_result']
-  endpoint = endpoint.replace(':key', monitoring_id)
+  endpoint = endpoint.replace(':key', monitoringId)
 
   if options.get('format') == 'csv' and self.json_format:
     print('cannot return csv format when json_format True is specified upon API object initialization')
@@ -58,7 +58,7 @@ def get_monitoring_result(self, monitoring_id, **options):
     headers = {'Authorization': self.token.authorization_header()}
     params = {
         'format': options.get('format'),
-        'status_only': 'true' if options.get('status_only') else 'false'
+        'statusOnly': 'true' if options.get('statusOnly') else 'false'
     }
 
     return requests.request(method, endpoint, **{'headers': headers, 'params': params})
@@ -67,9 +67,9 @@ def get_monitoring_result(self, monitoring_id, **options):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Streams-PostMonitoringsMonitoring_idKill
 @api_call(error.InvalidQueryError)
-def kill_monitoring(self, monitoring_id):
+def kill_monitoring(self, monitoringId):
   (endpoint, method) = self.endpoints['kill_monitoring']
-  endpoint = endpoint.replace(':key', monitoring_id)
+  endpoint = endpoint.replace(':key', monitoringId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
@@ -79,19 +79,19 @@ def kill_monitoring(self, monitoring_id):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Streams-PostStreamsStream_idMonitorDetector_id
 @api_call(error.InvalidQueryError)
-def monitor_stream(self, stream_id, detector_id, **options):
+def monitor_stream(self, streamId, detectorId, **options):
   (endpoint, method) = self.endpoints['monitor_stream']
-  endpoint = endpoint.replace(':detector_id', detector_id)
-  endpoint = endpoint.replace(':stream_id', stream_id)
+  endpoint = endpoint.replace(':detectorId', detectorId)
+  endpoint = endpoint.replace(':streamId', streamId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
         'thresholds': json.dumps(options.get('thresholds')),
-        'startTime': options.get('start_time'),
-        'endTime': options.get('end_time'),
+        'startTime': options.get('startTime'),
+        'endTime': options.get('endTime'),
         'endpoint': options.get('endpoint'),
-        'taskName': options.get('task_name')
+        'taskName': options.get('taskName')
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -105,14 +105,15 @@ def search_monitorings(self, **options):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     params = {
-        'stream_id': options.get('stream_id'),
-        'monitoring_id': options.get('monitoring_id'),
-        'detector_id': options.get('detector_id'),
+        'streamId': options.get('streamId'),
+        'monitoringId': options.get('monitoringId'),
+        'detectorId': options.get('detectorId'),
         'name': options.get('name'),
-        'start_time': options.get('start_time'),
-        'end_time': options.get('end_time'),
+        'startTime': options.get('startTime'),
+        'endTime': options.get('endTime'),
         'state': options.get('state'),
     }
+
     return requests.request(method, endpoint, **{'headers': headers, 'params': params})
   except Exception as e:
     raise error.APIConnectionError(message=e)
@@ -125,7 +126,7 @@ def search_streams(self, **options):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     params = {
-        'stream_id': options.get('stream_id'),
+        'streamId': options.get('streamId'),
         'name': options.get('name'),
         'permission': options.get('permission')
     }

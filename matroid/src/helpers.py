@@ -178,7 +178,7 @@ def get_endpoints(base_url):
       'delete_stream': (base_url + '/streams/:key', 'DELETE'),
       'get_monitoring_result': (base_url + '/monitorings/:key', 'GET'),
       'kill_monitoring': (base_url + '/monitorings/:key/kill', 'POST'),
-      'monitor_stream': (base_url + '/streams/:stream_id/monitor/:detector_id', 'POST'),
+      'monitor_stream': (base_url + '/streams/:streamId/monitor/:detectorId', 'POST'),
       'search_monitorings': (base_url + '/monitorings', 'GET'),
       'search_streams': (base_url + '/streams', 'GET'),
       # labels
