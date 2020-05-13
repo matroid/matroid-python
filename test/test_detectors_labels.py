@@ -77,10 +77,10 @@ class TestDetectorsAndLabels(object):
 
     res = self.api.create_detector(
         file=file, name=name, detectorType=detector_type)
-    assert(res['detector_id'] != None)
+    assert(res['detectorId'] != None)
 
     print_test_pass()
-    return res['detector_id']
+    return res['detectorId']
 
   def create_label_with_images_with_images_test(self, name, detector_id, image_files):
     with pytest.raises(InvalidQueryError) as e:
@@ -107,7 +107,7 @@ class TestDetectorsAndLabels(object):
     assert(res['images'] != None)
 
     print_test_pass()
-    return res['images'][0]['image_id']
+    return res['images'][0]['imageId']
 
   def update_annotations_test(self, detector_id, label_id, image_id, bbox):
     with pytest.raises(InvalidQueryError) as e:
@@ -149,7 +149,7 @@ class TestDetectorsAndLabels(object):
 
   def redo_detector_test(self, detector_id):
     res = self.api.redo_detector(detectorId=detector_id)
-    redo_detector_id = res['detector_id']
+    redo_detector_id = res['detectorId']
     assert(redo_detector_id != None)
 
     print_test_pass()
@@ -159,10 +159,10 @@ class TestDetectorsAndLabels(object):
     res = self.api.import_detector(name=name, inputTensor=input_tensor, outputTensor=output_tensor,
                                    detectorType=detector_type, fileProto=file_proto, labels=labels)
 
-    assert(res['detector_id'] != None)
+    assert(res['detectorId'] != None)
 
     print_test_pass()
-    return res['detector_id']
+    return res['detectorId']
 
   def delete_detector_test(self, detector_id, detector_type):
     res = self.api.delete_detector(detectorId=detector_id)

@@ -45,14 +45,14 @@ class TestStreams(object):
         url=url,
         name=name
     )
-    assert (res['stream_id'] != None)
+    assert (res['streamId'] != None)
 
     with pytest.raises(InvalidQueryError) as e:
       self.api.create_stream(url=url, name=name)
     assert ('invalid_query_err' in str(e))
 
     print_test_pass()
-    return res['stream_id']
+    return res['streamId']
 
   def monitor_stream_test(self, stream_id, detector_id, thresholds, task_name):
     end_time = '5 minutes'
@@ -64,19 +64,19 @@ class TestStreams(object):
 
     res = self.api.monitor_stream(streamId=stream_id, detectorId=detector_id,
                                   thresholds=thresholds, endTime=end_time, taskName=task_name)
-    assert(res['monitoring_id'] != None)
+    assert(res['monitoringId'] != None)
 
     print_test_pass()
-    return res['monitoring_id']
+    return res['monitoringId']
 
   def search_monitorings_test(self, stream_id, monitoring_id):
     res = self.api.search_monitorings(streamId=stream_id)
-    assert (res[0]['monitoring_id'] == monitoring_id)
+    assert (res[0]['monitoringId'] == monitoring_id)
     print_test_pass()
 
   def search_streams_test(self):
     res = self.api.search_streams(permission='private')
-    assert (res[0]['stream_id'] != None)
+    assert (res[0]['streamId'] != None)
     print_test_pass()
 
   def get_monitoring_result_test(self, monitoring_id):
