@@ -95,8 +95,8 @@ def update_annotations(self, detectorId, labelId, images, **options):
     headers = {'Authorization': self.token.authorization_header()}
     data = {
         'images': json.dumps(images),
-        'destination': options.get('destination')
     }
+    data.update(options)
 
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -112,10 +112,8 @@ def update_label_with_images(self, detectorId, labelId, imageFiles, **options):
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
-    data = {
-        'destination': options.get('destination'),
-        'bboxes': options.get('bboxes'),
-    }
+    data = {}
+    data.update(options)
 
     if not isinstance(imageFiles, list):
       imageFiles = [imageFiles]

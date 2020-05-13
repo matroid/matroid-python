@@ -6,7 +6,7 @@ from matroid.src.helpers import api_call
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Streams-PostStreams
 @api_call(error.InvalidQueryError)
-def create_stream(self, url, name):
+def create_stream(self, url, name, **options):
   (endpoint, method) = self.endpoints['create_stream']
 
   try:
@@ -15,6 +15,8 @@ def create_stream(self, url, name):
         'name': name,
         'url': url
     }
+    data.update(options)
+
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
     raise error.APIConnectionError(message=e)
@@ -79,7 +81,7 @@ def kill_monitoring(self, monitoringId):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Streams-PostStreamsStream_idMonitorDetector_id
 @api_call(error.InvalidQueryError)
-def monitor_stream(self, streamId, detectorId, **options):
+def monitor_stream(self, streamId, detectorId, thresholds, **options):
   (endpoint, method) = self.endpoints['monitor_stream']
   endpoint = endpoint.replace(':detectorId', detectorId)
   endpoint = endpoint.replace(':streamId', streamId)
@@ -87,12 +89,10 @@ def monitor_stream(self, streamId, detectorId, **options):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-        'thresholds': json.dumps(options.get('thresholds')),
-        'startTime': options.get('startTime'),
-        'endTime': options.get('endTime'),
-        'endpoint': options.get('endpoint'),
-        'taskName': options.get('taskName')
+        'thresholds': json.dumps(thresholds),
     }
+    data.update(options)
+
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
     raise error.APIConnectionError(message=e)
@@ -104,15 +104,8 @@ def search_monitorings(self, **options):
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
-    params = {
-        'streamId': options.get('streamId'),
-        'monitoringId': options.get('monitoringId'),
-        'detectorId': options.get('detectorId'),
-        'name': options.get('name'),
-        'startTime': options.get('startTime'),
-        'endTime': options.get('endTime'),
-        'state': options.get('state'),
-    }
+    params = {}
+    params.update(options)
 
     return requests.request(method, endpoint, **{'headers': headers, 'params': params})
   except Exception as e:
