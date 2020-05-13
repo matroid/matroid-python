@@ -6,11 +6,11 @@ from matroid.src.helpers import api_call, batch_file_request
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Images-Classify
 @api_call(error.InvalidQueryError)
-def classify_image(self, detector_id, file=None, url=None, **options):
+def classify_image(self, detectorId, file=None, url=None, **options):
   """
   Classify an image with a detector
 
-  detector_id: a unique id for the detector
+  detectorId: a unique id for the detector
   file: path to local image file to classify
   url: internet URL for the image to classify
   """
@@ -21,11 +21,11 @@ def classify_image(self, detector_id, file=None, url=None, **options):
     raise error.InvalidQueryError(
         message='Missing required parameter: file or url')
 
-  endpoint = endpoint.replace(':key', detector_id)
+  endpoint = endpoint.replace(':key', detectorId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
-    data = {'detector_id': detector_id}
+    data = {'detectorId': detectorId}
     data.update(options)
 
     if url:
@@ -46,7 +46,7 @@ def classify_image(self, detector_id, file=None, url=None, **options):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Images-PostLocalize
 @api_call(error.InvalidQueryError)
-def localize_image(self, localizer, localizer_label, **options):
+def localize_image(self, localizer, localizerLabel, **options):
   """
   Note: this API is very similar to Images/Classify;
   however, it can be used to update bounding boxes of existing training images
@@ -58,18 +58,18 @@ def localize_image(self, localizer, localizer_label, **options):
 
   data = {
       'localizer': localizer,
-      'localizerLabel': localizer_label,
+      'localizerLabel': localizerLabel,
   }
 
   update = options.get('update')
 
   if update:
-    image_id = options.get('image_id')
-    image_ids = options.get('image_ids')
+    image_id = options.get('imageId')
+    image_ids = options.get('imageIds')
 
     if not image_id and not image_ids:
       raise error.InvalidQueryError(
-          message='Missing required parameter for update: image_id or image_ids')
+          message='Missing required parameter for update: imageId or imageIds')
 
     if image_id:
       data['imageId'] = image_id
@@ -91,9 +91,9 @@ def localize_image(self, localizer, localizer_label, **options):
 
     data.update({'confidence': options.get('confidence'),
                  'update': 'true' if update else '',
-                 'maxFaces': options.get('max_faces'),
+                 'maxFaces': options.get('maxFaces'),
                  'confidence': options.get('confidence'),
-                 'labelId': options.get('label_id')
+                 'labelId': options.get('labelId')
                  })
 
     if update:
