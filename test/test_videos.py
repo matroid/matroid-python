@@ -24,7 +24,7 @@ class TestVideos(object):
 
     res = self.api.classify_video(
         detectorId=detector_id, url=url)
-    video_id = res['video_id']
+    video_id = res['videoId']
     assert(video_id != None)
 
     print_test_pass()
