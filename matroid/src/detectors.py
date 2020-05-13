@@ -6,7 +6,7 @@ from matroid.src.helpers import api_call
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectors
 @api_call(error.InvalidQueryError)
-def create_detector(self, file, name, detectorType):
+def create_detector(self, file, name, detectorType, **options):
   """
   Create a new detector with the contents of the zip file
 
@@ -47,6 +47,7 @@ def create_detector(self, file, name, detectorType):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     data = {'name': name, 'detectorType': detectorType}
+    data.update(options)
 
     with self.filereader.get_file(file) as file_to_upload:
       files = {'file': file_to_upload}
