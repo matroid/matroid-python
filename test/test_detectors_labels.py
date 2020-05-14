@@ -93,7 +93,7 @@ class TestDetectorsAndLabels(object):
     assert('successfully uploaded 1 images to label' in res['message'])
 
     print_test_pass()
-    return res['label_id']
+    return res['labelId']
 
   def get_annotations_test(self, detector_id, label_id):
     res = self.api.get_annotations(
