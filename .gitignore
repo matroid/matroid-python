@@ -5,3 +5,10 @@ __pycache__/
 *.egg-info
 dist
 setup.cfg
+.DS_Store
+
+# pytest
+.pytest_cache/
+
+# editor
+.vscode/

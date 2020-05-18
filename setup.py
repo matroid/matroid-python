@@ -1,3 +1,4 @@
+from version import VERSION
 import os
 import sys
 
@@ -7,7 +8,6 @@ except ImportError:
   from distutils.core import setup
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'matroid'))
-from version import VERSION
 
 setup(
     name='matroid',

@@ -8,7 +8,8 @@ class APIError(Exception):
       try:
         super(APIError, self).__init__(response.text)
       except AttributeError:
-        super(APIError, self).__init__('No response or error message provided')
+        super(APIError, self).__init__(
+            'No response or error message provided')
 
     if response:
       self.response = response
