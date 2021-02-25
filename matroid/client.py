@@ -3,21 +3,21 @@ import re
 import sys
 
 from matroid import error
-from src.helpers import api_call
+from matroid.src.helpers import api_call
 
-BASE_URL = 'https://www.matroid.com/api/v1'
+BASE_URL = 'https://staging.dev.matroid.com/api/v1'
 DEFAULT_GRANT_TYPE = 'client_credentials'
 
 
 class MatroidAPI(object):
-  from src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader
-  from src.accounts import account_info, retrieve_token
-  from src.detectors import create_detector, delete_detector, finalize_detector, get_detector_info, import_detector, redo_detector, search_detectors
-  from src.images import classify_image, localize_image
-  from src.videos import classify_video, get_video_results
-  from src.streams import create_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams
-  from src.labels import create_label_with_images, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images
-  from src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index
+  from matroid.src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader
+  from matroid.src.accounts import get_account_info, account_info, retrieve_token
+  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, get_detector_info, import_detector, redo_detector, search_detectors
+  from matroid.src.images import classify_image, localize_image
+  from matroid.src.videos import classify_video, get_video_results
+  from matroid.src.streams import create_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams
+  from matroid.src.labels import create_label_with_images, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images
+  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index
 
   def __init__(self, base_url=BASE_URL, client_id=None, client_secret=None, options={}):
     """
@@ -30,7 +30,7 @@ class MatroidAPI(object):
       set access_token with your auth token e.g., 43174a480adebf5b8e2bf39c0dcb53f1, to preload the token instead of requesting it from the server
     """
 
-    from src.helpers import get_endpoints
+    from matroid.src.helpers import get_endpoints
 
     if not client_id:
       client_id = os.environ.get('MATROID_CLIENT_ID', None)
