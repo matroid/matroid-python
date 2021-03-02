@@ -51,4 +51,5 @@ def account_info(self):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
+# account_info is now DEPRECATED in favor of get_account_info (kept for backwards-compatibility)
 get_account_info = account_info

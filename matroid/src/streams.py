@@ -21,6 +21,9 @@ def create_stream(self, url, name, **options):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
+# register_stream is now DEPRECATED in favor of create_stream (kept for backwards-compatibility)
+register_stream = create_stream
+
 # https://staging.dev.matroid.com/docs/api/index.html#api-Streams-DeleteMonitoringsMonitoring_id
 @api_call(error.InvalidQueryError)
 def delete_monitoring(self, monitoringId):
@@ -90,6 +93,8 @@ def monitor_stream(self, streamId, detectorId, thresholds, **options):
     headers = {'Authorization': self.token.authorization_header()}
     data = {
         'thresholds': json.dumps(thresholds),
+        'sendEmailNotifications': 'true' if options.get('sendEmailNotifications') else 'false',
+        'regionEnabled': 'true' if options.get('regionEnabled') else 'false'
     }
     data.update(options)
 

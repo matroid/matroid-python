@@ -4,17 +4,19 @@ import os
 import sys
 import pytest
 
-from data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_VIDEO_URL, RAMDOM_MONGO_ID
-from matroid.error import InvalidQueryError
+from test.data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_S3_VIDEO_URL, TEST_S3_VIDEO_URL_2, TEST_VIDEO_URL, RANDOM_MONGO_ID
+from matroid.error import InvalidQueryError, APIError
 from test.helper import print_test_pass
 
 
 class TestStreams(object):
   def test_stream(self, set_up_client):
     stream_id = None
+    stream_id_2 = None
     monitoring_id = None
 
     stream_name = 'py-test-stream-{}'.format(datetime.now())
+    stream_name_2 = 'py-test-stream-2-{}'.format(datetime.now())
     thresholds = {'cat': 0.5, 'dog': 0.6}
     task_name = 'test-task'
 
@@ -24,7 +26,9 @@ class TestStreams(object):
     # start testing
     try:
       stream_id = self.create_stream_test(
-          url=TEST_VIDEO_URL, name=stream_name)
+          url=TEST_S3_VIDEO_URL, name=stream_name)
+      stream_id_2 = self.register_stream_test(
+          url=TEST_S3_VIDEO_URL_2, name=stream_name_2)
       monitoring_id = self.monitor_stream_test(
           stream_id=stream_id, detector_id=EVERYDAY_OBJECT_DETECTOR_ID, thresholds=thresholds, task_name=task_name)
       self.search_monitorings_test(
@@ -38,6 +42,8 @@ class TestStreams(object):
         self.delete_monitoring_test(monitoring_id=monitoring_id)
       if stream_id:
         self.delete_stream_test(stream_id=stream_id)
+      if stream_id_2:
+        self.delete_stream_test(stream_id=stream_id_2)
 
   # test cases
   def create_stream_test(self, url, name):
@@ -47,8 +53,22 @@ class TestStreams(object):
     )
     assert (res['streamId'] != None)
 
-    with pytest.raises(InvalidQueryError) as e:
+    with pytest.raises(APIError) as e:
       self.api.create_stream(url=url, name=name)
+    assert ('invalid_query_err' in str(e))
+
+    print_test_pass()
+    return res['streamId']
+
+  def register_stream_test(self, url, name):
+    res = self.api.register_stream(
+      url=url,
+      name=name
+    )
+    assert (res['streamId'] != None)
+
+    with pytest.raises(APIError) as e:
+      self.api.register_stream(url=url, name=name)
     assert ('invalid_query_err' in str(e))
 
     print_test_pass()
@@ -57,8 +77,8 @@ class TestStreams(object):
   def monitor_stream_test(self, stream_id, detector_id, thresholds, task_name):
     end_time = '5 minutes'
 
-    with pytest.raises(InvalidQueryError) as e:
-      self.api.monitor_stream(streamId=RAMDOM_MONGO_ID, detectorId=detector_id,
+    with pytest.raises(APIError) as e:
+      self.api.monitor_stream(streamId=RANDOM_MONGO_ID, detectorId=detector_id,
                               thresholds=thresholds, endTime=end_time, taskName=task_name)
     assert ('invalid_query_err' in str(e))
 

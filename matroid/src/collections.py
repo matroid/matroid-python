@@ -24,7 +24,7 @@ def create_collection_index(self, collectionId, detectorId, fileTypes):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostCollections
 @api_call(error.InvalidQueryError)
-def create_collection(self, name, url, sourceType):
+def create_collection(self, name, url, sourceType, **options):
   """Creates a new collection from a web or S3 url. Automatically kick off default indexes"""
   (endpoint, method) = self.endpoints['create_collection']
 
@@ -33,8 +33,10 @@ def create_collection(self, name, url, sourceType):
     data = {
         'name': name,
         'url': url,
-        'sourceType': sourceType
+        'sourceType': sourceType,
+        'indexWithDefault': 'true' if options.get('indexWithDefault') else 'false'
     }
+
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
     raise error.APIConnectionError(message=e)
@@ -110,7 +112,7 @@ def kill_collection_index(self, taskId, includeCollectionInfo):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostApiVersionCollectionTasksTaskidScoresQuery
 @api_call(error.InvalidQueryError)
-def query_collection_by_scores(self, taskId, thresholds, numResults):
+def query_collection_by_scores(self, taskId, thresholds, **options):
   """
   Query against a collection index using a set of labels and scores as a query.
   Takes in a map of thresholds, and returns media in the collection with detections above those thresholds
@@ -122,7 +124,7 @@ def query_collection_by_scores(self, taskId, thresholds, numResults):
     headers = {'Authorization': self.token.authorization_header()}
     data = {
         'thresholds': json.dumps(thresholds),
-        'numResults': numResults
+        'numResults': options.get("numResults")
     }
     return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
@@ -130,7 +132,7 @@ def query_collection_by_scores(self, taskId, thresholds, numResults):
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Collections-PostApiCollectionTasksTaskidImageQuery
 @api_call(error.InvalidQueryError)
-def query_collection_by_image(self, taskId, boundingBox=None, url=None, file=None, **options):
+def query_collection_by_image(self, taskId, url=None, file=None, **options):
   """
   Query against a collection index (CollectionManagerTask) using an image as key.
   Takes in an image file or url and returns similar media from the collection.
@@ -146,7 +148,7 @@ def query_collection_by_image(self, taskId, boundingBox=None, url=None, file=Non
     file_to_upload = None
     headers = {'Authorization': self.token.authorization_header()}
     data = {
-        'boundingBox': json.dumps(boundingBox),
+        'boundingBox': json.dumps(options.get('boundingBox')),
         'numResults': options.get('num_results')
     }
 

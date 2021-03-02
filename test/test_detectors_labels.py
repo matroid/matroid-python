@@ -3,8 +3,8 @@ import time
 from datetime import datetime
 import pytest
 
-from data import TEST_IMAGE_FILE, RAMDOM_MONGO_ID
-from matroid.error import APIConnectionError, InvalidQueryError
+from test.data import TEST_IMAGE_FILE, RANDOM_MONGO_ID
+from matroid.error import APIConnectionError, InvalidQueryError, APIError
 from test.helper import print_test_pass
 
 DETECTOR_TEST_ZIP = os.getcwd() + '/test/test_file/cat-dog-lacroix.zip'
@@ -54,6 +54,7 @@ class TestDetectorsAndLabels(object):
 
       self.get_detector_info_test(detector_id=detector_id)
       self.search_detectors_test()
+      self.list_detectors_test()
       redo_detector_id = self.redo_detector_test(
           detector_id=detector_id)
       import_detector_id = self.import_detector_test(name=import_detector_name, input_tensor=input_tensor,
@@ -72,19 +73,19 @@ class TestDetectorsAndLabels(object):
     with pytest.raises(APIConnectionError) as e:
       invalid_zip_path = os.getcwd() + '/test/test_file/invalid.zip'
       self.api.create_detector(
-          file=invalid_zip_path, name=name, detectorType=detector_type)
+          file=invalid_zip_path, name=name, detector_type=detector_type)
     assert ('No such file or directory' in str(e))
 
     res = self.api.create_detector(
-        file=file, name=name, detectorType=detector_type)
+        file=file, name=name, detector_type=detector_type)
     assert(res['detectorId'] != None)
 
     print_test_pass()
     return res['detectorId']
 
   def create_label_with_images_with_images_test(self, name, detector_id, image_files):
-    with pytest.raises(InvalidQueryError) as e:
-      self.api.create_label_with_images(detectorId=RAMDOM_MONGO_ID,
+    with pytest.raises(APIError) as e:
+      self.api.create_label_with_images(detectorId=RANDOM_MONGO_ID,
                                         name=name, imageFiles=image_files)
     assert ('invalid_query_err' in str(e))
 
@@ -110,7 +111,7 @@ class TestDetectorsAndLabels(object):
     return res['images'][0]['imageId']
 
   def update_annotations_test(self, detector_id, label_id, image_id, bbox):
-    with pytest.raises(InvalidQueryError) as e:
+    with pytest.raises(APIError) as e:
       self.api.update_annotations(
           detectorId=detector_id, labelId=label_id, images=[])
     assert ('invalid_query_err' in str(e))
@@ -145,6 +146,11 @@ class TestDetectorsAndLabels(object):
   def search_detectors_test(self):
     res = self.api.search_detectors()
     assert (res[0]['id'] != None)
+    print_test_pass()
+
+  def list_detectors_test(self):
+    res = self.api.list_detectors()
+    assert (len(res) > 0)
     print_test_pass()
 
   def redo_detector_test(self, detector_id):
@@ -183,11 +189,9 @@ class TestDetectorsAndLabels(object):
     print ('Info: waiting for detectors training')
     indicator = '.'
     max_indicator_length = 48
-    while res['state'] != 'trained':
+    while res['state'] != 'trained' and res['state'] != 'failed':
       if len(indicator) > max_indicator_length:
         pytest.fail('Timeout when waiting for detector training')
-      elif res['state'] == 'failed':
-        pytest.fail('Detector training failed')
 
       print(indicator)
       time.sleep(5)

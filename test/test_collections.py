@@ -2,8 +2,8 @@ import time
 from datetime import datetime
 import pytest
 
-from data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_IMAGE_URL, RAMDOM_MONGO_ID
-from matroid.error import InvalidQueryError
+from test.data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_IMAGE_URL, RANDOM_MONGO_ID
+from matroid.error import InvalidQueryError, APIError
 from test.helper import print_test_pass
 
 COLLECTION_NAME = 'py-test-collection-{}'.format(datetime.now())
@@ -11,6 +11,7 @@ S3_BUCKET_URL = 's3://bucket/m-test-public/'
 
 
 class TestCollections(object):
+
   def test_collections(self, set_up_client):
     collection_id = None
     task_id = None
@@ -41,23 +42,29 @@ class TestCollections(object):
 
   # test cases
   def create_collection_test(self):
-    with pytest.raises(InvalidQueryError) as e:
+    with pytest.raises(APIError) as e:
       self.api.create_collection(
           name='invalid-collection', url='invalid-url', sourceType='s3')
     assert ('invalid_query_err' in str(e))
 
+    # should create collection with correct params
+    sourceType = 's3'
     res = self.api.create_collection(
-        name=COLLECTION_NAME, url=S3_BUCKET_URL, sourceType='s3')
+        name=COLLECTION_NAME, url=S3_BUCKET_URL, sourceType=sourceType)
     collection_id = res['collection']['_id']
     assert(collection_id != None)
+    assert (res['collection']['name'] == COLLECTION_NAME)
+    assert (res['collection']['url'] == S3_BUCKET_URL)
+    assert (res['collection']['sourceType'] == sourceType)
+    assert (len(res['collection']['detectingTasks']) == 0)
 
     print_test_pass()
     return collection_id
 
   def create_collection_index_test(self, collection_id):
-    with pytest.raises(InvalidQueryError) as e:
+    with pytest.raises(APIError) as e:
       self.api.create_collection_index(
-          collectionId=collection_id, detectorId=RAMDOM_MONGO_ID, fileTypes='images')
+          collectionId=collection_id, detectorId=RANDOM_MONGO_ID, fileTypes='images')
     assert ('invalid_query_err' in str(e))
 
     res = self.api.create_collection_index(
@@ -67,10 +74,6 @@ class TestCollections(object):
 
     print_test_pass()
     return task_id
-
-  def delete_collection_test(self, collection_id):
-    res = self.api.delete_collection(collection_id=collection_id)
-    assert(res['message'] == 'Successfully deleted')
 
   def get_collection_test(self, collection_id):
     res = self.api.get_collection(collectionId=collection_id)
@@ -102,8 +105,8 @@ class TestCollections(object):
     print_test_pass()
 
   def query_collection_by_image_test(self, task_id, url):
-    res = self.api.query_collection_by_image(taskId=task_id, boundingBox={
-        "top": 0.1, "left": 0.1, "height": 0.8, "width": 0.8}, numResults=1, url=url)
+    res = self.api.query_collection_by_image(taskId=task_id, numResults=1, url=url, boundingBox={
+        "top": 0.1, "left": 0.1, "height": 0.8, "width": 0.8})
     assert (res['results'] != None)
     print_test_pass()
 

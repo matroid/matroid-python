@@ -1,7 +1,7 @@
 import pytest
 
-from data import TEST_IMAGE_URL, EVERYDAY_OBJECT_DETECTOR_ID, TEST_VIDEO_URL, RAMDOM_MONGO_ID
-from matroid.error import InvalidQueryError
+from test.data import TEST_IMAGE_URL, EVERYDAY_OBJECT_DETECTOR_ID, TEST_VIDEO_URL, RANDOM_MONGO_ID
+from matroid.error import InvalidQueryError, APIError
 from test.helper import print_test_pass
 
 
@@ -18,8 +18,8 @@ class TestVideos(object):
     self.get_video_results_test(video_id=video_id, threshold=threshold)
 
   def classify_video_test(self, detector_id, url):
-    with pytest.raises(InvalidQueryError) as e:
-      self.api.classify_video(detectorId=detector_id, url='invlid-url')
+    with pytest.raises(APIError) as e:
+      self.api.classify_video(detectorId=detector_id, url='invalid-url')
     assert ('invalid_query_err' in str(e))
 
     res = self.api.classify_video(
@@ -31,8 +31,8 @@ class TestVideos(object):
     return video_id
 
   def get_video_results_test(self, video_id, threshold):
-    with pytest.raises(InvalidQueryError) as e:
-      self.api.classify_video(detectorId=RAMDOM_MONGO_ID, url='invlid-url')
+    with pytest.raises(APIError) as e:
+      self.api.classify_video(detectorId=RANDOM_MONGO_ID, url='invalid-url')
     assert ('invalid_query_err' in str(e))
 
     res = self.api.get_video_results(
