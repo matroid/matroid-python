@@ -30,7 +30,6 @@ Then run `source ~/.bash_profile` on the command line to ensure the environment 
 ## Example API client usage
 
 ```
-import matroid
 from matroid.client import Matroid
 
 api = Matroid(client_id = 'abc', client_secret = '123')
