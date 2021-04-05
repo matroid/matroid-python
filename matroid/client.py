@@ -5,7 +5,7 @@ import sys
 from matroid import error
 from matroid.src.helpers import api_call
 
-BASE_URL = 'https://matroid.com/api/v1'
+BASE_URL = 'https://www.matroid.com/api/v1'
 DEFAULT_GRANT_TYPE = 'client_credentials'
 
 

@@ -73,11 +73,11 @@ class TestDetectorsAndLabels(object):
     with pytest.raises(APIConnectionError) as e:
       invalid_zip_path = os.getcwd() + '/test/test_file/invalid.zip'
       self.api.create_detector(
-          file=invalid_zip_path, name=name, detector_type=detector_type)
+          file=invalid_zip_path, name=name, detectorType=detector_type)
     assert ('No such file or directory' in str(e))
 
     res = self.api.create_detector(
-        file=file, name=name, detector_type=detector_type)
+        file=file, name=name, detectorType=detector_type)
     assert(res['detectorId'] != None)
 
     print_test_pass()
