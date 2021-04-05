@@ -5,7 +5,6 @@ from matroid.src.helpers import api_call
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Accounts-RefreshToken
 
-
 def retrieve_token(self, options={}):
   """
   Generates an OAuth token. The API client will intelligently refresh the Access Token for you
@@ -51,3 +50,6 @@ def account_info(self):
     return requests.request(method, endpoint, **{'headers': headers})
   except Exception as e:
     raise error.APIConnectionError(message=e)
+
+# account_info is now DEPRECATED in favor of get_account_info (kept for backwards-compatibility)
+get_account_info = account_info

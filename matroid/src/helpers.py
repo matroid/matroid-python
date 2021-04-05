@@ -166,6 +166,7 @@ def get_endpoints(base_url):
       'import_detector': (base_url + '/detectors/upload', 'POST'),
       'redo_detector': (base_url + '/detectors/:key/redo', 'POST'),
       'detectors': (base_url + '/detectors/search', 'GET'),
+      'list_detectors': (base_url + '/detectors', 'GET'),
       # images
       'classify_image': (base_url + '/detectors/:key/classify_image', 'POST'),
       'localize_image': (base_url + '/localize', 'POST'),

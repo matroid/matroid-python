@@ -23,4 +23,5 @@ def set_up_client(request):
 
 @pytest.fixture(scope="module")
 def set_up_wrong_permission_client(request):
-  return Matroid(client_id='invalid-id', client_secret='invalid-secret')
+  base_url = request.config.getoption('--base_url')
+  return Matroid(base_url=base_url, client_id='invalid-id', client_secret='invalid-secret')

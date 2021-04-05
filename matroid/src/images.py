@@ -92,7 +92,6 @@ def localize_image(self, localizer, localizerLabel, **options):
     data.update({'confidence': options.get('confidence'),
                  'update': 'true' if update else '',
                  'maxFaces': options.get('maxFaces'),
-                 'confidence': options.get('confidence'),
                  'labelId': options.get('labelId')
                  })
 

@@ -1,3 +1,4 @@
+import io
 import os
 import requests
 
@@ -50,13 +51,13 @@ def create_detector(self, file, name, detectorType, **options):
     data.update(options)
 
     with self.filereader.get_file(file) as file_to_upload:
-      files = {'file': file_to_upload}
+      # files = {'file': file_to_upload}
+      files = {'file': (file, file_to_upload, 'application/zip')}
       file_size = os.fstat(file_to_upload.fileno()).st_size
 
       if file_size > MAX_LOCAL_ZIP_SIZE:
         raise error.InvalidQueryError(message='File %s is larger than the limit of %d megabytes' % (
             file_to_upload.name, self.bytes_to_mb(MAX_LOCAL_ZIP_SIZE)))
-
       return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
   except Exception as e:
     raise error.APIConnectionError(message=e)
@@ -94,6 +95,8 @@ def finalize_detector(self, detectorId):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
+train_detector = finalize_detector
+
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-GetDetectorsDetector_id
 @api_call(error.InvalidQueryError)
 def get_detector_info(self, detectorId):
@@ -107,6 +110,8 @@ def get_detector_info(self, detectorId):
     return requests.request(method, endpoint, **{'headers': headers})
   except Exception as e:
     raise error.APIConnectionError(message=e)
+
+detector_info = get_detector_info
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsUpload
 @api_call(error.InvalidQueryError)
@@ -161,12 +166,12 @@ def import_detector(self, name, **options):
     raise error.APIConnectionError(message=e)
   finally:
     for file_keyword, file_obj in file_objs.items():
-      if isinstance(file_obj, file):
+      if isinstance(file_obj, io.IOBase):
         file_obj.close()
 
 # https://staging.dev.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsDetector_idRedo
 @api_call(error.InvalidQueryError)
-def redo_detector(self, detectorId):
+def redo_detector(self, detectorId, **options):
   """
   Redo a detector
   Note: a deep copy of the trained detector with different detector_id will be made
@@ -177,7 +182,10 @@ def redo_detector(self, detectorId):
 
   try:
     headers = {'Authorization': self.token.authorization_header()}
-    return requests.request(method, endpoint, **{'headers': headers})
+    data = {
+      'feedbackOnly': 'true' if options.get('feedbackOnly') else 'false'
+    }
+    return requests.request(method, endpoint, **{'headers': headers, 'data': data})
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
@@ -190,7 +198,21 @@ def search_detectors(self, **query):
   try:
     headers = {'Authorization': self.token.authorization_header()}
     params = {x: str(query[x]).lower() for x in query}
+    params['published'] = 'true' if query.get('published') else 'false'
 
     return requests.request(method, endpoint, **{'headers': headers, 'params': params})
   except Exception as e:
     raise error.APIConnectionError(message=e)
+
+# DEPRECATED in favor of search_detectors
+@api_call(error.InvalidQueryError)
+def list_detectors(self):
+  """Lists the available detectors"""
+  (endpoint, method) = self.endpoints['list_detectors']
+
+  try:
+    headers = {'Authorization': self.token.authorization_header()}
+    return requests.request(method, endpoint, **{'headers': headers})
+  except Exception as e:
+    raise error.APIConnectionError(message=e)
+
