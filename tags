@@ -1,0 +1,195 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+APIConnectionError	matroid/error.py	/^class APIConnectionError(APIError):$/;"	c
+APIError	matroid/error.py	/^class APIError(Exception):$/;"	c
+AuthorizationError	matroid/error.py	/^class AuthorizationError(APIError):$/;"	c
+BASE_URL	matroid/client.py	/^BASE_URL = 'https:\/\/www.matroid.com\/api\/v1'$/;"	v
+DEFAULT_GRANT_TYPE	matroid/client.py	/^DEFAULT_GRANT_TYPE = 'client_credentials'$/;"	v
+FileReader	matroid/client.py	/^  from matroid.src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader$/;"	i
+FileReader	matroid/src/helpers.py	/^class FileReader(object):$/;"	c
+InvalidQueryError	matroid/error.py	/^class InvalidQueryError(APIError):$/;"	c
+MAX_LOCAL_IMAGE_BATCH_SIZE	matroid/src/helpers.py	/^MAX_LOCAL_IMAGE_BATCH_SIZE = 50 * 1024 * 1024$/;"	v
+MAX_LOCAL_IMAGE_SIZE	matroid/src/helpers.py	/^MAX_LOCAL_IMAGE_SIZE = 50 * 1024 * 1024$/;"	v
+Matroid	matroid/client.py	/^Matroid = MatroidAPI$/;"	v
+MatroidAPI	matroid/client.py	/^class MatroidAPI(object):$/;"	c
+MediaError	matroid/error.py	/^class MediaError(APIError):$/;"	c
+PaymentError	matroid/error.py	/^class PaymentError(APIError):$/;"	c
+RateLimitError	matroid/error.py	/^class RateLimitError(APIError):$/;"	c
+ServerError	matroid/error.py	/^class ServerError(APIError):$/;"	c
+Token	matroid/client.py	/^  from matroid.src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader$/;"	i
+Token	matroid/src/helpers.py	/^class Token(object):$/;"	c
+TokenExpirationError	matroid/error.py	/^class TokenExpirationError(APIError):$/;"	c
+VERSION	matroid/version.py	/^VERSION = '1.0.2'$/;"	v
+VERSION	setup.py	/^from version import VERSION$/;"	i
+__init__	matroid/client.py	/^  def __init__(self, base_url=BASE_URL, client_id=None, client_secret=None, options={}):$/;"	m	class:MatroidAPI
+__init__	matroid/error.py	/^  def __init__(self, response=None, message=None):$/;"	m	class:APIError
+__init__	matroid/src/helpers.py	/^  def __init__(self):$/;"	m	class:FileReader
+__init__	matroid/src/helpers.py	/^  def __init__(self, token_type, token_str, expiration):$/;"	m	class:Token
+__str__	matroid/error.py	/^    def __str__(self):$/;"	f	function:APIError.__init__	file:
+absolute_import	matroid/__init__.py	/^from __future__ import absolute_import, division, print_function, unicode_literals$/;"	i
+account_info	matroid/client.py	/^  from matroid.src.accounts import get_account_info, account_info, retrieve_token$/;"	i
+account_info	matroid/src/accounts.py	/^def account_info(self):$/;"	f
+add_feedback_from_file	matroid/src/detectors.py	/^def add_feedback_from_file(self, detectorId, filePath, feedback):$/;"	f
+add_feedback_from_url	matroid/src/detectors.py	/^def add_feedback_from_url(self, detectorId, imageURL, feedback):$/;"	f
+api_call	matroid/client.py	/^from matroid.src.helpers import api_call$/;"	i
+api_call	matroid/src/accounts.py	/^from matroid.src.helpers import api_call$/;"	i
+api_call	matroid/src/collections.py	/^from matroid.src.helpers import api_call$/;"	i
+api_call	matroid/src/detectors.py	/^from matroid.src.helpers import api_call$/;"	i
+api_call	matroid/src/helpers.py	/^def api_call(default_error):$/;"	f
+api_call	matroid/src/images.py	/^from matroid.src.helpers import api_call, batch_file_request$/;"	i
+api_call	matroid/src/labels.py	/^from matroid.src.helpers import api_call, batch_file_request$/;"	i
+api_call	matroid/src/streams.py	/^from matroid.src.helpers import api_call$/;"	i
+api_call	matroid/src/videos.py	/^from matroid.src.helpers import api_call$/;"	i
+author	setup.py	/^    author='Matroid',$/;"	v
+author_email	setup.py	/^    author_email='support@matroid.com',$/;"	v
+authorization_header	matroid/src/helpers.py	/^  def authorization_header(self):$/;"	m	class:Token
+batch_file_request	matroid/src/helpers.py	/^def batch_file_request(uploaded_files, method, endpoint, headers, data, file_keyword='file'):$/;"	f
+batch_file_request	matroid/src/images.py	/^from matroid.src.helpers import api_call, batch_file_request$/;"	i
+batch_file_request	matroid/src/labels.py	/^from matroid.src.helpers import api_call, batch_file_request$/;"	i
+bytes_to_mb	matroid/client.py	/^  from matroid.src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader$/;"	i
+bytes_to_mb	matroid/src/helpers.py	/^def bytes_to_mb(self, bytes):$/;"	f
+check_errors	matroid/client.py	/^  from matroid.src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader$/;"	i
+check_errors	matroid/src/helpers.py	/^def check_errors(self, response=None, UserErr=None):$/;"	f
+check_file_size	matroid/src/helpers.py	/^def check_file_size(file):$/;"	f
+classify_image	matroid/client.py	/^  from matroid.src.images import classify_image, localize_image$/;"	i
+classify_image	matroid/src/images.py	/^def classify_image(self, detectorId, file=None, url=None, **options):$/;"	f
+classify_video	matroid/client.py	/^  from matroid.src.videos import classify_video, get_video_results$/;"	i
+classify_video	matroid/src/videos.py	/^def classify_video(self, detectorId, url=None, file=None, **options):$/;"	f
+create_collection	matroid/client.py	/^  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index$/;"	i
+create_collection	matroid/src/collections.py	/^def create_collection(self, name, url, sourceType, **options):$/;"	f
+create_collection_index	matroid/client.py	/^  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index$/;"	i
+create_collection_index	matroid/src/collections.py	/^def create_collection_index(self, collectionId, detectorId, fileTypes):$/;"	f
+create_detector	matroid/client.py	/^  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors$/;"	i
+create_detector	matroid/src/detectors.py	/^def create_detector(self, file, name, detectorType, **options):$/;"	f
+create_label_with_images	matroid/client.py	/^  from matroid.src.labels import create_label_with_images, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images$/;"	i
+create_label_with_images	matroid/src/labels.py	/^def create_label_with_images(self, detectorId, name, imageFiles, **options):$/;"	f
+create_stream	matroid/client.py	/^  from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams$/;"	i
+create_stream	matroid/src/streams.py	/^def create_stream(self, url, name, **options):$/;"	f
+datetime	matroid/src/helpers.py	/^import datetime$/;"	i
+decorator	matroid/src/helpers.py	/^  def decorator(func):$/;"	f	function:api_call
+delete_collection	matroid/client.py	/^  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index$/;"	i
+delete_collection	matroid/src/collections.py	/^def delete_collection(self, collectionId):$/;"	f
+delete_collection_index	matroid/client.py	/^  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index$/;"	i
+delete_collection_index	matroid/src/collections.py	/^def delete_collection_index(self, taskId):$/;"	f
+delete_detector	matroid/client.py	/^  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors$/;"	i
+delete_detector	matroid/src/detectors.py	/^def delete_detector(self, detectorId):$/;"	f
+delete_feedback	matroid/src/detectors.py	/^def delete_feedback(self, feedbackId):$/;"	f
+delete_label	matroid/client.py	/^  from matroid.src.labels import create_label_with_images, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images$/;"	i
+delete_label	matroid/src/labels.py	/^def delete_label(self, detectorId, labelId):$/;"	f
+delete_monitoring	matroid/client.py	/^  from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams$/;"	i
+delete_monitoring	matroid/src/streams.py	/^def delete_monitoring(self, monitoringId):$/;"	f
+delete_stream	matroid/client.py	/^  from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams$/;"	i
+delete_stream	matroid/src/streams.py	/^def delete_stream(self, streamId):$/;"	f
+description	setup.py	/^    description='Matroid API Python Library',$/;"	v
+detector_info	matroid/client.py	/^  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors$/;"	i
+detector_info	matroid/src/detectors.py	/^detector_info = get_detector_info$/;"	v
+division	matroid/__init__.py	/^from __future__ import absolute_import, division, print_function, unicode_literals$/;"	i
+error	matroid/client.py	/^from matroid import error$/;"	i
+error	matroid/src/accounts.py	/^from matroid import error$/;"	i
+error	matroid/src/collections.py	/^from matroid import error$/;"	i
+error	matroid/src/detectors.py	/^from matroid import error$/;"	i
+error	matroid/src/helpers.py	/^from matroid import error$/;"	i
+error	matroid/src/images.py	/^from matroid import error$/;"	i
+error	matroid/src/labels.py	/^from matroid import error$/;"	i
+error	matroid/src/streams.py	/^from matroid import error$/;"	i
+error	matroid/src/videos.py	/^from matroid import error$/;"	i
+expired	matroid/src/helpers.py	/^  def expired(self):$/;"	m	class:Token
+finalize_detector	matroid/client.py	/^  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors$/;"	i
+finalize_detector	matroid/src/detectors.py	/^def finalize_detector(self, detectorId):$/;"	f
+format_response	matroid/client.py	/^  from matroid.src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader$/;"	i
+format_response	matroid/src/helpers.py	/^def format_response(self, response):$/;"	f
+get_account_info	matroid/client.py	/^  from matroid.src.accounts import get_account_info, account_info, retrieve_token$/;"	i
+get_account_info	matroid/src/accounts.py	/^get_account_info = account_info$/;"	v
+get_annotations	matroid/client.py	/^  from matroid.src.labels import create_label_with_images, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images$/;"	i
+get_annotations	matroid/src/labels.py	/^def get_annotations(self, **options):$/;"	f
+get_collection	matroid/client.py	/^  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index$/;"	i
+get_collection	matroid/src/collections.py	/^def get_collection(self, collectionId):$/;"	f
+get_collection_task	matroid/client.py	/^  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index$/;"	i
+get_collection_task	matroid/src/collections.py	/^def get_collection_task(self, taskId):$/;"	f
+get_data_info	matroid/src/detectors.py	/^  def get_data_info():$/;"	f	function:import_detector
+get_detector_info	matroid/client.py	/^  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors$/;"	i
+get_detector_info	matroid/src/detectors.py	/^def get_detector_info(self, detectorId):$/;"	f
+get_endpoints	matroid/client.py	/^    from matroid.src.helpers import get_endpoints$/;"	i
+get_endpoints	matroid/src/helpers.py	/^def get_endpoints(base_url):$/;"	f
+get_file	matroid/src/helpers.py	/^  def get_file(self, file_input):$/;"	m	class:FileReader
+get_label_images	matroid/client.py	/^  from matroid.src.labels import create_label_with_images, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images$/;"	i
+get_label_images	matroid/src/labels.py	/^def get_label_images(self, detectorId, labelId):$/;"	f
+get_monitoring_result	matroid/client.py	/^  from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams$/;"	i
+get_monitoring_result	matroid/src/streams.py	/^def get_monitoring_result(self, monitoringId, **options):$/;"	f
+get_video_results	matroid/client.py	/^  from matroid.src.videos import classify_video, get_video_results$/;"	i
+get_video_results	matroid/src/videos.py	/^def get_video_results(self, videoId, **options):$/;"	f
+import_detector	matroid/client.py	/^  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors$/;"	i
+import_detector	matroid/src/detectors.py	/^def import_detector(self, name, **options):$/;"	f
+install_requires	setup.py	/^    install_requires=['requests'],$/;"	v
+io	matroid/src/detectors.py	/^import io$/;"	i
+json	matroid/src/collections.py	/^import json$/;"	i
+json	matroid/src/labels.py	/^import json$/;"	i
+json	matroid/src/streams.py	/^import json$/;"	i
+kill_collection_index	matroid/client.py	/^  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index$/;"	i
+kill_collection_index	matroid/src/collections.py	/^def kill_collection_index(self, taskId, includeCollectionInfo):$/;"	f
+kill_monitoring	matroid/client.py	/^  from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams$/;"	i
+kill_monitoring	matroid/src/streams.py	/^def kill_monitoring(self, monitoringId):$/;"	f
+list_detectors	matroid/client.py	/^  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors$/;"	i
+list_detectors	matroid/src/detectors.py	/^def list_detectors(self):$/;"	f
+localize_image	matroid/client.py	/^  from matroid.src.images import classify_image, localize_image$/;"	i
+localize_image	matroid/src/images.py	/^def localize_image(self, localizer, localizerLabel, **options):$/;"	f
+monitor_stream	matroid/client.py	/^  from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams$/;"	i
+monitor_stream	matroid/src/streams.py	/^def monitor_stream(self, streamId, detectorId, thresholds, **options):$/;"	f
+name	setup.py	/^    name='matroid',$/;"	v
+os	matroid/client.py	/^import os$/;"	i
+os	matroid/src/collections.py	/^import os$/;"	i
+os	matroid/src/detectors.py	/^import os$/;"	i
+os	matroid/src/helpers.py	/^import os$/;"	i
+os	matroid/src/images.py	/^import os$/;"	i
+os	matroid/src/videos.py	/^import os$/;"	i
+os	setup.py	/^import os$/;"	i
+packages	setup.py	/^    packages=['matroid'],$/;"	v
+print_function	matroid/__init__.py	/^from __future__ import absolute_import, division, print_function, unicode_literals$/;"	i
+query_collection_by_image	matroid/client.py	/^  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index$/;"	i
+query_collection_by_image	matroid/src/collections.py	/^def query_collection_by_image(self, taskId, url=None, file=None, **options):$/;"	f
+query_collection_by_scores	matroid/client.py	/^  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index$/;"	i
+query_collection_by_scores	matroid/src/collections.py	/^def query_collection_by_scores(self, taskId, thresholds, **options):$/;"	f
+re	matroid/client.py	/^import re$/;"	i
+redo_detector	matroid/client.py	/^  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors$/;"	i
+redo_detector	matroid/src/detectors.py	/^def redo_detector(self, detectorId, **options):$/;"	f
+register_stream	matroid/client.py	/^  from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams$/;"	i
+register_stream	matroid/src/streams.py	/^register_stream = create_stream$/;"	v
+requests	matroid/src/accounts.py	/^import requests$/;"	i
+requests	matroid/src/collections.py	/^import requests$/;"	i
+requests	matroid/src/detectors.py	/^import requests$/;"	i
+requests	matroid/src/helpers.py	/^import requests$/;"	i
+requests	matroid/src/images.py	/^import requests$/;"	i
+requests	matroid/src/labels.py	/^import requests$/;"	i
+requests	matroid/src/streams.py	/^import requests$/;"	i
+requests	matroid/src/videos.py	/^import requests$/;"	i
+retrieve_token	matroid/client.py	/^  from matroid.src.accounts import get_account_info, account_info, retrieve_token$/;"	i
+retrieve_token	matroid/src/accounts.py	/^def retrieve_token(self, options={}):$/;"	f
+save_token	matroid/client.py	/^  from matroid.src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader$/;"	i
+save_token	matroid/src/helpers.py	/^def save_token(self, response):$/;"	f
+search_detectors	matroid/client.py	/^  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors$/;"	i
+search_detectors	matroid/src/detectors.py	/^def search_detectors(self, **query):$/;"	f
+search_monitorings	matroid/client.py	/^  from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams$/;"	i
+search_monitorings	matroid/src/streams.py	/^def search_monitorings(self, **options):$/;"	f
+search_streams	matroid/client.py	/^  from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams$/;"	i
+search_streams	matroid/src/streams.py	/^def search_streams(self, **options):$/;"	f
+setup	setup.py	/^  from distutils.core import setup$/;"	i
+setup	setup.py	/^  from setuptools import setup$/;"	i
+setup_and_teardown	matroid/src/helpers.py	/^    def setup_and_teardown(self, *original_args, **original_kwargs):$/;"	f	function:api_call.decorator
+sys	matroid/client.py	/^import sys$/;"	i
+sys	setup.py	/^import sys$/;"	i
+train_detector	matroid/client.py	/^  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors$/;"	i
+train_detector	matroid/src/detectors.py	/^train_detector = finalize_detector$/;"	v
+unicode_literals	matroid/__init__.py	/^from __future__ import absolute_import, division, print_function, unicode_literals$/;"	i
+update_annotations	matroid/client.py	/^  from matroid.src.labels import create_label_with_images, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images$/;"	i
+update_annotations	matroid/src/labels.py	/^def update_annotations(self, detectorId, labelId, images, **options):$/;"	f
+update_collection_index	matroid/client.py	/^  from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index$/;"	i
+update_collection_index	matroid/src/collections.py	/^def update_collection_index(self, taskId, updateIndex):$/;"	f
+update_label_with_images	matroid/client.py	/^  from matroid.src.labels import create_label_with_images, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images$/;"	i
+update_label_with_images	matroid/src/labels.py	/^def update_label_with_images(self, detectorId, labelId, imageFiles, **options):$/;"	f
+url	setup.py	/^    url='https:\/\/github.com\/matroid\/matroid-python',$/;"	v
+use_2to3	setup.py	/^    use_2to3=True$/;"	v
+version	setup.py	/^    version=VERSION,$/;"	v

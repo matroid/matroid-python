@@ -216,3 +216,64 @@ def list_detectors(self):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
+
+@api_call(error.InvalidQueryError)
+def add_feedback_from_file(self, detectorId, filePath, feedback):
+  """Add feedback to a detector using a local file"""
+  (endpoint, method) = self.endpoints['add_feedback_from_file']
+  endpoint = endpoint.replace(':key', detectorId)
+
+  data = {
+      'feedback': feedback,
+  }
+
+  file_objs = {'file': filePath}
+
+  try:
+    headers = {'Authorization': self.token.authorization_header()}
+    return requests.request(method, endpoint, **{'headers': headers, 'files': file_objs, 'data': data})
+  except IOError as e:
+    raise e
+  except error.InvalidQueryError as e:
+    raise e
+  except Exception as e:
+    raise error.APIConnectionError(message=e)
+  finally:
+    for file_keyword, file_obj in file_objs.items():
+      if isinstance(file_obj, io.IOBase):
+        file_obj.close()
+
+
+@api_call(error.InvalidQueryError)
+def add_feedback_from_url(self, detectorId, imageURL, feedback):
+  """Add feedback to a detector using an image URL"""
+  (endpoint, method) = self.endpoints['add_feedback_from_url']
+  endpoint = endpoint.replace(':key', detectorId)
+
+  data = {
+      'feedback': feedback,
+      'url': imageURL
+  }
+
+  try:
+    headers = {'Authorization': self.token.authorization_header()}
+    return requests.request(method, endpoint, **{'headers': headers, 'data': data})
+  except error.InvalidQueryError as e:
+    raise e
+  except Exception as e:
+    raise error.APIConnectionError(message=e)
+
+
+@api_call(error.InvalidQueryError)
+def delete_feedback(self, feedbackId):
+  """Delete previously given feedback"""
+  (endpoint, method) = self.endpoints['delete_feedback']
+  endpoint = endpoint.replace(':key', feedbackId)
+
+  try:
+    headers = {'Authorization': self.token.authorization_header()}
+    return requests.request(method, endpoint, **{'headers': headers})
+  except error.InvalidQueryError as e:
+    raise e
+  except Exception as e:
+    raise error.APIConnectionError(message=e)

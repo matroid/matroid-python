@@ -167,6 +167,9 @@ def get_endpoints(base_url):
       'redo_detector': (base_url + '/detectors/:key/redo', 'POST'),
       'detectors': (base_url + '/detectors/search', 'GET'),
       'list_detectors': (base_url + '/detectors', 'GET'),
+      'add_feedback_from_file': (base_url + '/detectors/:key/feedback', 'POST'),
+      'add_feedback_from_url': (base_url + '/detectors/:key/feedback', 'POST'),
+      'delete_feedback': (base_url + '/feedback/:key', 'DELETE'),
       # images
       'classify_image': (base_url + '/detectors/:key/classify_image', 'POST'),
       'localize_image': (base_url + '/localize', 'POST'),
