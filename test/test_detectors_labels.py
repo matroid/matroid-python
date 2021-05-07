@@ -229,7 +229,7 @@ class TestDetectorsAndLabels(object):
 
   def delete_feedback_test(self):
     for feedback_id in self.feedback_ids:
-        res = self.api.delete_feedback(feedback_id)
+        res = self.api.delete_feedback(feedbackId=feedback_id)
         assert (res['feedbackId'] is not None)
 
     print_test_pass()
