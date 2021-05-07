@@ -57,6 +57,7 @@ class TestDetectorsAndLabels(object):
       self.get_detector_info_test(detector_id=detector_id)
       self.add_feedback_from_file_test(detector_id=detector_id)
       self.add_feedback_from_url_test(detector_id=detector_id)
+      self.add_single_feedback_from_url_test(detector_id=detector_id)
       self.delete_feedback_test()
       self.search_detectors_test()
       self.list_detectors_test()
@@ -163,9 +164,12 @@ class TestDetectorsAndLabels(object):
     ]
 
     res = self.api.add_feedback_from_file(detectorId=detector_id, filePath=TEST_IMAGE_FILE, feedback=feedback)
+    assert (len(res['feedback']) == 1)
+
     feedback_id = res['feedback'][0]['id']
     assert (feedback_id is not None)
     self.feedback_ids.append(feedback_id)
+
     print_test_pass()
 
   def add_feedback_from_url_test(self, detector_id):
@@ -193,11 +197,33 @@ class TestDetectorsAndLabels(object):
     ]
 
     res = self.api.add_feedback_from_url(detectorId=detector_id, imageURL=TEST_IMAGE_URL, feedback=feedback)
+    assert (len(res['feedback']) == 2)
 
     for feedback_item in res['feedback']:
         feedback_id = feedback_item['id']
         assert (feedback_id is not None)
         self.feedback_ids.append(feedback_id)
+
+    print_test_pass()
+
+  def add_single_feedback_from_url_test(self, detector_id):
+    feedback = {
+      'feedbackType': 'negative',
+      'label': 'cat',
+      'boundingBox': {
+        'top': .2,
+        'left': .2,
+        'height': .2,
+        'width': .2,
+      },
+    }
+
+    res = self.api.add_feedback_from_url(detectorId=detector_id, imageURL=TEST_IMAGE_URL, feedback=feedback)
+    assert (len(res['feedback']) == 1)
+
+    feedback_id = res['feedback'][0]['id']
+    assert (feedback_id is not None)
+    self.feedback_ids.append(feedback_id)
 
     print_test_pass()
 
