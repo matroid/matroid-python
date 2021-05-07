@@ -162,7 +162,7 @@ class TestDetectorsAndLabels(object):
        }
     ]
 
-    res = self.api.add_feedback_from_file(detectorId=detector_id, imageFile=TEST_IMAGE_FILE, feedback=feedback)
+    res = self.api.add_feedback_from_file(detectorId=detector_id, filePath=TEST_IMAGE_FILE, feedback=feedback)
     feedback_id = res['feedback'][0]['id']
     assert (feedback_id is not None)
     self.feedback_ids.append(feedback_id)
@@ -178,14 +178,27 @@ class TestDetectorsAndLabels(object):
           'left': .1,
           'height': .1,
           'width': .1,
-         },
-       }
+        },
+      },
+      {
+        'feedbackType': 'negative',
+        'label': 'cat',
+        'boundingBox': {
+          'top': .3,
+          'left': .3,
+          'height': .3,
+          'width': .3,
+        },
+      }
     ]
 
-    res = self.api.add_feedback_from_url(detectorId=detector_id, imageUrl=TEST_IMAGE_URL, feedback=feedback)
-    feedback_id = res['feedback'][0]['id']
-    assert (feedback_id is not None)
-    self.feedback_ids.append(feedback_id)
+    res = self.api.add_feedback_from_url(detectorId=detector_id, imageURL=TEST_IMAGE_URL, feedback=feedback)
+
+    for feedback_item in res['feedback']:
+        feedback_id = feedback_item['id']
+        assert (feedback_id is not None)
+        self.feedback_ids.append(feedback_id)
+
     print_test_pass()
 
   def delete_feedback_test(self):

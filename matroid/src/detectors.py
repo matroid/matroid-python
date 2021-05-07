@@ -1,6 +1,7 @@
 import io
 import os
 import requests
+import json
 
 from matroid import error
 from matroid.src.helpers import api_call
@@ -224,14 +225,15 @@ def add_feedback_from_file(self, detectorId, filePath, feedback):
   endpoint = endpoint.replace(':key', detectorId)
 
   data = {
-      'feedback': feedback,
+    'feedback': format_feedback(feedback)
   }
 
-  file_objs = {'file': filePath}
-
   try:
+    image_file = self.filereader.get_file(filePath)
+    files = {'file': image_file }
     headers = {'Authorization': self.token.authorization_header()}
-    return requests.request(method, endpoint, **{'headers': headers, 'files': file_objs, 'data': data})
+
+    return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
   except IOError as e:
     raise e
   except error.InvalidQueryError as e:
@@ -239,9 +241,8 @@ def add_feedback_from_file(self, detectorId, filePath, feedback):
   except Exception as e:
     raise error.APIConnectionError(message=e)
   finally:
-    for file_keyword, file_obj in file_objs.items():
-      if isinstance(file_obj, io.IOBase):
-        file_obj.close()
+    if isinstance(image_file, io.IOBase):
+      image_file.close()
 
 
 @api_call(error.InvalidQueryError)
@@ -251,8 +252,8 @@ def add_feedback_from_url(self, detectorId, imageURL, feedback):
   endpoint = endpoint.replace(':key', detectorId)
 
   data = {
-      'feedback': feedback,
-      'url': imageURL
+    'feedback': format_feedback(feedback),
+    'url': imageURL
   }
 
   try:
@@ -277,3 +278,12 @@ def delete_feedback(self, feedbackId):
     raise e
   except Exception as e:
     raise error.APIConnectionError(message=e)
+
+def format_feedback(feedback):
+    if not isinstance(feedback, list):
+        feedback = [feedback]
+
+    if len(feedback) == 1:
+        return json.dumps(feedback[0])
+
+    return [json.dumps(item) for item in feedback]
