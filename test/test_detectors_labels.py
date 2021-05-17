@@ -58,7 +58,7 @@ class TestDetectorsAndLabels(object):
       self.add_feedback_from_file_test(detector_id=detector_id)
       self.add_feedback_from_url_test(detector_id=detector_id)
       self.add_single_feedback_from_url_test(detector_id=detector_id)
-      self.delete_feedback_test()
+      self.delete_feedback_test(detector_id=detector_id)
       self.search_detectors_test()
       self.list_detectors_test()
       redo_detector_id = self.redo_detector_test(
@@ -227,9 +227,9 @@ class TestDetectorsAndLabels(object):
 
     print_test_pass()
 
-  def delete_feedback_test(self):
+  def delete_feedback_test(self, detector_id):
     for feedback_id in self.feedback_ids:
-        res = self.api.delete_feedback(feedbackId=feedback_id)
+        res = self.api.delete_feedback(feedbackId=feedback_id, detectorId=detector_id)
         assert (res['feedbackId'] is not None)
 
     print_test_pass()

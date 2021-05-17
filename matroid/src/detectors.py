@@ -222,7 +222,7 @@ def list_detectors(self):
 def add_feedback_from_file(self, detectorId, filePath, feedback):
   """Add feedback to a detector using a local file"""
   (endpoint, method) = self.endpoints['add_feedback_from_file']
-  endpoint = endpoint.replace(':key', detectorId)
+  endpoint = endpoint.replace(':detector_id', detectorId)
 
   data = {
     'feedback': format_feedback(feedback)
@@ -249,7 +249,7 @@ def add_feedback_from_file(self, detectorId, filePath, feedback):
 def add_feedback_from_url(self, detectorId, imageURL, feedback):
   """Add feedback to a detector using an image URL"""
   (endpoint, method) = self.endpoints['add_feedback_from_url']
-  endpoint = endpoint.replace(':key', detectorId)
+  endpoint = endpoint.replace(':detector_id', detectorId)
 
   data = {
     'feedback': format_feedback(feedback),
@@ -266,10 +266,11 @@ def add_feedback_from_url(self, detectorId, imageURL, feedback):
 
 
 @api_call(error.InvalidQueryError)
-def delete_feedback(self, feedbackId):
+def delete_feedback(self, feedbackId, detectorId):
   """Delete previously given feedback"""
   (endpoint, method) = self.endpoints['delete_feedback']
-  endpoint = endpoint.replace(':key', feedbackId)
+  endpoint = endpoint.replace(':detector_id', detectorId)
+  endpoint = endpoint.replace(':feedback_id', feedbackId)
 
   try:
     headers = {'Authorization': self.token.authorization_header()}

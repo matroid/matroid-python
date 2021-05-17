@@ -137,7 +137,7 @@ feedback = [
 api.add_feedback_from_url(detector_id = 'your-detector-id', imageURL = url, feedback = feedback)
 
 # Delete feedback from a detector
-api.delete_feedback(feedback_id = 'your-feedback-id')
+api.delete_feedback(feedback_id = 'your-feedback-id', detector_id = 'your-detector-id')
 ```
 
 ## API Response samples
