@@ -117,7 +117,7 @@ feedback = [
    },
 ]
 
-api.add_feedback_from_file(detector_id = 'your-detector-id', filePath = '/Users/matroid/image.png', feedback = feedback)
+api.add_feedback(detectorId = 'your-detector-id', feedback = feedback, file = '/Users/matroid/image.png')
 
 # Add feedback to a detector from a URL
 url = 'https://www.matroid.com/images/logo2.png'
@@ -134,7 +134,7 @@ feedback = [
    },
 ]
 
-api.add_feedback_from_url(detector_id = 'your-detector-id', imageURL = url, feedback = feedback)
+api.add_feedback(detectorId = 'your-detector-id', feeback = feedback, url = url)
 
 # Delete feedback from a detector
 api.delete_feedback(feedback_id = 'your-feedback-id', detector_id = 'your-detector-id')

@@ -55,9 +55,7 @@ class TestDetectorsAndLabels(object):
       self.wait_detector_training(detector_id)
 
       self.get_detector_info_test(detector_id=detector_id)
-      self.add_feedback_from_file_test(detector_id=detector_id)
-      self.add_feedback_from_url_test(detector_id=detector_id)
-      self.add_single_feedback_from_url_test(detector_id=detector_id)
+      self.add_feedback_test(detector_id=detector_id)
       self.delete_feedback_test(detector_id=detector_id)
       self.search_detectors_test()
       self.list_detectors_test()
@@ -149,7 +147,7 @@ class TestDetectorsAndLabels(object):
     assert (res['id'] == detector_id)
     print_test_pass()
 
-  def add_feedback_from_file_test(self, detector_id):
+  def add_feedback_test(self, detector_id):
     feedback = [
       {
         'feedbackType': 'positive',
@@ -163,17 +161,14 @@ class TestDetectorsAndLabels(object):
        }
     ]
 
-    res = self.api.add_feedback_from_file(detectorId=detector_id, filePath=TEST_IMAGE_FILE, feedback=feedback)
+    res = self.api.add_feedback(detectorId=detector_id, file=TEST_IMAGE_FILE, feedback=feedback)
     assert (len(res['feedback']) == 1)
 
     feedback_id = res['feedback'][0]['id']
     assert (feedback_id is not None)
     self.feedback_ids.append(feedback_id)
 
-    print_test_pass()
-
-  def add_feedback_from_url_test(self, detector_id):
-    feedback = [
+    url_feedback = [
       {
         'feedbackType': 'positive',
         'label': 'cat',
@@ -196,7 +191,7 @@ class TestDetectorsAndLabels(object):
       }
     ]
 
-    res = self.api.add_feedback_from_url(detectorId=detector_id, imageURL=TEST_IMAGE_URL, feedback=feedback)
+    res = self.api.add_feedback(detectorId=detector_id, feedback=url_feedback, url=TEST_IMAGE_URL)
     assert (len(res['feedback']) == 2)
 
     for feedback_item in res['feedback']:
@@ -204,10 +199,7 @@ class TestDetectorsAndLabels(object):
         assert (feedback_id is not None)
         self.feedback_ids.append(feedback_id)
 
-    print_test_pass()
-
-  def add_single_feedback_from_url_test(self, detector_id):
-    feedback = {
+    single_feedback = {
       'feedbackType': 'negative',
       'label': 'cat',
       'boundingBox': {
@@ -218,7 +210,7 @@ class TestDetectorsAndLabels(object):
       },
     }
 
-    res = self.api.add_feedback_from_url(detectorId=detector_id, imageURL=TEST_IMAGE_URL, feedback=feedback)
+    res = self.api.add_feedback(detectorId=detector_id, url=TEST_IMAGE_URL, feedback=single_feedback)
     assert (len(res['feedback']) == 1)
 
     feedback_id = res['feedback'][0]['id']

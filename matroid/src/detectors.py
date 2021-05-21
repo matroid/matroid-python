@@ -217,22 +217,37 @@ def list_detectors(self):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
-
 @api_call(error.InvalidQueryError)
-def add_feedback_from_file(self, detectorId, filePath, feedback):
-  """Add feedback to a detector using a local file"""
-  (endpoint, method) = self.endpoints['add_feedback_from_file']
+def add_feedback(self, detectorId, feedback, file=None, url=None):
+  """
+  Add feedback to a detector using a local file or image URL
+  """
+  (endpoint, method) = self.endpoints['add_feedback']
   endpoint = endpoint.replace(':detector_id', detectorId)
+
+  if not url and not file:
+    raise error.InvalidQueryError(
+        message='Missing required parameter: file or URL')
+
+  if url and file:
+    raise error.InvalidQueryError(
+        message='You may only specify a file or a URL, not both')
 
   data = {
     'feedback': format_feedback(feedback)
   }
 
-  try:
-    image_file = self.filereader.get_file(filePath)
-    files = {'file': image_file }
-    headers = {'Authorization': self.token.authorization_header()}
+  image_file = None
+  files = None
 
+  try:
+    if url:
+        data['url'] = url
+    else:
+        image_file = self.filereader.get_file(file)
+        files = {'file': image_file }
+
+    headers = {'Authorization': self.token.authorization_header()}
     return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
   except IOError as e:
     raise e
@@ -243,26 +258,6 @@ def add_feedback_from_file(self, detectorId, filePath, feedback):
   finally:
     if isinstance(image_file, io.IOBase):
       image_file.close()
-
-
-@api_call(error.InvalidQueryError)
-def add_feedback_from_url(self, detectorId, imageURL, feedback):
-  """Add feedback to a detector using an image URL"""
-  (endpoint, method) = self.endpoints['add_feedback_from_url']
-  endpoint = endpoint.replace(':detector_id', detectorId)
-
-  data = {
-    'feedback': format_feedback(feedback),
-    'url': imageURL
-  }
-
-  try:
-    headers = {'Authorization': self.token.authorization_header()}
-    return requests.request(method, endpoint, **{'headers': headers, 'data': data})
-  except error.InvalidQueryError as e:
-    raise e
-  except Exception as e:
-    raise error.APIConnectionError(message=e)
 
 
 @api_call(error.InvalidQueryError)
