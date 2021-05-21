@@ -134,7 +134,7 @@ feedback = [
    },
 ]
 
-api.add_feedback(detectorId = 'your-detector-id', feeback = feedback, url = url)
+api.add_feedback(detectorId = 'your-detector-id', feedback = feedback, url = url)
 
 # Delete feedback from a detector
 api.delete_feedback(feedback_id = 'your-feedback-id', detector_id = 'your-detector-id')
