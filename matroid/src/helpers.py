@@ -199,7 +199,15 @@ def get_endpoints(base_url):
       'kill_collection_index': (base_url + '/collection-tasks/:key/kill', 'POST'),
       'query_collection_by_scores': (base_url + '/collection-tasks/:key/scores-query', 'POST'),
       'query_collection_by_image': (base_url + '/collection-tasks/:key/image-query', 'POST'),
-      'update_collection_index':  (base_url + '/collection-tasks/:key', 'PUT')
+      'update_collection_index':  (base_url + '/collection-tasks/:key', 'PUT'),
+      # video summary
+      'create_video_summary': (base_url + '/summarize', 'POST'),
+      'get_video_summary': (base_url + '/summaries/:summaryId', 'GET'),
+      'get_video_summary_tracks': (base_url + '/summaries/:summaryId/tracks.csv', 'GET'),
+      'get_video_summary_file': (base_url + '/summaries/:summaryId/video.mp4', 'GET'),
+      'delete_video_summary': (base_url + '/summaries/:summaryId', 'DELETE'),
+      'create_stream_summary': (base_url + '/streams/:streamId/summarize', 'POST'),
+      'get_stream_summaries': (base_url + '/streams/:streamId/summaries', 'GET'),
   }
 
   return end_points
