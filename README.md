@@ -92,6 +92,52 @@ api.get_detector_info(detector_id)
 
 # Check your Matroid Credits balance
 api.account_info()
+
+# Add feedback to a detector from a local file
+feedback = [
+  {
+    'feedbackType': 'positive',
+    'label': 'cat',
+    'boundingBox': {
+      'top': .1,
+      'left': .1,
+      'height': .1,
+      'width': .1,
+     },
+   },
+  {
+    'feedbackType': 'negative',
+    'label': 'dog',
+    'boundingBox': {
+      'top': .2,
+      'left': .2,
+      'height': .35,
+      'width': .35,
+     },
+   },
+]
+
+api.add_feedback(detectorId = 'your-detector-id', feedback = feedback, file = '/Users/matroid/image.png')
+
+# Add feedback to a detector from a URL
+url = 'https://www.matroid.com/images/logo2.png'
+feedback = [
+  {
+    'feedbackType': 'positive',
+    'label': 'cat',
+    'boundingBox': {
+      'top': .1,
+      'left': .1,
+      'height': .1,
+      'width': .1,
+     },
+   },
+]
+
+api.add_feedback(detectorId = 'your-detector-id', feedback = feedback, url = url)
+
+# Delete feedback from a detector
+api.delete_feedback(feedback_id = 'your-feedback-id', detector_id = 'your-detector-id')
 ```
 
 ## API Response samples
@@ -276,5 +322,44 @@ api.account_info()
       "estimated_completion_time": "2016-01-01T20:24:30.193Z"
     }
   }
+}
+```
+
+#### Sample add feedback response
+
+```
+{
+  "feedback": [
+    {
+      "id": "58471afdc3d3516158d3b441",
+      "label": "cat",
+      "feedbackType": "negative",
+      "boundingBox": {
+        "top": 0.1,
+        "left": 0.1,
+        "width": 0.73,
+        "height": 0.44,
+      },
+    },
+    {
+      "id": "58471afdc3d3516158d3b442",
+      "label": "cat",
+      "feedbackType": "positive",
+      "boundingBox": {
+        "top": 0.3,
+        "left": 0.3,
+        "width": 0.13,
+        "height": 0.24,
+      },
+    },
+  ]
+}
+```
+
+#### Sample delete feedback respoonse
+
+```
+{
+  "feedbackId": ": "58471afdc3d3516158d3b441",
 }
 ```

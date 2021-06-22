@@ -1,6 +1,7 @@
 import io
 import os
 import requests
+import json
 
 from matroid import error
 from matroid.src.helpers import api_call
@@ -216,3 +217,69 @@ def list_detectors(self):
   except Exception as e:
     raise error.APIConnectionError(message=e)
 
+@api_call(error.InvalidQueryError)
+def add_feedback(self, detectorId, feedback, file=None, url=None):
+  """
+  Add feedback to a detector using a local file or image URL
+  """
+  (endpoint, method) = self.endpoints['add_feedback']
+  endpoint = endpoint.replace(':detector_id', detectorId)
+
+  if not url and not file:
+    raise error.InvalidQueryError(
+        message='Missing required parameter: file or URL')
+
+  if url and file:
+    raise error.InvalidQueryError(
+        message='You may only specify a file or a URL, not both')
+
+  data = {
+    'feedback': format_feedback(feedback)
+  }
+
+  image_file = None
+  files = None
+
+  try:
+    if url:
+        data['url'] = url
+    else:
+        image_file = self.filereader.get_file(file)
+        files = {'file': image_file }
+
+    headers = {'Authorization': self.token.authorization_header()}
+    return requests.request(method, endpoint, **{'headers': headers, 'files': files, 'data': data})
+  except IOError as e:
+    raise e
+  except error.InvalidQueryError as e:
+    raise e
+  except Exception as e:
+    raise error.APIConnectionError(message=e)
+  finally:
+    if isinstance(image_file, io.IOBase):
+      image_file.close()
+
+
+@api_call(error.InvalidQueryError)
+def delete_feedback(self, feedbackId, detectorId):
+  """Delete previously given feedback"""
+  (endpoint, method) = self.endpoints['delete_feedback']
+  endpoint = endpoint.replace(':detector_id', detectorId)
+  endpoint = endpoint.replace(':feedback_id', feedbackId)
+
+  try:
+    headers = {'Authorization': self.token.authorization_header()}
+    return requests.request(method, endpoint, **{'headers': headers})
+  except error.InvalidQueryError as e:
+    raise e
+  except Exception as e:
+    raise error.APIConnectionError(message=e)
+
+def format_feedback(feedback):
+    if not isinstance(feedback, list):
+        feedback = [feedback]
+
+    if len(feedback) == 1:
+        return json.dumps(feedback[0])
+
+    return [json.dumps(item) for item in feedback]

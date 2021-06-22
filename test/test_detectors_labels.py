@@ -3,12 +3,11 @@ import time
 from datetime import datetime
 import pytest
 
-from test.data import TEST_IMAGE_FILE, RANDOM_MONGO_ID
+from test.data import TEST_IMAGE_FILE, RANDOM_MONGO_ID, TEST_IMAGE_URL
 from matroid.error import APIConnectionError, InvalidQueryError, APIError
 from test.helper import print_test_pass
 
 DETECTOR_TEST_ZIP = os.getcwd() + '/test/test_file/cat-dog-lacroix.zip'
-
 
 class TestDetectorsAndLabels(object):
   def test_detector_and_labels(self, set_up_client):
@@ -27,6 +26,9 @@ class TestDetectorsAndLabels(object):
     output_tensor = 'prob3[2]'
     labels = ['female', 'male']
     file_proto = os.getcwd() + '/test/test_file/gender_only_all_android.pb'
+
+    # track so they can be deleted
+    self.feedback_ids = []
 
     # set up client
     self.api = set_up_client
@@ -53,6 +55,8 @@ class TestDetectorsAndLabels(object):
       self.wait_detector_training(detector_id)
 
       self.get_detector_info_test(detector_id=detector_id)
+      self.add_feedback_test(detector_id=detector_id)
+      self.delete_feedback_test(detector_id=detector_id)
       self.search_detectors_test()
       self.list_detectors_test()
       redo_detector_id = self.redo_detector_test(
@@ -141,6 +145,85 @@ class TestDetectorsAndLabels(object):
   def get_detector_info_test(self, detector_id):
     res = self.api.get_detector_info(detectorId=detector_id)
     assert (res['id'] == detector_id)
+    print_test_pass()
+
+  def add_feedback_test(self, detector_id):
+    feedback = [
+      {
+        'feedbackType': 'positive',
+        'label': 'cat',
+        'boundingBox': {
+          'top': .1,
+          'left': .1,
+          'height': .1,
+          'width': .1,
+         },
+       }
+    ]
+
+    res = self.api.add_feedback(detectorId=detector_id, file=TEST_IMAGE_FILE, feedback=feedback)
+    assert (len(res['feedback']) == 1)
+
+    feedback_id = res['feedback'][0]['id']
+    assert (feedback_id is not None)
+    self.feedback_ids.append(feedback_id)
+
+    url_feedback = [
+      {
+        'feedbackType': 'positive',
+        'label': 'cat',
+        'boundingBox': {
+          'top': .1,
+          'left': .1,
+          'height': .1,
+          'width': .1,
+        },
+      },
+      {
+        'feedbackType': 'negative',
+        'label': 'cat',
+        'boundingBox': {
+          'top': .3,
+          'left': .3,
+          'height': .3,
+          'width': .3,
+        },
+      }
+    ]
+
+    res = self.api.add_feedback(detectorId=detector_id, feedback=url_feedback, url=TEST_IMAGE_URL)
+    assert (len(res['feedback']) == 2)
+
+    for feedback_item in res['feedback']:
+        feedback_id = feedback_item['id']
+        assert (feedback_id is not None)
+        self.feedback_ids.append(feedback_id)
+
+    single_feedback = {
+      'feedbackType': 'negative',
+      'label': 'cat',
+      'boundingBox': {
+        'top': .2,
+        'left': .2,
+        'height': .2,
+        'width': .2,
+      },
+    }
+
+    res = self.api.add_feedback(detectorId=detector_id, url=TEST_IMAGE_URL, feedback=single_feedback)
+    assert (len(res['feedback']) == 1)
+
+    feedback_id = res['feedback'][0]['id']
+    assert (feedback_id is not None)
+    self.feedback_ids.append(feedback_id)
+
+    print_test_pass()
+
+  def delete_feedback_test(self, detector_id):
+    for feedback_id in self.feedback_ids:
+        res = self.api.delete_feedback(feedbackId=feedback_id, detectorId=detector_id)
+        assert (res['feedbackId'] is not None)
+
     print_test_pass()
 
   def search_detectors_test(self):

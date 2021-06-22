@@ -12,7 +12,7 @@ DEFAULT_GRANT_TYPE = 'client_credentials'
 class MatroidAPI(object):
   from matroid.src.helpers import bytes_to_mb, check_errors, format_response, save_token, Token, FileReader
   from matroid.src.accounts import get_account_info, account_info, retrieve_token
-  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors
+  from matroid.src.detectors import create_detector, delete_detector, finalize_detector, train_detector, get_detector_info, detector_info, import_detector, redo_detector, search_detectors, list_detectors, add_feedback, delete_feedback
   from matroid.src.images import classify_image, localize_image
   from matroid.src.videos import classify_video, get_video_results
   from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams
