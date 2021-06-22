@@ -18,6 +18,7 @@ class MatroidAPI(object):
   from matroid.src.streams import create_stream, register_stream, delete_monitoring, delete_stream, get_monitoring_result, kill_monitoring, monitor_stream, search_monitorings, search_streams
   from matroid.src.labels import create_label_with_images, delete_label, get_annotations, get_label_images, update_annotations, update_label_with_images
   from matroid.src.collections import create_collection_index, create_collection, delete_collection_index, delete_collection, get_collection_task, get_collection, kill_collection_index, query_collection_by_scores, query_collection_by_image, update_collection_index
+  from matroid.src.video_summary import create_video_summary, get_video_summary, get_video_summary_tracks, get_video_summary_file, delete_video_summary, create_stream_summary, get_stream_summaries
 
   def __init__(self, base_url=BASE_URL, client_id=None, client_secret=None, options={}):
     """
