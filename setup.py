@@ -1,13 +1,10 @@
-from version import VERSION
 import os
 import sys
 
-try:
-  from setuptools import setup
-except ImportError:
-  from distutils.core import setup
-
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'matroid'))
+from version import VERSION
+
+from setuptools import setup, find_packages
 
 setup(
     name='matroid',
@@ -17,6 +14,6 @@ setup(
     author_email='support@matroid.com',
     url='https://github.com/matroid/matroid-python',
     install_requires=['requests'],
-    packages=['matroid'],
+    packages=find_packages(),
     use_2to3=True
 )
