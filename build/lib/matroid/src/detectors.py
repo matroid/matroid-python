@@ -159,7 +159,7 @@ def import_detector(self, name, **options):
         raise error.InvalidQueryError(message="Invalid parameter combination")
 
     file_objs = {}
-    for file_keyword, file_path in file_paths.items():
+    for file_keyword, file_path in list(file_paths.items()):
         file_obj = self.filereader.get_file(file_path)
         file_objs[file_keyword] = file_obj
 
@@ -175,7 +175,7 @@ def import_detector(self, name, **options):
     except Exception as e:
         raise error.APIConnectionError(message=e)
     finally:
-        for file_keyword, file_obj in file_objs.items():
+        for file_keyword, file_obj in list(file_objs.items()):
             if isinstance(file_obj, io.IOBase):
                 file_obj.close()
 

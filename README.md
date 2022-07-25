@@ -2,9 +2,11 @@
 
 Use our Python client to access the Matroid API for image and video classification. The client has been tested in Python 2.7 and Python 3.5.
 
+Due to API changes, please use Matroid Python Client versions 1.2.0 or later
+
 ## Full documentation
 
-Navigate to any detector's page, such as the [Famous Places Detector](https://www.matroid.com/detector/58d010c75bcac50d00ad85ed?tab=api), and click on the "Overview" tab. The "Overview" section contains the full specifications for each REST endpoint.
+Navigate to any detector's page, such as the [Famous Places Detector](https://app.matroid.com/detector/58d010c75bcac50d00ad85ed?tab=api), and click on the "Overview" tab. The "Overview" section contains the full specifications for each REST endpoint.
 
 ## Installation
 
@@ -18,7 +20,7 @@ You can pass in your API credentials directly to the API client or save them as 
 nano .bash_profile
 ```
 
-Inside your `.bash_profile`, add the following lines, replacing the placeholder with the real values from the [API documentation's](https://www.matroid.com/detector/58d010c75bcac50d00ad85ed?tab=api) "Account Info" section
+Inside your `.bash_profile`, add the following lines, replacing the placeholder with the real values from the [API documentation's](https://app.matroid.com/detector/58d010c75bcac50d00ad85ed?tab=api) "Account Info" section
 
 ```
 export MATROID_CLIENT_ID=PLACEHOLDER
@@ -39,7 +41,7 @@ api = Matroid(client_id = 'abc', client_secret = '123')
 detectors_to_use = api.search_detectors()
 
 # Classifying a picture from a URL
-logo_classification_result = api.classify_image(detector_id = 'test', image_url = 'https://www.matroid.com/images/logo2.png', num_results = 5)
+logo_classification_result = api.classify_image(detector_id = 'test', image_url = 'https://app.matroid.com/images/logo2.png', num_results = 5)
 
 # Classifying a picture from a file path
 stadium_classification_result = api.classify_image(detector_id = 'test', image_file = '/Users/matroid/Desktop/stadium.jpg')
@@ -120,7 +122,7 @@ feedback = [
 api.add_feedback(detectorId = 'your-detector-id', feedback = feedback, file = '/Users/matroid/image.png')
 
 # Add feedback to a detector from a URL
-url = 'https://www.matroid.com/images/logo2.png'
+url = 'https://app.matroid.com/images/logo2.png'
 feedback = [
   {
     'feedbackType': 'positive',
