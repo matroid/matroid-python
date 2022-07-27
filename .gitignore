@@ -4,6 +4,7 @@ __pycache__/
 .pypirc
 *.egg-info
 dist
+build
 setup.cfg
 .DS_Store
 
