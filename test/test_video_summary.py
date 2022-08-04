@@ -2,7 +2,13 @@ from datetime import datetime
 import time
 import pytest
 
-from test.data import TEST_LOCAL_VIDEO_URL, TEST_S3_VIDEO_URL, TEST_VIDEO_URL
+from test.data import (
+    TEST_LOCAL_VIDEO_URL,
+    TEST_S3_VIDEO_URL,
+    TEST_VIDEO_URL,
+    EVERYDAY_OBJECT_DETECTOR_ID,
+    DETECTOR_LABELS,
+)
 from matroid.error import APIError
 from test.helper import print_test_pass
 
@@ -14,7 +20,6 @@ class TestVideoSummary(object):
         local_video_summary_id = None
         stream_summary_id = None
         stream_name = "py-test-stream-{}".format(datetime.now())
-        one_day = 24 * 60 * 60
 
         # set up client
         self.api = set_up_client
@@ -35,13 +40,16 @@ class TestVideoSummary(object):
                 url=TEST_S3_VIDEO_URL, name=stream_name, dmca=True
             )
             time.sleep(90)
-            self.create_stream_summary_test(
+            stream_summary_id = self.create_stream_summary_test(
                 streamId=stream_id,
                 startTime=datetime.utcfromtimestamp(int(time.time()) - (60)),
                 endTime=datetime.utcfromtimestamp(int(time.time()) - (30)),
             )
             self.get_stream_summaries_test(streamId=stream_id)
         finally:
+            self.get_existing_summaries_test(
+                url_video_summary_id, local_video_summary_id, stream_summary_id
+            )
             if url_video_summary_id:
                 self.delete_video_summary_test(summaryId=url_video_summary_id)
             if local_video_summary_id:
@@ -55,24 +63,37 @@ class TestVideoSummary(object):
     def create_video_summary_test(self, url=None, videoId=None, file=None):
         if url and file:
             with pytest.raises(APIError) as e:
-                self.api.create_video_summary(url=url, file=file)
+                self.api.create_video_summary(
+                    detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
+                    url=url,
+                    file=file,
+                    labels=DETECTOR_LABELS,
+                )
             assert "You may only specify a file or a URL, not both" in str(e)
 
         if url:
             with pytest.raises(APIError) as e:
-                self.api.create_video_summary(url=TEST_LOCAL_VIDEO_URL)
+                self.api.create_video_summary(
+                    detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
+                    url=TEST_LOCAL_VIDEO_URL,
+                    labels=DETECTOR_LABELS,
+                )
             assert "You provided an invalid URL" in str(e)
 
             res = self.api.create_video_summary(
+                detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
                 url=url,
+                labels=DETECTOR_LABELS,
             )
         if file:
             res = self.api.create_video_summary(
+                detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
                 file=file,
+                labels=DETECTOR_LABELS,
             )
 
-        assert res["summary"] != None
         assert res["summary"]["video"] != None
+        assert res["summary"]["network"] == EVERYDAY_OBJECT_DETECTOR_ID
 
         print_test_pass()
         return res["summary"]["_id"]
@@ -106,11 +127,17 @@ class TestVideoSummary(object):
     def create_stream_summary_test(self, streamId, startTime, endTime):
         with pytest.raises(APIError) as e:
             self.api.create_stream_summary(
-                streamId=streamId, startTime="test", endTime=endTime
+                streamId=streamId,
+                startTime="test",
+                endTime=endTime,
+                detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
+                labels=DETECTOR_LABELS,
             )
         assert "Invalid dates provided" in str(e)
         with pytest.raises(APIError) as e:
             self.api.create_stream_summary(
+                detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
+                labels=DETECTOR_LABELS,
                 streamId=streamId,
                 startTime=datetime.utcfromtimestamp(
                     int(time.time()) - (24 * 60 * 60 * 8)
@@ -119,7 +146,13 @@ class TestVideoSummary(object):
             )
         assert "Provided dates are not within your stream" in str(e)
 
-        res = self.api.create_stream_summary(streamId, startTime, endTime)
+        res = self.api.create_stream_summary(
+            streamId,
+            startTime,
+            endTime,
+            detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
+            labels=DETECTOR_LABELS,
+        )
         assert res["summary"]["feed"] == streamId
         assert (
             datetime.strptime(res["summary"]["startTime"], "%Y-%m-%dT%H:%M:%S.000Z")
@@ -129,8 +162,10 @@ class TestVideoSummary(object):
             datetime.strptime(res["summary"]["endTime"], "%Y-%m-%dT%H:%M:%S.000Z")
             == endTime
         )
+        assert res["summary"]["network"] == EVERYDAY_OBJECT_DETECTOR_ID
 
         print_test_pass()
+        return res["summary"]["_id"]
 
     def get_stream_summaries_test(self, streamId):
         res = self.api.get_stream_summaries(streamId)
@@ -158,4 +193,16 @@ class TestVideoSummary(object):
 
         res = self.api.delete_video_summary(summaryId=summaryId)
         assert res["summaryId"] == summaryId
+        print_test_pass()
+
+    def get_existing_summaries_test(self, *summary_ids):
+        res = self.api.get_existing_summaries()
+        res_summary_ids = [summary["_id"] for summary in res["summaries"]]
+
+        for summary_id in summary_ids:
+            assert (
+                summary_id in res_summary_ids
+            ), f"Summary ID {summary_id} was not found in existing user summaries."
+
+        assert res["summaries"] is not None
         print_test_pass()

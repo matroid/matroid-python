@@ -1,6 +1,7 @@
 import os
 
 EVERYDAY_OBJECT_DETECTOR_ID = "598e23679fd1a805a5c09275"
+DETECTOR_LABELS = ["person", "boat"]
 RANDOM_MONGO_ID = "5d0148512563ae5e748e9a66"
 
 TEST_IMAGE_URL = "https://matroid-web.s3.amazonaws.com/test/python-client/tesla-cat.jpg"

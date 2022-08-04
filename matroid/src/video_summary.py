@@ -3,11 +3,25 @@ import requests
 from matroid import error
 from matroid.src.helpers import api_call
 
-# https://staging.dev.matroid.com/docs/api/index.html#api-Video_Summary-PostSummarize
+# https://staging.app.matroid.com/docs/api/index.html#api-Video_Summary-PostSummarize
 @api_call(error.InvalidQueryError)
-def create_video_summary(self, url=None, videoId=None, file=None):
+def create_video_summary(
+    self,
+    detectorId,
+    labels=None,
+    url=None,
+    videoId=None,
+    file=None,
+    fps=None,
+    featureWeight=None,
+    motionWeight=None,
+    matchingDistance=None,
+):
     """Create an video summary with provided url or file"""
     (endpoint, method) = self.endpoints["create_video_summary"]
+
+    if not detectorId:
+        raise error.InvalidQueryError(message="Missing required parameter: detectorID")
 
     if not file and not url:
         raise error.InvalidQueryError(message="Missing required parameter: file or url")
@@ -19,7 +33,14 @@ def create_video_summary(self, url=None, videoId=None, file=None):
     try:
         file_to_upload = None
         headers = {"Authorization": self.token.authorization_header()}
-        data = {}
+        data = {
+            "detectorId": detectorId,
+            "labels": labels,
+            "fps": fps,
+            "featureWeight": featureWeight,
+            "motionWeight": motionWeight,
+            "matchingDistance": matchingDistance,
+        }
         if file:
             file_to_upload = self.filereader.get_file(file)
             files = {"file": file_to_upload}
@@ -46,7 +67,7 @@ def create_video_summary(self, url=None, videoId=None, file=None):
             file_to_upload.close()
 
 
-# https://staging.dev.matroid.com/docs/api/index.html#api-Video_Summary-GetSummariesSummaryid
+# https://staging.app.matroid.com/docs/api/index.html#api-Video_Summary-GetSummariesSummaryid
 @api_call(error.InvalidQueryError)
 def get_video_summary(self, summaryId):
     """Fetch a video summary"""
@@ -61,7 +82,7 @@ def get_video_summary(self, summaryId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.dev.matroid.com/docs/api/index.html#api-Video_Summary-GetSummariesSummaryidTracksCsv
+# https://staging.app.matroid.com/docs/api/index.html#api-Video_Summary-GetSummariesSummaryidTracksCsv
 @api_call(error.InvalidQueryError)
 def get_video_summary_tracks(self, summaryId):
     """Fetch a video summary track CSV"""
@@ -76,7 +97,7 @@ def get_video_summary_tracks(self, summaryId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.dev.matroid.com/docs/api/index.html#api-Video_Summary-GetSummariesSummaryidVideoMp4
+# https://staging.app.matroid.com/docs/api/index.html#api-Video_Summary-GetSummariesSummaryidVideoMp4
 @api_call(error.InvalidQueryError)
 def get_video_summary_file(self, summaryId):
     """Fetch a video summary video file"""
@@ -91,7 +112,7 @@ def get_video_summary_file(self, summaryId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.dev.matroid.com/docs/api/index.html#api-Video_Summary-DeleteSummariesSummaryid
+# https://staging.app.matroid.com/docs/api/index.html#api-Video_Summary-DeleteSummariesSummaryid
 @api_call(error.InvalidQueryError)
 def delete_video_summary(self, summaryId):
     """Delete a video summary"""
@@ -106,7 +127,7 @@ def delete_video_summary(self, summaryId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.dev.matroid.com/docs/api/index.html#api-Video_Summary-GetStreamsStreamidSummaries
+# https://staging.app.matroid.com/docs/api/index.html#api-Video_Summary-GetStreamsStreamidSummaries
 @api_call(error.InvalidQueryError)
 def get_stream_summaries(self, streamId):
     """Fetch all video summaries for a stream"""
@@ -121,17 +142,48 @@ def get_stream_summaries(self, streamId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.dev.matroid.com/docs/api/index.html#api-Video_Summary-PostStreamsStreamidSummarize
+# https://staging.app.matroid.com/docs/api/index.html#api-Video_Summary-PostStreamsStreamidSummarize
 @api_call(error.InvalidQueryError)
-def create_stream_summary(self, streamId, startTime, endTime):
+def create_stream_summary(
+    self,
+    streamId,
+    startTime,
+    endTime,
+    detectorId,
+    labels=None,
+    fps=None,
+    featureWeight=None,
+    motionWeight=None,
+    matchingDistance=None,
+):
     """Create a video summary for a stream"""
     (endpoint, method) = self.endpoints["create_stream_summary"]
     endpoint = endpoint.replace(":streamId", streamId)
 
     try:
         headers = {"Authorization": self.token.authorization_header()}
-        data = {"startTime": startTime, "endTime": endTime}
+        data = {
+            "startTime": startTime,
+            "endTime": endTime,
+            "detectorId": detectorId,
+            "labels": labels,
+            "fps": fps,
+            "featureWeight": featureWeight,
+            "motionWeight": motionWeight,
+            "matchingDistance": matchingDistance,
+        }
 
         return requests.request(method, endpoint, **{"headers": headers, "data": data})
+    except Exception as e:
+        raise error.APIConnectionError(message=e)
+
+
+# https://staging.dev.matroid.com/docs/api/index.html#api-Video_Summary-GetSummaries
+@api_call(error.InvalidQueryError)
+def get_existing_summaries(self):
+    (endpoint, method) = self.endpoints["get_existing_summaries"]
+    try:
+        headers = {"Authorization": self.token.authorization_header()}
+        return requests.request(method, endpoint, **{"headers": headers})
     except Exception as e:
         raise error.APIConnectionError(message=e)

@@ -74,6 +74,7 @@ class MatroidAPI(object):
         delete_video_summary,
         create_stream_summary,
         get_stream_summaries,
+        get_existing_summaries,
     )
 
     def __init__(

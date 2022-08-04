@@ -249,6 +249,7 @@ def get_endpoints(base_url):
         "delete_video_summary": (base_url + "/summaries/:summaryId", "DELETE"),
         "create_stream_summary": (base_url + "/streams/:streamId/summarize", "POST"),
         "get_stream_summaries": (base_url + "/streams/:streamId/summaries", "GET"),
+        "get_existing_summaries": (base_url + "/summaries", "GET"),
     }
 
     return end_points

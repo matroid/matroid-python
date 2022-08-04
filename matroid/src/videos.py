@@ -4,7 +4,7 @@ import requests
 from matroid import error
 from matroid.src.helpers import api_call
 
-# https://staging.dev.matroid.com/docs/api/index.html#api-Videos-PostDetectorsDetector_idClassify_video
+# https://staging.app.matroid.com/docs/api/index.html#api-Videos-PostDetectorsDetector_idClassify_video
 @api_call(error.InvalidQueryError)
 def classify_video(self, detectorId, url=None, file=None, **options):
     """
@@ -65,7 +65,7 @@ def classify_video(self, detectorId, url=None, file=None, **options):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.dev.matroid.com/docs/api/index.html#api-Videos-GetVideosVideo_idQuery
+# https://staging.app.matroid.com/docs/api/index.html#api-Videos-GetVideosVideo_idQuery
 @api_call(error.InvalidQueryError)
 def get_video_results(self, videoId, **options):
     """
