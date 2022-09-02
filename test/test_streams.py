@@ -46,6 +46,11 @@ class TestStreams(object):
             )
             self.search_streams_test()
             self.get_monitoring_result_test(monitoring_id=monitoring_id)
+            self.get_monitoring_result_in_range_test(
+                monitoring_id=monitoring_id,
+                start_time="2022-05-01 00:00:00",
+                end_time="2022-06-01 00:00:00",
+            )
         finally:
             if monitoring_id:
                 self.kill_monitoring_test(monitoring_id=monitoring_id)
@@ -116,6 +121,13 @@ class TestStreams(object):
 
     def get_monitoring_result_test(self, monitoring_id):
         res = self.api.get_monitoring_result(monitoringId=monitoring_id)
+        assert res != None
+        print_test_pass()
+
+    def get_monitoring_result_in_range_test(self, monitoring_id, start_time, end_time):
+        res = self.api.get_monitoring_result(
+            monitoringId=monitoring_id, startTime=start_time, endTime=end_time
+        )
         assert res != None
         print_test_pass()
 

@@ -66,6 +66,8 @@ def get_monitoring_result(self, monitoringId, **options):
         params = {
             "format": options.get("format"),
             "statusOnly": "true" if options.get("statusOnly") else "false",
+            "startTime": options.get("startTime"),
+            "endTime": options.get("endTime"),
         }
 
         return requests.request(
