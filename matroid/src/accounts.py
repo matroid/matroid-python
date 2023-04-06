@@ -3,7 +3,7 @@ import requests
 from matroid import error
 from matroid.src.helpers import api_call
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Accounts-RefreshToken
+# https://staging.app.matroid.com/docs/api/documentation#api-Accounts-RefreshToken
 
 
 def retrieve_token(self, options={}):
@@ -44,7 +44,7 @@ def retrieve_token(self, options={}):
     return response.json()
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Accounts-GetAccount
+# https://staging.app.matroid.com/docs/api/documentation#api-Accounts-GetAccount
 @api_call(error.InvalidQueryError)
 def account_info(self):
     """Get user account and credits information"""

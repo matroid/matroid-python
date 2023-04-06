@@ -25,7 +25,7 @@ class TestStreams(object):
         stream_name_2 = "py-test-stream-2-{}".format(datetime.now())
         thresholds = {"cat": 0.5, "dog": 0.6}
         task_name = "test-task"
-
+        minDetectionInterval = 90
         # set up client
         self.api = set_up_client
 
@@ -40,6 +40,7 @@ class TestStreams(object):
                 detector_id=EVERYDAY_OBJECT_DETECTOR_ID,
                 thresholds=thresholds,
                 task_name=task_name,
+                minDetectionInterval=minDetectionInterval,
             )
             self.search_monitorings_test(
                 stream_id=stream_id, monitoring_id=monitoring_id
@@ -50,6 +51,11 @@ class TestStreams(object):
                 monitoring_id=monitoring_id,
                 start_time="2022-05-01 00:00:00",
                 end_time="2022-06-01 00:00:00",
+            )
+            self.update_monitoring_test(
+                monitoring_id=monitoring_id,
+                thresholds={"cat": 0.7, "dog": 0.1},
+                minDetectionInterval="50",
             )
         finally:
             if monitoring_id:
@@ -84,7 +90,9 @@ class TestStreams(object):
         print_test_pass()
         return res["streamId"]
 
-    def monitor_stream_test(self, stream_id, detector_id, thresholds, task_name):
+    def monitor_stream_test(
+        self, stream_id, detector_id, thresholds, task_name, minDetectionInterval
+    ):
         end_time = "5 minutes"
 
         with pytest.raises(APIError) as e:
@@ -94,6 +102,7 @@ class TestStreams(object):
                 thresholds=thresholds,
                 endTime=end_time,
                 taskName=task_name,
+                minDetectionInterval=minDetectionInterval,
             )
         assert "invalid_query_err" in str(e)
 
@@ -103,11 +112,55 @@ class TestStreams(object):
             thresholds=thresholds,
             endTime=end_time,
             taskName=task_name,
+            minDetectionInterval=minDetectionInterval,
         )
         assert res["monitoringId"] != None
-
+        assert res["minDetectionInterval"] == minDetectionInterval
         print_test_pass()
         return res["monitoringId"]
+
+    def update_monitoring_test(self, monitoring_id, thresholds, minDetectionInterval):
+        regionCoords = [
+            "0.2500,0.2500",
+            "0.7500,0.2500",
+            "0.7500,0.7500",
+            "0.2500,0.7500",
+        ]
+        regionEnabled = True
+        res = self.api.update_monitoring(
+            monitoringId=monitoring_id,
+            thresholds=thresholds,
+            minDetectionInterval=minDetectionInterval,
+            regionEnabled=regionEnabled,
+            regionCoords=regionCoords,
+        )
+        assert res["detection"]["minDetectionInterval"] == int(minDetectionInterval)
+        # indexed thresholds for cat and dog
+        assert res["detection"]["thresholds"] == [
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "0.7",
+            "1",
+            "1",
+            "1",
+            "0.1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+        ]
+        assert res["region"]["enabled"] == regionEnabled
+        assert res["region"]["focusAreas"][0]["coords"] == [regionCoords]
+        print_test_pass()
 
     def search_monitorings_test(self, stream_id, monitoring_id):
         res = self.api.search_monitorings(streamId=stream_id)

@@ -200,6 +200,7 @@ def get_endpoints(base_url):
         "get_monitoring_result": (base_url + "/monitorings/:key", "GET"),
         "kill_monitoring": (base_url + "/monitorings/:key/kill", "POST"),
         "monitor_stream": (base_url + "/streams/:streamId/monitor/:detectorId", "POST"),
+        "update_monitoring": (base_url + "/monitorings/:monitoringId", "PUT"),
         "search_monitorings": (base_url + "/monitorings", "GET"),
         "search_streams": (base_url + "/streams", "GET"),
         # labels

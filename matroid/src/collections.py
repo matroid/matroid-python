@@ -5,7 +5,7 @@ import json
 from matroid import error
 from matroid.src.helpers import api_call
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Collections-PostApiVersionCollectionsCollectionidCollectionTasks
+# https://staging.app.matroid.com/docs/api/documentation#api-Collections-PostApiVersionCollectionsCollectionidCollectionTasks
 @api_call(error.InvalidQueryError)
 def create_collection_index(self, collectionId, detectorId, fileTypes):
     """Create an index on a collection with a detector"""
@@ -20,7 +20,7 @@ def create_collection_index(self, collectionId, detectorId, fileTypes):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Collections-PostCollections
+# https://staging.app.matroid.com/docs/api/documentation#api-Collections-PostCollections
 @api_call(error.InvalidQueryError)
 def create_collection(self, name, url, sourceType, **options):
     """Creates a new collection from a web or S3 url. Automatically kick off default indexes"""
@@ -40,7 +40,7 @@ def create_collection(self, name, url, sourceType, **options):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Collections-DeleteCollectionTasksTaskid
+# https://staging.app.matroid.com/docs/api/documentation#api-Collections-DeleteCollectionTasksTaskid
 @api_call(error.InvalidQueryError)
 def delete_collection_index(self, taskId):
     """Deletes a completed collection mananger task"""
@@ -54,7 +54,7 @@ def delete_collection_index(self, taskId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Collections-DeleteCollectionsCollectionid
+# https://staging.app.matroid.com/docs/api/documentation#api-Collections-DeleteCollectionsCollectionid
 @api_call(error.InvalidQueryError)
 def delete_collection(self, collectionId):
     """Deletes a collection with no active indexing tasks"""
@@ -68,7 +68,7 @@ def delete_collection(self, collectionId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Collections-GetCollectionTasksTaskid
+# https://staging.app.matroid.com/docs/api/documentation#api-Collections-GetCollectionTasksTaskid
 @api_call(error.InvalidQueryError)
 def get_collection_task(self, taskId):
     """Creates a new collection from a web or S3 url"""
@@ -82,7 +82,7 @@ def get_collection_task(self, taskId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Collections-GetCollectionsCollectionid
+# https://staging.app.matroid.com/docs/api/documentation#api-Collections-GetCollectionsCollectionid
 @api_call(error.InvalidQueryError)
 def get_collection(self, collectionId):
     """Get information about a specific collection"""
@@ -96,7 +96,7 @@ def get_collection(self, collectionId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Collections-PostCollectionTasksTaskidKill
+# https://staging.app.matroid.com/docs/api/documentation#api-Collections-PostCollectionTasksTaskidKill
 @api_call(error.InvalidQueryError)
 def kill_collection_index(self, taskId, includeCollectionInfo):
     """Kills an active collection indexing task"""
@@ -111,7 +111,7 @@ def kill_collection_index(self, taskId, includeCollectionInfo):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Collections-PostApiVersionCollectionTasksTaskidScoresQuery
+# https://staging.app.matroid.com/docs/api/documentation#api-Collections-PostApiVersionCollectionTasksTaskidScoresQuery
 @api_call(error.InvalidQueryError)
 def query_collection_by_scores(self, taskId, thresholds, **options):
     """
@@ -132,7 +132,7 @@ def query_collection_by_scores(self, taskId, thresholds, **options):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Collections-PostApiCollectionTasksTaskidImageQuery
+# https://staging.app.matroid.com/docs/api/documentation#api-Collections-PostApiCollectionTasksTaskidImageQuery
 @api_call(error.InvalidQueryError)
 def query_collection_by_image(self, taskId, url=None, file=None, **options):
     """
@@ -175,7 +175,7 @@ def query_collection_by_image(self, taskId, url=None, file=None, **options):
             file_to_upload.close()
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Collections-PutApiVersionCollectionTasksTaskid
+# https://staging.app.matroid.com/docs/api/documentation#api-Collections-PutApiVersionCollectionTasksTaskid
 @api_call(error.InvalidQueryError)
 def update_collection_index(self, taskId, updateIndex):
     """Update a collection index"""

@@ -60,7 +60,9 @@ class TestVideoSummary(object):
                 self.delete_stream_test(streamId=stream_id)
 
     # test cases
-    def create_video_summary_test(self, url=None, videoId=None, file=None):
+    def create_video_summary_test(
+        self, url=None, videoId=None, file=None, name="Summary"
+    ):
         if url and file:
             with pytest.raises(APIError) as e:
                 self.api.create_video_summary(
@@ -68,6 +70,7 @@ class TestVideoSummary(object):
                     url=url,
                     file=file,
                     labels=DETECTOR_LABELS,
+                    name=name,
                 )
             assert "You may only specify a file or a URL, not both" in str(e)
 
@@ -77,6 +80,7 @@ class TestVideoSummary(object):
                     detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
                     url=TEST_LOCAL_VIDEO_URL,
                     labels=DETECTOR_LABELS,
+                    name=name,
                 )
             assert "You provided an invalid URL" in str(e)
 
@@ -84,12 +88,14 @@ class TestVideoSummary(object):
                 detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
                 url=url,
                 labels=DETECTOR_LABELS,
+                name=name,
             )
         if file:
             res = self.api.create_video_summary(
                 detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
                 file=file,
                 labels=DETECTOR_LABELS,
+                name=name,
             )
 
         assert res["summary"]["video"] != None
@@ -128,6 +134,7 @@ class TestVideoSummary(object):
         with pytest.raises(APIError) as e:
             self.api.create_stream_summary(
                 streamId=streamId,
+                name="Summary",
                 startTime="test",
                 endTime=endTime,
                 detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
@@ -143,6 +150,7 @@ class TestVideoSummary(object):
                     int(time.time()) - (24 * 60 * 60 * 8)
                 ),
                 endTime=endTime,
+                name="Summary",
             )
         assert "Provided dates are not within your stream" in str(e)
 
@@ -152,6 +160,7 @@ class TestVideoSummary(object):
             endTime,
             detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
             labels=DETECTOR_LABELS,
+            name="Summary",
         )
         assert res["summary"]["feed"] == streamId
         assert (

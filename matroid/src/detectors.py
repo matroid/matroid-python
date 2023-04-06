@@ -6,7 +6,7 @@ import json
 from matroid import error
 from matroid.src.helpers import api_call
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Detectors-PostDetectors
+# https://staging.app.matroid.com/docs/api/documentation#api-Detectors-PostDetectors
 @api_call(error.InvalidQueryError)
 def create_detector(self, file, name, detectorType, **options):
     """
@@ -68,7 +68,7 @@ def create_detector(self, file, name, detectorType, **options):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Detectors-DeleteDetectorsDetector_id
+# https://staging.app.matroid.com/docs/api/documentation#api-Detectors-DeleteDetectorsDetector_id
 @api_call(error.InvalidQueryError)
 def delete_detector(self, detectorId):
     """
@@ -86,7 +86,7 @@ def delete_detector(self, detectorId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsDetector_idFinalize
+# https://staging.app.matroid.com/docs/api/documentation#api-Detectors-PostDetectorsDetector_idFinalize
 @api_call(error.InvalidQueryError)
 def finalize_detector(self, detectorId):
     """Begin training the detector"""
@@ -105,7 +105,7 @@ def finalize_detector(self, detectorId):
 
 train_detector = finalize_detector
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Detectors-GetDetectorsDetector_id
+# https://staging.app.matroid.com/docs/api/documentation#api-Detectors-GetDetectorsDetector_id
 @api_call(error.InvalidQueryError)
 def get_detector_info(self, detectorId):
     """Get information about detector"""
@@ -122,7 +122,7 @@ def get_detector_info(self, detectorId):
 
 detector_info = get_detector_info
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsUpload
+# https://staging.app.matroid.com/docs/api/documentation#api-Detectors-PostDetectorsUpload
 @api_call(error.InvalidQueryError)
 def import_detector(self, name, **options):
     """
@@ -180,7 +180,7 @@ def import_detector(self, name, **options):
                 file_obj.close()
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Detectors-PostDetectorsDetector_idRedo
+# https://staging.app.matroid.com/docs/api/documentation#api-Detectors-PostDetectorsDetector_idRedo
 @api_call(error.InvalidQueryError)
 def redo_detector(self, detectorId, **options):
     """
@@ -199,7 +199,7 @@ def redo_detector(self, detectorId, **options):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Detectors-Search
+# https://staging.app.matroid.com/docs/api/documentation#api-Detectors-Search
 @api_call(error.InvalidQueryError)
 def search_detectors(self, **query):
     """Lists the available detectors"""

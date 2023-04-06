@@ -4,7 +4,7 @@ import json
 from matroid import error
 from matroid.src.helpers import api_call, batch_file_request
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Labels-PostDetectorsDetector_idLabels
+# https://staging.app.matroid.com/docs/api/documentation#api-Labels-PostDetectorsDetector_idLabels
 @api_call(error.InvalidQueryError)
 def create_label_with_images(self, detectorId, name, imageFiles, **options):
     """Create a label. Requires processing=false. Creates label asynchronously (turn processing to true)"""
@@ -35,7 +35,7 @@ def create_label_with_images(self, detectorId, name, imageFiles, **options):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Labels-DeleteDetectorsDetector_idLabelsLabel_id
+# https://staging.app.matroid.com/docs/api/documentation#api-Labels-DeleteDetectorsDetector_idLabelsLabel_id
 @api_call(error.InvalidQueryError)
 def delete_label(self, detectorId, labelId):
     """Delete a label. Requires processing=false"""
@@ -50,7 +50,7 @@ def delete_label(self, detectorId, labelId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Labels-GetImagesAnnotationsQuery
+# https://staging.app.matroid.com/docs/api/documentation#api-Labels-GetImagesAnnotationsQuery
 @api_call(error.InvalidQueryError)
 def get_annotations(self, **options):
     """Get annotations. Requires processing=false. Note: you need to provide at least one of the three ids to query"""
@@ -79,7 +79,7 @@ def get_annotations(self, **options):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Labels-GetDetectorsDetector_idLabelsLabel_id
+# https://staging.app.matroid.com/docs/api/documentation#api-Labels-GetDetectorsDetector_idLabelsLabel_id
 @api_call(error.InvalidQueryError)
 def get_label_images(self, detectorId, labelId):
     (endpoint, method) = self.endpoints["get_label_images"]
@@ -93,7 +93,7 @@ def get_label_images(self, detectorId, labelId):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Labels-UpdateAnnotations
+# https://staging.app.matroid.com/docs/api/documentation#api-Labels-UpdateAnnotations
 @api_call(error.InvalidQueryError)
 def update_annotations(self, detectorId, labelId, images, **options):
     (endpoint, method) = self.endpoints["update_annotations"]
@@ -112,7 +112,7 @@ def update_annotations(self, detectorId, labelId, images, **options):
         raise error.APIConnectionError(message=e)
 
 
-# https://staging.app.matroid.com/docs/api/index.html#api-Labels-PostDetectorsDetector_idLabelsLabel_idImages
+# https://staging.app.matroid.com/docs/api/documentation#api-Labels-PostDetectorsDetector_idLabelsLabel_idImages
 @api_call(error.InvalidQueryError)
 def update_label_with_images(self, detectorId, labelId, imageFiles, **options):
     """Requires processing=false. Updates label asynchronously (turn processing to true)"""
