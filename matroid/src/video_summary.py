@@ -43,13 +43,13 @@ def create_video_summary(
             "detectorId": detectorId,
             "labels": labels,
             "fps": fps,
-            "mc_lambda": mc_lambda,
-            "matching_distance": matching_distance,
-            "n_init": n_init,
-            "nn_budget": nn_budget,
-            "max_iou_dist": max_iou_dist,
-            "max_age": max_age,
-            "detection_threshold": detection_threshold,
+            "mcLambda": mc_lambda,
+            "matchingDistance": matching_distance,
+            "nInit": n_init,
+            "nnBudget": nn_budget,
+            "maxIouDist": max_iou_dist,
+            "maxAge": max_age,
+            "detectionThreshold": detection_threshold,
         }
         if file:
             file_to_upload = self.filereader.get_file(file)
@@ -184,13 +184,13 @@ def create_stream_summary(
             "detectorId": detectorId,
             "labels": labels,
             "fps": fps,
-            "mc_lambda": mc_lambda,
-            "matching_distance": matching_distance,
-            "n_init": n_init,
-            "nn_budget": nn_budget,
-            "max_iou_dist": max_iou_dist,
-            "max_age": max_age,
-            "detection_threshold": detection_threshold,
+            "mcLambda": mc_lambda,
+            "matchingDistance": matching_distance,
+            "nInit": n_init,
+            "nnBudget": nn_budget,
+            "maxIouDist": max_iou_dist,
+            "maxAge": max_age,
+            "detectionThreshold": detection_threshold,
         }
 
         return requests.request(method, endpoint, **{"headers": headers, "data": data})

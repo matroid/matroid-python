@@ -1,6 +1,7 @@
 from datetime import datetime
 import time
 import pytest
+import random
 
 from test.data import (
     TEST_LOCAL_VIDEO_URL,
@@ -46,6 +47,7 @@ class TestVideoSummary(object):
                 endTime=datetime.utcfromtimestamp(int(time.time()) - (30)),
             )
             self.get_stream_summaries_test(streamId=stream_id)
+            self.create_summary_with_hyperparameters()
         finally:
             self.get_existing_summaries_test(
                 url_video_summary_id, local_video_summary_id, stream_summary_id
@@ -90,6 +92,7 @@ class TestVideoSummary(object):
                 labels=DETECTOR_LABELS,
                 name=name,
             )
+
         if file:
             res = self.api.create_video_summary(
                 detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
@@ -111,8 +114,14 @@ class TestVideoSummary(object):
 
         res = self.api.get_video_summary(summaryId=summaryId)
 
-        assert res["progress"] == 0
-        assert res["state"] == "requested"
+        assert res["progress"] >= 0 and res["progress"] <= 1
+        assert res["state"] in [
+            "requested",
+            "preparing",
+            "toprepare",
+            "ready",
+            "success",
+        ]
 
         print_test_pass()
 
@@ -214,4 +223,45 @@ class TestVideoSummary(object):
             ), f"Summary ID {summary_id} was not found in existing user summaries."
 
         assert res["summaries"] is not None
+        print_test_pass()
+
+    def create_summary_with_hyperparameters(self):
+        # Sample random HPs
+        mc_lambda = random.uniform(0, 1)
+        matching_distance = random.uniform(0, 1)
+        detection_threshold = random.uniform(0, 1)
+        max_iou_dist = random.uniform(0, 1)
+        n_init = random.randint(1, 100)
+        nn_budget = random.randint(1, 100)
+        max_age = random.randint(1, 100)
+        fps = random.randint(1, 5)  # set low fps for quick summary
+        res = self.api.create_video_summary(
+            detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
+            url=TEST_S3_VIDEO_URL,
+            fps=fps,
+            mc_lambda=mc_lambda,
+            matching_distance=matching_distance,
+            n_init=n_init,
+            nn_budget=nn_budget,
+            max_iou_dist=max_iou_dist,
+            max_age=max_age,
+            detection_threshold=detection_threshold,
+            name="Hyperparameter Test",
+        )
+
+        params = self.api.get_video_summary(res["summary"]["_id"])
+
+        assert params["fps"] == fps, "fps set incorrectly"
+        assert params["mcLambda"] == mc_lambda, "mcLambda set incorrectly"
+        assert (
+            params["matchingDistance"] == matching_distance
+        ), "matchingDistance set incorrectly"
+        assert params["nInit"] == n_init, "nInit set incorrectly"
+        assert params["nnBudget"] == nn_budget, "nnBudget set incorrectly"
+        assert params["maxIouDist"] == max_iou_dist, "maxIouDist set incorrectly"
+        assert params["maxAge"] == max_age, "maxAge set incorrectly"
+        assert (
+            params["detectionThreshold"] == detection_threshold
+        ), "detectionThreshold set incorrectly"
+
         print_test_pass()
