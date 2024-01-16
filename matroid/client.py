@@ -40,6 +40,7 @@ class MatroidAPI(object):
         register_stream,
         delete_monitoring,
         delete_stream,
+        watch_monitoring_result,
         get_monitoring_result,
         kill_monitoring,
         monitor_stream,
@@ -76,6 +77,17 @@ class MatroidAPI(object):
         create_stream_summary,
         get_stream_summaries,
         get_existing_summaries,
+    )
+
+    from matroid.src.temporal_task import (
+        localize_video_actions,
+        localize_stream_actions,
+        delete_temporal_task,
+        get_existing_temporal_tasks,
+        get_temporal_task,
+        get_stream_temporal_tasks,
+        get_temporal_task_preds,
+        sample_stream,
     )
 
     def __init__(

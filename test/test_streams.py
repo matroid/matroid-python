@@ -23,7 +23,7 @@ class TestStreams(object):
 
         stream_name = "py-test-stream-{}".format(datetime.now())
         stream_name_2 = "py-test-stream-2-{}".format(datetime.now())
-        thresholds = {"cat": 0.5, "dog": 0.6}
+        thresholds = {"cat": 0.5, "dog": 0.6, "car": 0.1}
         task_name = "test-task"
         minDetectionInterval = 90
         # set up client
@@ -51,6 +51,9 @@ class TestStreams(object):
                 monitoring_id=monitoring_id,
                 start_time="2022-05-01 00:00:00",
                 end_time="2022-06-01 00:00:00",
+            )
+            self.watch_monitoring_result_test(
+                monitoring_id=monitoring_id,
             )
             self.update_monitoring_test(
                 monitoring_id=monitoring_id,
@@ -175,6 +178,15 @@ class TestStreams(object):
     def get_monitoring_result_test(self, monitoring_id):
         res = self.api.get_monitoring_result(monitoringId=monitoring_id)
         assert res != None
+        print_test_pass()
+
+    def watch_monitoring_result_test(self, monitoring_id):
+        res = self.api.watch_monitoring_result(monitoringId=monitoring_id)
+        actual_res = next(iter(res))
+        res.close()
+        assert actual_res != None
+        assert actual_res["monitoringId"] == monitoring_id
+        assert len(actual_res["detections"]) >= 1
         print_test_pass()
 
     def get_monitoring_result_in_range_test(self, monitoring_id, start_time, end_time):

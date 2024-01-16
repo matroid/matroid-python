@@ -3,6 +3,11 @@ import json
 
 from matroid import error
 from matroid.src.helpers import api_call
+from matroid.src.sse import stream_sse_events
+import time
+
+INITIAL_BACKOFF_SECS = 1
+MAX_BACKOFF_SECS = 60
 
 
 # https://staging.app.matroid.com/docs/api/documentation#api-Streams-PostStreams
@@ -46,6 +51,35 @@ def delete_stream(self, streamId):
     try:
         headers = {"Authorization": self.token.authorization_header()}
         return requests.request(method, endpoint, **{"headers": headers})
+    except Exception as e:
+        raise error.APIConnectionError(message=e)
+
+
+def watch_monitoring_result(self, monitoringId, **options):
+    self.retrieve_token()
+    (endpoint, method) = self.endpoints["watch_monitoring_result"]
+    endpoint = endpoint.replace(":key", monitoringId)
+
+    try:
+        headers = {"Authorization": self.token.authorization_header()}
+        params = {}
+
+        backoff = INITIAL_BACKOFF_SECS
+        while True:
+            try:
+                with requests.request(
+                    method, endpoint, headers=headers, params=params, stream=True
+                ) as req:
+                    if req.status_code >= 400 and req.status_code < 500:
+                        self.check_errors(req, error.InvalidQueryError)
+                    backoff = INITIAL_BACKOFF_SECS
+                    yield from stream_sse_events(req.raw)
+            except error.TokenExpirationError:
+                self.retrieve_token(options={"request_from_server": True})
+            except requests.RequestException as e:
+                print("Detections connection interrupted, will retry", e)
+                time.sleep(backoff)
+                backoff = min(MAX_BACKOFF_SECS, backoff * 2)
     except Exception as e:
         raise error.APIConnectionError(message=e)
 

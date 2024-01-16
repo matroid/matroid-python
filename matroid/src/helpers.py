@@ -197,6 +197,7 @@ def get_endpoints(base_url):
         "create_stream": (base_url + "/streams", "POST"),
         "delete_monitoring": (base_url + "/monitorings/:key", "DELETE"),
         "delete_stream": (base_url + "/streams/:key", "DELETE"),
+        "watch_monitoring_result": (base_url + "/monitorings/:key/watch", "GET"),
         "get_monitoring_result": (base_url + "/monitorings/:key", "GET"),
         "kill_monitoring": (base_url + "/monitorings/:key/kill", "POST"),
         "monitor_stream": (base_url + "/streams/:streamId/monitor/:detectorId", "POST"),
@@ -251,6 +252,23 @@ def get_endpoints(base_url):
         "create_stream_summary": (base_url + "/streams/:streamId/summarize", "POST"),
         "get_stream_summaries": (base_url + "/streams/:streamId/summaries", "GET"),
         "get_existing_summaries": (base_url + "/summaries", "GET"),
+        # temporal tasks
+        "localize_video_actions": (base_url + "/temporal-task", "POST"),
+        "localize_stream_actions": (
+            base_url + "/streams/:streamId/temporal-task",
+            "POST",
+        ),
+        "delete_temporal_task": (base_url + "/temporal-tasks/:taskId", "DELETE"),
+        "get_existing_temporal_tasks": (base_url + "/temporal-tasks", "GET"),
+        "get_temporal_task": (base_url + "/temporal-tasks/:taskId", "GET"),
+        "get_stream_temporal_tasks": (
+            base_url + "/streams/:streamId/temporal-tasks",
+            "GET",
+        ),
+        "get_temporal_task_preds": (
+            base_url + "/temporal-tasks/:taskId/preds.json",
+            "GET",
+        ),
     }
 
     return end_points
