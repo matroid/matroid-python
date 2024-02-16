@@ -4,10 +4,15 @@ import json
 from matroid import error
 from matroid.src.helpers import api_call
 from matroid.src.sse import stream_sse_events
+from threading import Lock
 import time
+import socket
 
 INITIAL_BACKOFF_SECS = 1
 MAX_BACKOFF_SECS = 60
+CONNECT_TIMEOUT = 60
+# Heartbeats are sent every minute, if we don't see anything for 5 then something is wrong.
+READ_TIMEOUT = 5 * 60
 
 
 # https://staging.app.matroid.com/docs/api/documentation#api-Streams-PostStreams
@@ -64,22 +69,70 @@ def watch_monitoring_result(self, monitoringId, **options):
         headers = {"Authorization": self.token.authorization_header()}
         params = {}
 
-        backoff = INITIAL_BACKOFF_SECS
-        while True:
-            try:
-                with requests.request(
-                    method, endpoint, headers=headers, params=params, stream=True
-                ) as req:
-                    if req.status_code >= 400 and req.status_code < 500:
-                        self.check_errors(req, error.InvalidQueryError)
-                    backoff = INITIAL_BACKOFF_SECS
-                    yield from stream_sse_events(req.raw)
-            except error.TokenExpirationError:
-                self.retrieve_token(options={"request_from_server": True})
-            except requests.RequestException as e:
-                print("Detections connection interrupted, will retry", e)
-                time.sleep(backoff)
-                backoff = min(MAX_BACKOFF_SECS, backoff * 2)
+        current_req = None
+        stop = False
+        lock = Lock()
+
+        def generate_results():
+            nonlocal current_req
+            nonlocal stop
+            backoff = INITIAL_BACKOFF_SECS
+            while not stop:
+                try:
+                    with requests.request(
+                        method,
+                        endpoint,
+                        headers=headers,
+                        params=params,
+                        stream=True,
+                        timeout=(CONNECT_TIMEOUT, READ_TIMEOUT),
+                    ) as req:
+                        with lock:
+                            if stop:
+                                return
+                            current_req = req
+                        if req.status_code >= 400 and req.status_code < 500:
+                            self.check_errors(req, error.InvalidQueryError)
+                        backoff = INITIAL_BACKOFF_SECS
+                        yield from stream_sse_events(req.raw)
+                except error.TokenExpirationError:
+                    self.retrieve_token(options={"request_from_server": True})
+                except requests.RequestException as e:
+                    print("Detections connection interrupted, will retry", e)
+                    if not stop:
+                        time.sleep(backoff)
+                    backoff = min(MAX_BACKOFF_SECS, backoff * 2)
+                except Exception:
+                    if stop:
+                        # The way we terminate usually leads to an Exception.
+                        break
+                    else:
+                        raise
+
+        class ResultsIterator:
+            def __iter__(self):
+                yield from generate_results()
+
+            def close(self):
+                nonlocal stop
+                nonlocal current_req
+                with lock:
+                    stop = True
+                    if current_req:
+                        try:
+                            if not current_req.raw.closed:
+                                # This is hacky, but the only method I've found to consistently
+                                # work in the case where no messages are being received.
+                                current_req.raw.connection.sock.shutdown(
+                                    socket.SHUT_RDWR
+                                )
+                        except Exception as e:
+                            print("Warning: unable to directly shutdown raw socket")
+                        # Worst case, this will probably take 1 minute to close if the
+                        # socket shutdown above didn't execute.
+                        current_req.close()
+
+        return ResultsIterator()
     except Exception as e:
         raise error.APIConnectionError(message=e)
 

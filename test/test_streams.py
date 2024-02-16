@@ -57,8 +57,11 @@ class TestStreams(object):
             )
             self.update_monitoring_test(
                 monitoring_id=monitoring_id,
-                thresholds={"cat": 0.7, "dog": 0.1},
+                thresholds={"cat": 0.98, "dog": 0.99},
                 minDetectionInterval="50",
+            )
+            self.watch_monitoring_result_stop_test(
+                monitoring_id=monitoring_id,
             )
         finally:
             if monitoring_id:
@@ -147,11 +150,11 @@ class TestStreams(object):
             "1",
             "1",
             "1",
-            "0.7",
+            "0.98",
             "1",
             "1",
             "1",
-            "0.1",
+            "0.99",
             "1",
             "1",
             "1",
@@ -187,6 +190,33 @@ class TestStreams(object):
         assert actual_res != None
         assert actual_res["monitoringId"] == monitoring_id
         assert len(actual_res["detections"]) >= 1
+        print_test_pass()
+
+    def watch_monitoring_result_stop_test(self, monitoring_id):
+        """Verifies we can stop a watch_monitoring."""
+        from threading import Thread
+
+        res = None
+        exc = None
+
+        def run():
+            nonlocal res
+            nonlocal exc
+            try:
+                res = self.api.watch_monitoring_result(monitoringId=monitoring_id)
+                actual_res = next(iter(res))
+                assert False, "Not expecting to reach this"
+            except StopIteration as e:
+                exc = e
+
+        thread = Thread(target=run, daemon=True)
+        thread.start()
+        time.sleep(1)
+        assert res
+        res.close()
+        thread.join(timeout=5)
+        assert not thread.is_alive()
+        assert isinstance(exc, StopIteration)
         print_test_pass()
 
     def get_monitoring_result_in_range_test(self, monitoring_id, start_time, end_time):
