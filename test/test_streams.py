@@ -4,6 +4,10 @@ import os
 import sys
 import pytest
 
+from unittest import mock
+
+from urllib3.exceptions import ProtocolError
+
 from test.data import (
     EVERYDAY_OBJECT_DETECTOR_ID,
     TEST_S3_VIDEO_URL,
@@ -13,6 +17,7 @@ from test.data import (
 )
 from matroid.error import InvalidQueryError, APIError
 from test.helper import print_test_pass
+from matroid.src.sse import _parse_sse_event as orig_parse_sse
 
 
 class TestStreams(object):
@@ -53,6 +58,9 @@ class TestStreams(object):
                 end_time="2022-06-01 00:00:00",
             )
             self.watch_monitoring_result_test(
+                monitoring_id=monitoring_id,
+            )
+            self.watch_monitoring_result_retry_test(
                 monitoring_id=monitoring_id,
             )
             self.update_monitoring_test(
@@ -191,6 +199,29 @@ class TestStreams(object):
         assert actual_res["monitoringId"] == monitoring_id
         assert len(actual_res["detections"]) >= 1
         print_test_pass()
+
+    def watch_monitoring_result_retry_test(self, monitoring_id):
+        first_call = True
+
+        def sse_mock_impl(*args, **kwargs):
+            nonlocal first_call
+            if first_call:
+                first_call = False
+                raise ProtocolError("Fake protocol error")
+            else:
+                return orig_parse_sse(*args, **kwargs)
+
+        with mock.patch("matroid.src.sse._parse_sse_event") as sse_mock:
+            sse_mock.side_effect = sse_mock_impl
+            res = self.api.watch_monitoring_result(monitoringId=monitoring_id)
+            actual_res = next(iter(res))
+            res.close()
+            assert actual_res != None
+            assert actual_res["monitoringId"] == monitoring_id
+            assert len(actual_res["detections"]) >= 1
+
+            assert not first_call, "Expected to throw an exception first"
+            print_test_pass()
 
     def watch_monitoring_result_stop_test(self, monitoring_id):
         """Verifies we can stop a watch_monitoring."""

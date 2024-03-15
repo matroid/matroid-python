@@ -7,6 +7,7 @@ from matroid.src.sse import stream_sse_events
 from threading import Lock
 import time
 import socket
+from urllib3.exceptions import ProtocolError
 
 INITIAL_BACKOFF_SECS = 1
 MAX_BACKOFF_SECS = 60
@@ -97,9 +98,9 @@ def watch_monitoring_result(self, monitoringId, **options):
                         yield from stream_sse_events(req.raw)
                 except error.TokenExpirationError:
                     self.retrieve_token(options={"request_from_server": True})
-                except requests.RequestException as e:
-                    print("Detections connection interrupted, will retry", e)
+                except (requests.RequestException, ProtocolError) as e:
                     if not stop:
+                        print("Detections connection interrupted, will retry", e)
                         time.sleep(backoff)
                     backoff = min(MAX_BACKOFF_SECS, backoff * 2)
                 except Exception:
@@ -190,9 +191,9 @@ def monitor_stream(self, streamId, detectorId, thresholds, **options):
         headers = {"Authorization": self.token.authorization_header()}
         data = {
             "thresholds": json.dumps(thresholds),
-            "sendEmailNotifications": "true"
-            if options.get("sendEmailNotifications")
-            else "false",
+            "sendEmailNotifications": (
+                "true" if options.get("sendEmailNotifications") else "false"
+            ),
             "regionEnabled": "true" if options.get("regionEnabled") else "false",
         }
 
@@ -219,9 +220,11 @@ def update_monitoring(self, monitoringId, **options):
         data = {
             "detection": options.get("detection") if options.get("detection") else {},
             "schedule": options.get("schedule") if options.get("schedule") else {},
-            "registeredEndpoint": options.get("registeredEndpoint")
-            if options.get("registeredEndpoint")
-            else {},
+            "registeredEndpoint": (
+                options.get("registeredEndpoint")
+                if options.get("registeredEndpoint")
+                else {}
+            ),
             "region": options.get("region") if options.get("region") else {},
         }
 

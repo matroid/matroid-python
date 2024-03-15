@@ -1,2 +1,2 @@
-1.3.2
+1.3.3
 # Please make sure to change the version in `matroid/matroid-python/matroid/version.py when making changes to this file, since the changes for deploy are based off of that file.
