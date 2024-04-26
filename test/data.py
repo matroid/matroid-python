@@ -2,14 +2,13 @@ import os
 
 EVERYDAY_OBJECT_DETECTOR_ID = "598e23679fd1a805a5c09275"
 DETECTOR_LABELS = ["person", "boat"]
+DEFAULT_DETECTION_THRESHOLD = 0.5
 RANDOM_MONGO_ID = "5d0148512563ae5e748e9a66"
 
 TEST_IMAGE_URL = (
     "https://m-test-public.s3.amazonaws.com/test/python-client/tesla-cat.jpg"
 )
-TEST_IMAGE_URL_DOG = (
-    "https://m-test-public.s3.amazonaws.com/test/python-client/dog.jpg"
-)
+TEST_IMAGE_URL_DOG = "https://m-test-public.s3.amazonaws.com/test/python-client/dog.jpg"
 TEST_IMAGE_FILE = os.getcwd() + "/test/test_file/cat.png"
 TEST_IMAGE_FILE_DOG = os.getcwd() + "/test/test_file/dog.png"
 

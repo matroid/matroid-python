@@ -71,6 +71,7 @@ def localize_stream_actions(
     detectorId,
     labels=None,
     fps=None,
+    thresholds=None,
 ):
     """Localize actions in a stream"""
     (endpoint, method) = self.endpoints["localize_stream_actions"]
@@ -84,6 +85,7 @@ def localize_stream_actions(
             "detectorId": detectorId,
             "labels": labels,
             "fps": fps,
+            "detectionThresholds": thresholds,
         }
 
         return requests.request(method, endpoint, **{"headers": headers, "data": data})

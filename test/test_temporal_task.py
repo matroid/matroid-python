@@ -9,6 +9,7 @@ from test.data import (
     TEST_VIDEO_URL,
     EVERYDAY_OBJECT_DETECTOR_ID,
     DETECTOR_LABELS,
+    DEFAULT_DETECTION_THRESHOLD,
 )
 from matroid.error import APIError
 from test.helper import print_test_pass
@@ -168,6 +169,7 @@ class TestTemporalTask(object):
                 endTime=endTime,
                 detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
                 labels=DETECTOR_LABELS,
+                thresholds=[DEFAULT_DETECTION_THRESHOLD] * len(DETECTOR_LABELS),
             )
         assert "Invalid dates provided" in str(e)
         with pytest.raises(APIError) as e:
@@ -179,6 +181,7 @@ class TestTemporalTask(object):
                     int(time.time()) - (24 * 60 * 60 * 8)
                 ),
                 endTime=endTime,
+                thresholds=[DEFAULT_DETECTION_THRESHOLD] * len(DETECTOR_LABELS),
             )
         assert "Provided dates are not within your stream" in str(e)
 
@@ -188,6 +191,7 @@ class TestTemporalTask(object):
             endTime,
             detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
             labels=DETECTOR_LABELS,
+            thresholds=[DEFAULT_DETECTION_THRESHOLD] * len(DETECTOR_LABELS),
         )
         assert res["temporal_task"]["feed"] == streamId
         assert (
