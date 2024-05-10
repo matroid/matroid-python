@@ -37,6 +37,7 @@ class MatroidAPI(object):
     from matroid.src.videos import classify_video, get_video_results
     from matroid.src.streams import (
         create_stream,
+        update_stream,
         register_stream,
         delete_monitoring,
         delete_stream,

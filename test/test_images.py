@@ -6,6 +6,7 @@ from test.data import (
     TEST_IMAGE_FILE,
     TEST_IMAGE_FILE_DOG,
     EVERYDAY_OBJECT_DETECTOR_ID,
+    EVERYDAY_OBJECT_SEGMENTOR_ID,
 )
 from matroid.error import InvalidQueryError, APIError
 from test.helper import print_test_pass
@@ -27,6 +28,12 @@ class TestImages(object):
             localizer=EVERYDAY_OBJECT_DETECTOR_ID,
             localizer_label=localizer_label,
             url=TEST_IMAGE_URL,
+        )
+
+        self.segment_image_test(
+            detector_id=EVERYDAY_OBJECT_SEGMENTOR_ID,
+            url=TEST_IMAGE_URL,
+            expected_label=localizer_label,
         )
 
     def classify_image_test(self, detector_id, url, urls, file, files):
@@ -61,5 +68,14 @@ class TestImages(object):
             localizer=localizer, localizerLabel=localizer_label, url=url
         )
         assert res["results"][0]["predictions"] != None
+
+        print_test_pass()
+
+    def segment_image_test(self, detector_id, url, expected_label):
+        res = self.api.classify_image(detectorId=detector_id, url=url)
+        preds = res["results"][0]["predictions"]
+        assert len(preds) == 3, "Expected 3 predictions for Segmentation"
+        assert expected_label in preds[0]["labels"]
+        assert len(preds[0]["segments"][0]["extPoints"]) > 500
 
         print_test_pass()

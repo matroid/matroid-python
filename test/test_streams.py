@@ -37,6 +37,12 @@ class TestStreams(object):
         # start testing
         try:
             stream_id = self.create_stream_test(url=TEST_S3_VIDEO_URL, name=stream_name)
+            self.update_stream_test(
+                stream_id,
+                "new-name",
+                "5",
+                [{"key": "i am a key", "template": "and i am a template"}],
+            )
             stream_id_2 = self.register_stream_test(
                 url=TEST_S3_VIDEO_URL_2, name=stream_name_2
             )
@@ -92,6 +98,20 @@ class TestStreams(object):
 
         print_test_pass()
         return res["streamId"]
+
+    def update_stream_test(self, stream_id, name, retention_days, custom_fields):
+        res = self.api.update_stream(
+            streamId=stream_id,
+            name=name,
+            retentionDays=retention_days,
+            customFields=custom_fields,
+        )
+        assert res["feed"] == stream_id
+        assert res["name"] == name
+        assert str(res["retentionDays"]) == retention_days
+        assert res["customFields"] == custom_fields
+
+        print_test_pass()
 
     def register_stream_test(self, url, name):
         res = self.api.register_stream(url=url, name=name)

@@ -8,7 +8,9 @@ from test.data import (
     TEST_S3_VIDEO_URL,
     TEST_VIDEO_URL,
     EVERYDAY_OBJECT_DETECTOR_ID,
+    TAL_DETECTOR_ID,
     DETECTOR_LABELS,
+    TAL_DETECTOR_LABELS,
     DEFAULT_DETECTION_THRESHOLD,
 )
 from matroid.error import APIError
@@ -73,36 +75,44 @@ class TestTemporalTask(object):
         if url and file:
             with pytest.raises(APIError) as e:
                 self.api.localize_video_actions(
-                    detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
+                    detectorId=TAL_DETECTOR_ID,
                     url=url,
                     file=file,
-                    labels=DETECTOR_LABELS,
+                    labels=TAL_DETECTOR_LABELS,
                 )
             assert "You may only specify a file or a URL, not both" in str(e)
 
         if url:
             with pytest.raises(APIError) as e:
                 self.api.localize_video_actions(
+                    detectorId=TAL_DETECTOR_ID,
+                    url=TEST_LOCAL_VIDEO_URL,
+                    labels=TAL_DETECTOR_LABELS,
+                )
+            assert "You provided an invalid URL" in str(e)
+
+            with pytest.raises(APIError) as e:
+                self.api.localize_video_actions(
                     detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
                     url=TEST_LOCAL_VIDEO_URL,
                     labels=DETECTOR_LABELS,
                 )
-            assert "You provided an invalid URL" in str(e)
+            assert "This detector does not support TAL" in str(e)
 
             res = self.api.localize_video_actions(
-                detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
+                detectorId=TAL_DETECTOR_ID,
                 url=url,
-                labels=DETECTOR_LABELS,
+                labels=TAL_DETECTOR_LABELS,
             )
 
         if file:
             res = self.api.localize_video_actions(
-                detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
+                detectorId=TAL_DETECTOR_ID,
                 file=file,
-                labels=DETECTOR_LABELS,
+                labels=TAL_DETECTOR_LABELS,
             )
 
-        assert res["temporal_task"]["network"] == EVERYDAY_OBJECT_DETECTOR_ID
+        assert res["temporal_task"]["network"] == TAL_DETECTOR_ID
 
         print_test_pass()
         return res["temporal_task"]["_id"]
@@ -167,11 +177,24 @@ class TestTemporalTask(object):
                 streamId=streamId,
                 startTime="test",
                 endTime=endTime,
-                detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
-                labels=DETECTOR_LABELS,
-                thresholds=[DEFAULT_DETECTION_THRESHOLD] * len(DETECTOR_LABELS),
+                detectorId=TAL_DETECTOR_ID,
+                labels=TAL_DETECTOR_LABELS,
+                thresholds=[DEFAULT_DETECTION_THRESHOLD] * len(TAL_DETECTOR_LABELS),
             )
         assert "Invalid dates provided" in str(e)
+        with pytest.raises(APIError) as e:
+            self.api.localize_stream_actions(
+                detectorId=TAL_DETECTOR_ID,
+                labels=TAL_DETECTOR_LABELS,
+                streamId=streamId,
+                startTime=datetime.utcfromtimestamp(
+                    int(time.time()) - (24 * 60 * 60 * 8)
+                ),
+                endTime=endTime,
+                thresholds=[DEFAULT_DETECTION_THRESHOLD] * len(TAL_DETECTOR_LABELS),
+            )
+        assert "Provided dates are not within your stream" in str(e)
+
         with pytest.raises(APIError) as e:
             self.api.localize_stream_actions(
                 detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
@@ -183,15 +206,15 @@ class TestTemporalTask(object):
                 endTime=endTime,
                 thresholds=[DEFAULT_DETECTION_THRESHOLD] * len(DETECTOR_LABELS),
             )
-        assert "Provided dates are not within your stream" in str(e)
+        assert "This detector does not support TAL" in str(e)
 
         res = self.api.localize_stream_actions(
             streamId,
             startTime,
             endTime,
-            detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
-            labels=DETECTOR_LABELS,
-            thresholds=[DEFAULT_DETECTION_THRESHOLD] * len(DETECTOR_LABELS),
+            detectorId=TAL_DETECTOR_ID,
+            labels=TAL_DETECTOR_LABELS,
+            thresholds=[DEFAULT_DETECTION_THRESHOLD] * len(TAL_DETECTOR_LABELS),
         )
         assert res["temporal_task"]["feed"] == streamId
         assert (
@@ -204,7 +227,7 @@ class TestTemporalTask(object):
             datetime.strptime(res["temporal_task"]["endTime"], "%Y-%m-%dT%H:%M:%S.000Z")
             == endTime
         )
-        assert res["temporal_task"]["network"] == EVERYDAY_OBJECT_DETECTOR_ID
+        assert res["temporal_task"]["network"] == TAL_DETECTOR_ID
 
         print_test_pass()
         return res["temporal_task"]["_id"]

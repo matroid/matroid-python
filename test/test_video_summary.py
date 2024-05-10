@@ -110,7 +110,7 @@ class TestVideoSummary(object):
     def get_video_summary_test(self, summaryId):
         with pytest.raises(APIError) as e:
             self.api.get_video_summary(summaryId="123")
-        assert "invalid_query_err" in str(e)
+        assert "Forbidden" in str(e)
 
         res = self.api.get_video_summary(summaryId=summaryId)
 
@@ -128,14 +128,14 @@ class TestVideoSummary(object):
     def get_video_summary_tracks_test(self):
         with pytest.raises(APIError) as e:
             self.api.get_video_summary_tracks(summaryId="123")
-        assert "invalid_query_err" in str(e)
+        assert "Forbidden" in str(e)
 
         print_test_pass()
 
     def get_video_summary_file_test(self):
         with pytest.raises(APIError) as e:
             self.api.get_video_summary_file(summaryId="123")
-        assert "invalid_query_err" in str(e)
+        assert "Forbidden" in str(e)
 
         print_test_pass()
 
@@ -207,7 +207,7 @@ class TestVideoSummary(object):
     def delete_video_summary_test(self, summaryId):
         with pytest.raises(APIError) as e:
             self.api.delete_video_summary(summaryId="123")
-        assert "invalid_query_err" in str(e)
+        assert "Forbidden" in str(e)
 
         res = self.api.delete_video_summary(summaryId=summaryId)
         assert res["summaryId"] == summaryId

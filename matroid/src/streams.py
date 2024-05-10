@@ -35,6 +35,21 @@ def create_stream(self, url, name, **options):
 register_stream = create_stream
 
 
+@api_call(error.InvalidQueryError)
+def update_stream(self, streamId, **options):
+    (endpoint, method) = self.endpoints["update_stream"]
+    endpoint = endpoint.replace(":key", streamId)
+
+    try:
+        headers = {"Authorization": self.token.authorization_header()}
+        data = {}
+        data.update(options)
+
+        return requests.request(method, endpoint, **{"headers": headers, "json": data})
+    except Exception as e:
+        raise error.APIConnectionError(message=e)
+
+
 # https://staging.app.matroid.com/docs/api/documentation#api-Streams-DeleteMonitoringsMonitoring_id
 @api_call(error.InvalidQueryError)
 def delete_monitoring(self, monitoringId):

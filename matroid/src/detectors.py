@@ -54,16 +54,26 @@ def create_detector(self, file, name, detectorType, **options):
         with self.filereader.get_file(file) as file_to_upload:
             # files = {'file': file_to_upload}
             files = {"file": (file, file_to_upload, "application/zip")}
+
+            labels_to_upload = None
+            labelsJSON = data.get("labelsJSON")
+            if labelsJSON:  # Check if labelsJSON is not None or empty
+                with self.filereader.get_file(labelsJSON) as labels_to_upload:
+                    files["labelsJSON"] = labels_to_upload.read()
+                data.pop("labelsJSON")
+
             file_size = os.fstat(file_to_upload.fileno()).st_size
 
             if file_size > MAX_LOCAL_ZIP_SIZE:
                 raise error.InvalidQueryError(
-                    message="File %s is larger than the limit of %d megabytes"
-                    % (file_to_upload.name, self.bytes_to_mb(MAX_LOCAL_ZIP_SIZE))
+                    message=f"File {file_to_upload.name} is larger than the limit of {self.bytes_to_mb(MAX_LOCAL_ZIP_SIZE)} megabytes"
                 )
-            return requests.request(
-                method, endpoint, **{"headers": headers, "files": files, "data": data}
+
+            response = requests.request(
+                method, endpoint, headers=headers, files=files, data=data
             )
+            return response
+
     except Exception as e:
         raise error.APIConnectionError(message=e)
 

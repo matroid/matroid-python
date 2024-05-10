@@ -195,6 +195,7 @@ def get_endpoints(base_url):
         "get_video_results": (base_url + "/videos/:key", "GET"),
         # streams
         "create_stream": (base_url + "/streams", "POST"),
+        "update_stream": (base_url + "/streams/:key", "PUT"),
         "delete_monitoring": (base_url + "/monitorings/:key", "DELETE"),
         "delete_stream": (base_url + "/streams/:key", "DELETE"),
         "watch_monitoring_result": (base_url + "/monitorings/:key/watch", "GET"),
