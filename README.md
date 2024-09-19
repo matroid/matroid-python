@@ -1,8 +1,6 @@
 # Matroid API Python Client
 
-Use our Python client to access the Matroid API for image and video classification. The client has been tested in Python 2.7 and Python 3.5.
-
-Due to API changes, please use Matroid Python Client versions 1.2.0 or later
+Use our Python client to access the Matroid API for image and video classification.
 
 ## Full documentation
 
@@ -41,22 +39,22 @@ api = Matroid(client_id = 'abc', client_secret = '123')
 detectors_to_use = api.search_detectors()
 
 # Classifying a picture from a URL
-logo_classification_result = api.classify_image(detector_id = 'test', image_url = 'https://app.matroid.com/images/logo2.png', num_results = 5)
+logo_classification_result = api.classify_image(detectorId = 'test', url = 'https://app.matroid.com/images/logo2.png', num_results = 5)
 
 # Classifying a picture from a file path
-stadium_classification_result = api.classify_image(detector_id = 'test', image_file = '/Users/matroid/Desktop/stadium.jpg')
+stadium_classification_result = api.classify_image(detectorId = 'test', file = '/Users/matroid/Desktop/stadium.jpg')
 
 # Classifying pictures from multiple file paths
-famous_people_results = api.classify_image(detector_id = 'test', image_file = ['/home/matroid/taylor.png', '/home/matroid/kanye.jpeg'])
+famous_people_results = api.classify_image(detectorId = 'test', file = ['/home/matroid/taylor.png', '/home/matroid/kanye.jpeg'])
 
 # Begin video classification
-classifying_video = api.classify_video(detector_id = 'test', video_file = '/home/matroid/video.mp4')
+classifying_video = api.classify_video(detectorId = 'test', file = '/home/matroid/video.mp4')
 
 # Classify YouTube video
-classifying_youtube_video = api.classify_video(detector_id = 'test', video_url = 'https://youtube.com/watch?v=abc')
+classifying_youtube_video = api.classify_video(detectorId = 'test', url = 'https://youtube.com/watch?v=abc')
 
 # Get video results
-video_results = api.get_video_results(video_id = classifying_video['video_id'], threshold = 0.3, format = 'json')
+video_results = api.get_video_results(videoId = classifying_video['videoId'], threshold = 0.3, format = 'json')
 
 # Register stream on Matroid
 registered_stream = api.create_stream(options = {})
@@ -71,7 +69,7 @@ options = {
   }
   'endpoint': 'http://mydomain.fake:9000/matroid_detections'
 }
-monitored_stream = api.monitor_stream(stream_id = registered_stream['stream_id'], detector_id = 'test', **options)
+monitored_stream = api.monitor_stream(streamId = registered_stream['stream_id'], detectorId = 'test', **options)
 # Parameters sent to endpoint: name, detectedAt, detector, screenshotUrl, clipUrl, detections
 
 # Create and train a detector
@@ -86,7 +84,7 @@ monitored_stream = api.monitor_stream(stream_id = registered_stream['stream_id']
       dog/
         odie.tiff
 """
-detector_id = api.create_detector(zip_file = '/home/matroid/catdog.zip', detector_type = 'general')['detector_id']
+detector_id = api.create_detector(file = '/home/matroid/catdog.zip', name='my-test-det', detectorType = 'general')['detectorId']
 api.finalize_detector(detector_id)
 
 # Check on training progress
@@ -139,7 +137,7 @@ feedback = [
 api.add_feedback(detectorId = 'your-detector-id', feedback = feedback, url = url)
 
 # Delete feedback from a detector
-api.delete_feedback(feedback_id = 'your-feedback-id', detector_id = 'your-detector-id')
+api.delete_feedback(feedbackId = 'your-feedback-id', detectorId = 'your-detector-id')
 ```
 
 ## API Response samples

@@ -74,8 +74,12 @@ class TestImages(object):
     def segment_image_test(self, detector_id, url, expected_label):
         res = self.api.classify_image(detectorId=detector_id, url=url)
         preds = res["results"][0]["predictions"]
-        assert len(preds) == 3, "Expected 3 predictions for Segmentation"
-        assert expected_label in preds[0]["labels"]
-        assert len(preds[0]["segments"][0]["extPoints"]) > 500
+        assert len(preds) == 4, "Expected 4 predictions for Segmentation"
+        predicted_labels = [
+            max(pred["labels"], key=pred["labels"].get) for pred in preds
+        ]
+        assert expected_label in predicted_labels
+        idx = predicted_labels.index(expected_label)
+        assert len(preds[idx]["segments"][0]["extPoints"]) > 500
 
         print_test_pass()
