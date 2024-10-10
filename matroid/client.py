@@ -12,6 +12,7 @@ DEFAULT_GRANT_TYPE = "client_credentials"
 class MatroidAPI(object):
     from matroid.src.helpers import (
         bytes_to_mb,
+        bytes_to_gb,
         check_errors,
         format_response,
         save_token,

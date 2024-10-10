@@ -30,7 +30,7 @@ def create_detector(self, file, name, detectorType, **options):
               Column definitions:
                 top left X coordinate, top left Y coordinate, bottom right X coordinate, bottom right Y coordinate, label, positive or negative example, file name
 
-              Max 300 MB zip file upload
+              Max 2 GB zip file upload
 
       structure example:
         cat/
@@ -42,7 +42,7 @@ def create_detector(self, file, name, detectorType, **options):
             lobo.jpg
         bbox.csv
     """
-    MAX_LOCAL_ZIP_SIZE = 300 * 1024 * 1024
+    MAX_LOCAL_ZIP_SIZE = 2e9
 
     (endpoint, method) = self.endpoints["create_detector"]
 
@@ -66,7 +66,7 @@ def create_detector(self, file, name, detectorType, **options):
 
             if file_size > MAX_LOCAL_ZIP_SIZE:
                 raise error.InvalidQueryError(
-                    message=f"File {file_to_upload.name} is larger than the limit of {self.bytes_to_mb(MAX_LOCAL_ZIP_SIZE)} megabytes"
+                    message=f"File {file_to_upload.name} is larger than the limit of {self.bytes_to_gb(MAX_LOCAL_ZIP_SIZE)} GB"
                 )
 
             response = requests.request(

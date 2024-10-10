@@ -34,6 +34,10 @@ def bytes_to_mb(self, bytes):
     return bytes / 1024 / 1024
 
 
+def bytes_to_gb(self, bytes):
+    return bytes / 1e9
+
+
 def check_errors(self, response=None, UserErr=None):
     """Raise specific errors depending on how the API call failed"""
     status = response.status_code
