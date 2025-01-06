@@ -258,6 +258,7 @@ def get_endpoints(base_url):
         "get_stream_summaries": (base_url + "/streams/:streamId/summaries", "GET"),
         "get_existing_summaries": (base_url + "/summaries", "GET"),
         # temporal tasks
+        "sample_stream": (base_url + "streams/:streamId/sample-stream", "POST"),
         "localize_video_actions": (base_url + "/temporal-task", "POST"),
         "localize_stream_actions": (
             base_url + "/streams/:streamId/temporal-task",
