@@ -49,6 +49,8 @@ class MatroidAPI(object):
         search_monitorings,
         search_streams,
         update_monitoring,
+        bulk_update_monitorings,
+        push_image,
     )
     from matroid.src.labels import (
         create_label_with_images,

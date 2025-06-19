@@ -206,9 +206,11 @@ def get_endpoints(base_url):
         "get_monitoring_result": (base_url + "/monitorings/:key", "GET"),
         "kill_monitoring": (base_url + "/monitorings/:key/kill", "POST"),
         "monitor_stream": (base_url + "/streams/:streamId/monitor/:detectorId", "POST"),
+        "bulk_update_monitorings": (base_url + "/monitorings/batch", "PUT"),
         "update_monitoring": (base_url + "/monitorings/:monitoringId", "PUT"),
         "search_monitorings": (base_url + "/monitorings", "GET"),
         "search_streams": (base_url + "/streams", "GET"),
+        "push_image": (base_url + "/streams/:streamId/push_image", "POST"),
         # labels
         "create_label_with_images": (base_url + "/detectors/:key/labels", "POST"),
         "delete_label": (base_url + "/detectors/:detectorId/labels/:labelId", "DELETE"),
@@ -274,6 +276,7 @@ def get_endpoints(base_url):
             base_url + "/temporal-tasks/:taskId/preds.json",
             "GET",
         ),
+        "sample_stream": (base_url + "/streams/:streamId/sample-stream", "POST"),
     }
 
     return end_points

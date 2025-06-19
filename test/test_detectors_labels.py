@@ -8,10 +8,14 @@ from matroid.error import APIConnectionError, InvalidQueryError, APIError
 from test.helper import print_test_pass
 
 DETECTOR_TEST_ZIP = os.getcwd() + "/test/test_file/cat-dog-lacroix.zip"
+DETECTOR_TEST_ZIP_NEW_STUDIO = os.getcwd() + "/test/test_file/example_coco.zip"
 
 
 class TestDetectorsAndLabels(object):
     def test_detector_and_labels(self, set_up_client):
+        print("DETECTOR_TEST_ZIP_NEW_STUDIO", DETECTOR_TEST_ZIP_NEW_STUDIO)
+        os.system("ls ..")
+        os.system("ls ../..")
         detector_id = None
         import_detector_id = None
         redo_detector_id = None
@@ -41,6 +45,12 @@ class TestDetectorsAndLabels(object):
             self.delete_pending_detectors()
             detector_id = self.create_detector_test(
                 file=DETECTOR_TEST_ZIP, name=detector_name, detector_type="general"
+            )
+            detector_id_2 = self.create_detector_test(
+                file=DETECTOR_TEST_ZIP_NEW_STUDIO,
+                name=detector_name,
+                detector_type="general",
+                use_new_studio=True,
             )
             self.wait_detector_ready_for_edit(detector_id)
             label_id = self.create_label_with_images_with_images_test(
@@ -85,15 +95,23 @@ class TestDetectorsAndLabels(object):
             if redo_detector_id:
                 self.delete_detector_test(redo_detector_id, "redo detector")
 
-    def create_detector_test(self, file, name, detector_type):
+    def create_detector_test(self, file, name, detector_type, use_new_studio=False):
         with pytest.raises(APIConnectionError) as e:
             invalid_zip_path = os.getcwd() + "/test/test_file/invalid.zip"
             self.api.create_detector(
-                file=invalid_zip_path, name=name, detectorType=detector_type
+                file=invalid_zip_path,
+                name=name,
+                detectorType=detector_type,
+                options={"useNewStudio": use_new_studio} if use_new_studio else {},
             )
         assert "No such file or directory" in str(e)
 
-        res = self.api.create_detector(file=file, name=name, detectorType=detector_type)
+        res = self.api.create_detector(
+            file=file,
+            name=name,
+            detectorType=detector_type,
+            options={"useNewStudio": use_new_studio} if use_new_studio else {},
+        )
         assert res["detectorId"] != None
 
         print_test_pass()
@@ -323,7 +341,7 @@ class TestDetectorsAndLabels(object):
         res = self.api.get_detector_info(detectorId=detector_id)
 
         tried_num = 0
-        max_tries = 15
+        max_tries = 150
 
         while res["processing"]:
             if tried_num > max_tries:

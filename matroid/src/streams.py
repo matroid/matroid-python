@@ -26,7 +26,7 @@ def create_stream(self, url, name, **options):
         data = {"name": name, "url": url}
         data.update(options)
 
-        return requests.request(method, endpoint, **{"headers": headers, "data": data})
+        return requests.request(method, endpoint, **{"headers": headers, "json": data})
     except Exception as e:
         raise error.APIConnectionError(message=e)
 
@@ -249,6 +249,21 @@ def update_monitoring(self, monitoringId, **options):
         raise error.APIConnectionError(message=e)
 
 
+@api_call(error.InvalidQueryError)
+def bulk_update_monitorings(self, monitoring_ids, task_update):
+    (endpoint, method) = self.endpoints["bulk_update_monitorings"]
+
+    try:
+        headers = {"Authorization": self.token.authorization_header()}
+        data = {
+            "monitoringIds": monitoring_ids,
+            "taskUpdate": task_update,
+        }
+        return requests.request(method, endpoint, **{"headers": headers, "json": data})
+    except Exception as e:
+        raise error.APIConnectionError(message=e)
+
+
 # https://staging.app.matroid.com/docs/api/documentation#api-Streams-GetMonitoringsQuery
 @api_call(error.InvalidQueryError)
 def search_monitorings(self, **options):
@@ -280,6 +295,34 @@ def search_streams(self, **options):
         }
         return requests.request(
             method, endpoint, **{"headers": headers, "params": params}
+        )
+    except Exception as e:
+        raise error.APIConnectionError(message=e)
+
+
+# https://staging.app.matroid.com/docs/api/documentation#api-Streams-GetStreamsQuery
+@api_call(error.InvalidQueryError)
+def push_image(self, streamId, **options):
+    (endpoint, method) = self.endpoints["push_image"]
+    endpoint = endpoint.replace(":streamId", streamId)
+
+    try:
+        image_file = None
+        files = None
+        file = options.get("file")
+        if file:
+            image_file = self.filereader.get_file(file)
+            files = {"file": image_file}
+
+        headers = {"Authorization": self.token.authorization_header()}
+        data = {
+            "useDefaultSource": options.get("useDefaultSource", False),
+            "timestamp": options.get("timestamp"),
+            "metadata": options.get("metadata"),
+        }
+
+        return requests.request(
+            method, endpoint, **{"headers": headers, "data": data, "files": files}
         )
     except Exception as e:
         raise error.APIConnectionError(message=e)

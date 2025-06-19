@@ -6,6 +6,7 @@ import json
 from matroid import error
 from matroid.src.helpers import api_call
 
+
 # https://staging.app.matroid.com/docs/api/documentation#api-Detectors-PostDetectors
 @api_call(error.InvalidQueryError)
 def create_detector(self, file, name, detectorType, **options):
@@ -50,6 +51,8 @@ def create_detector(self, file, name, detectorType, **options):
         headers = {"Authorization": self.token.authorization_header()}
         data = {"name": name, "detectorType": detectorType}
         data.update(options)
+        if "options" in options:
+            data.update(options["options"])
 
         with self.filereader.get_file(file) as file_to_upload:
             # files = {'file': file_to_upload}
@@ -115,6 +118,7 @@ def finalize_detector(self, detectorId):
 
 train_detector = finalize_detector
 
+
 # https://staging.app.matroid.com/docs/api/documentation#api-Detectors-GetDetectorsDetector_id
 @api_call(error.InvalidQueryError)
 def get_detector_info(self, detectorId):
@@ -131,6 +135,7 @@ def get_detector_info(self, detectorId):
 
 
 detector_info = get_detector_info
+
 
 # https://staging.app.matroid.com/docs/api/documentation#api-Detectors-PostDetectorsUpload
 @api_call(error.InvalidQueryError)

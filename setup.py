@@ -16,5 +16,4 @@ setup(
     url="https://github.com/matroid/matroid-python",
     install_requires=["requests"],
     packages=find_packages(),
-    use_2to3=True,
 )

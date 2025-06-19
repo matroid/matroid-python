@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import os
 import sys
@@ -19,15 +19,25 @@ from matroid.error import InvalidQueryError, APIError
 from test.helper import print_test_pass
 from matroid.src.sse import _parse_sse_event as orig_parse_sse
 
+DETECTOR_TEST_ZIP = os.getcwd() + "/test/test_file/cat-dog-lacroix.zip"
+PUSH_IMAGE_TEST_IMAGE = os.getcwd() + "/test/test_file/cat.jpg"
+PUSH_IMAGE_API_STREAM_URL = "api_image_push://example"
+PUSH_IMAGE_API_STREAM_DEFAULT_IMAGE_SRC = (
+    "https://images.pexels.com/photos/1563356/pexels-photo-1563356.jpeg"
+)
+
 
 class TestStreams(object):
     def test_stream(self, set_up_client):
         stream_id = None
         stream_id_2 = None
+        stream_id_3 = None  # Push Image API Stream
         monitoring_id = None
+        monitoring_id_2 = None
 
         stream_name = "py-test-stream-{}".format(datetime.now())
         stream_name_2 = "py-test-stream-2-{}".format(datetime.now())
+        stream_name_3 = "py-test-stream-3-{}".format(datetime.now())
         thresholds = {"cat": 0.5, "dog": 0.6, "car": 0.1}
         task_name = "test-task"
         minDetectionInterval = 90
@@ -46,11 +56,25 @@ class TestStreams(object):
             stream_id_2 = self.register_stream_test(
                 url=TEST_S3_VIDEO_URL_2, name=stream_name_2
             )
+
+            stream_id_3 = self.create_stream_test(
+                url=PUSH_IMAGE_API_STREAM_URL,
+                name=stream_name_3,
+                defaultImagePull={"source": PUSH_IMAGE_API_STREAM_DEFAULT_IMAGE_SRC},
+            )
             monitoring_id = self.monitor_stream_test(
                 stream_id=stream_id,
                 detector_id=EVERYDAY_OBJECT_DETECTOR_ID,
                 thresholds=thresholds,
                 task_name=task_name,
+                minDetectionInterval=minDetectionInterval,
+            )
+
+            monitoring_id_2 = self.monitor_stream_test(
+                stream_id=stream_id_2,
+                detector_id=EVERYDAY_OBJECT_DETECTOR_ID,
+                thresholds=thresholds,
+                task_name=task_name + "_2",
                 minDetectionInterval=minDetectionInterval,
             )
             self.search_monitorings_test(
@@ -74,26 +98,104 @@ class TestStreams(object):
                 thresholds={"cat": 0.98, "dog": 0.99},
                 minDetectionInterval="50",
             )
+
+            self.bulk_update_monitorings_test(
+                monitoring_ids=[monitoring_id, monitoring_id_2],
+                task_update={
+                    "detection": {
+                        "thresholds": [
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "0.7",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                            "1",
+                        ],
+                        "notificationAlertSounds": [
+                            "simple-ding.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                            "simple-ding.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                            "simple-ding.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                            "-",
+                            "harp-strum.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                            "invalid.mp3",
+                        ],
+                    },
+                    "registeredEndpoints": {
+                        "uri": "http://example.com",
+                    },
+                },
+            )
+
             self.watch_monitoring_result_stop_test(
                 monitoring_id=monitoring_id,
+            )
+
+            self.sample_stream_test(
+                stream_id=stream_id,
+                start_time=datetime.now() - timedelta(seconds=2),
+                end_time=datetime.now(),
+            )
+
+            self.push_image_test(
+                stream_id=stream_id_3,
             )
         finally:
             if monitoring_id:
                 self.kill_monitoring_test(monitoring_id=monitoring_id)
                 self.wait_for_monitoring_stop(monitoring_id=monitoring_id)
                 self.delete_monitoring_test(monitoring_id=monitoring_id)
+
+            if monitoring_id_2:
+                self.kill_monitoring_test(monitoring_id=monitoring_id_2)
+                self.wait_for_monitoring_stop(monitoring_id=monitoring_id_2)
+                self.delete_monitoring_test(monitoring_id=monitoring_id_2)
+
             if stream_id:
                 self.delete_stream_test(stream_id=stream_id)
             if stream_id_2:
                 self.delete_stream_test(stream_id=stream_id_2)
+            if stream_id_3:
+                self.delete_stream_test(stream_id=stream_id_3)
 
     # test cases
-    def create_stream_test(self, url, name):
-        res = self.api.create_stream(url=url, name=name)
+    def create_stream_test(self, url, name, defaultImagePull=None):
+        res = self.api.create_stream(
+            url=url, name=name, defaultImagePull=defaultImagePull
+        )
         assert res["streamId"] != None
 
         with pytest.raises(APIError) as e:
-            self.api.create_stream(url=url, name=name)
+            self.api.create_stream(
+                url=url, name=name, defaultImagePull=defaultImagePull
+            )
         assert "invalid_query_err" in str(e)
 
         print_test_pass()
@@ -196,6 +298,61 @@ class TestStreams(object):
         assert res["region"]["focusAreas"][0]["coords"] == [regionCoords]
         print_test_pass()
 
+    def bulk_update_monitorings_test(self, monitoring_ids, task_update):
+        res = self.api.bulk_update_monitorings(
+            monitoring_ids=monitoring_ids, task_update=task_update
+        )
+
+        modified_monitorings = res["modifiedMonitorings"]
+        assert len(modified_monitorings) == 2
+        for monitoring in modified_monitorings:
+            assert monitoring["_id"] in monitoring_ids
+            assert monitoring["detection"]["thresholds"] == [
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "0.7",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+            ]
+            assert monitoring["detection"]["notificationAlertSounds"] == [
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "-",
+                "harp-strum.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+                "simple-ding.mp3",
+            ]
+        print_test_pass()
+
     def search_monitorings_test(self, stream_id, monitoring_id):
         res = self.api.search_monitorings(streamId=stream_id)
         assert res[0]["monitoringId"] == monitoring_id
@@ -290,6 +447,42 @@ class TestStreams(object):
     def delete_stream_test(self, stream_id):
         res = self.api.delete_stream(streamId=stream_id)
         assert res["message"] == "Successfully deleted stream."
+        print_test_pass()
+
+    def sample_stream_test(self, stream_id, start_time, end_time):
+        res = self.api.create_detector(
+            name="sample-stream-test",
+            detectorType="general",
+            file=DETECTOR_TEST_ZIP,
+        )
+
+        detector_id = res["detectorId"]
+
+        time.sleep(5)
+        res = self.api.sample_stream(
+            streamId=stream_id,
+            startTime=start_time,
+            endTime=end_time,
+            detectorId=detector_id,
+            label="cat",
+        )
+        assert res != None
+        assert res["temporal_task"] != None
+        assert res["temporal_task"]["_id"] != None
+        print_test_pass()
+
+    def push_image_test(self, stream_id):
+        res = self.api.push_image(
+            streamId=stream_id,
+            useDefaultSource=None,
+            timestamp=None,
+            metadata="",
+            file=PUSH_IMAGE_TEST_IMAGE,
+        )
+        assert res["success"] == True
+
+        res2 = self.api.push_image(streamId=stream_id, useDefaultSource=True)
+        assert res["success"] == True
         print_test_pass()
 
     # helpers

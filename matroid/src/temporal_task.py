@@ -3,6 +3,7 @@ import requests
 from matroid import error
 from matroid.src.helpers import api_call
 
+
 # https://staging.app.matroid.com/docs/api/index.html#api-Temporal_Task-PostLocalizeActions
 @api_call(error.InvalidQueryError)
 def localize_video_actions(
@@ -173,7 +174,7 @@ def sample_stream(
     startTime,
     endTime,
     detectorId,
-    labels=None,
+    label=None,
     fps=None,
 ):
     """Localize actions in a stream"""
@@ -186,7 +187,7 @@ def sample_stream(
             "startTime": startTime,
             "endTime": endTime,
             "detectorId": detectorId,
-            "labels": labels,
+            "label": label,
             "fps": fps,
         }
 
