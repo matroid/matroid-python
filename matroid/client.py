@@ -95,7 +95,11 @@ class MatroidAPI(object):
     )
 
     def __init__(
-        self, base_url=BASE_URL, client_id=None, client_secret=None, options={}
+        self,
+        base_url=BASE_URL,
+        client_id=None,
+        client_secret=None,
+        options={},  # noqa: B006
     ):
         """
         base_url: the API endpoint

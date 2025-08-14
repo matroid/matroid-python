@@ -3,12 +3,12 @@ class APIError(Exception):
 
     def __init__(self, response=None, message=None):
         if message:
-            super(APIError, self).__init__(message)
+            super(APIError, self).__init__(message)  # noqa: UP008
         else:
             try:
-                super(APIError, self).__init__(response.text)
+                super(APIError, self).__init__(response.text)  # noqa: UP008
             except AttributeError:
-                super(APIError, self).__init__("No response or error message provided")
+                super(APIError, self).__init__("No response or error message provided")  # noqa: UP008
 
         if response:
             self.response = response

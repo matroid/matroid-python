@@ -4,6 +4,7 @@ import requests
 from matroid import error
 from matroid.src.helpers import api_call
 
+
 # https://staging.app.matroid.com/docs/api/documentation#api-Videos-PostDetectorsDetector_idClassify_video
 @api_call(error.InvalidQueryError)
 def classify_video(self, detectorId, url=None, file=None, **options):
@@ -50,7 +51,7 @@ def classify_video(self, detectorId, url=None, file=None, **options):
 
                 if file_size > MAX_LOCAL_VIDEO_SIZE:
                     raise error.InvalidQueryError(
-                        message="File %s is larger than the limit of %d megabytes"
+                        message="File %s is larger than the limit of %d megabytes"  # noqa: UP031
                         % (file_to_upload.name, self.bytes_to_mb(MAX_LOCAL_VIDEO_SIZE))
                     )
 

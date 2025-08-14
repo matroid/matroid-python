@@ -5,7 +5,7 @@ import pytest
 
 from test.data import TEST_IMAGE_FILE, RANDOM_MONGO_ID, TEST_IMAGE_URL
 from matroid.error import APIConnectionError, InvalidQueryError, APIError
-from test.helper import print_test_pass
+from test.helper import print_test_pass, wait_detector_ready_for_edit
 
 DETECTOR_TEST_ZIP = os.getcwd() + "/test/test_file/cat-dog-lacroix.zip"
 DETECTOR_TEST_ZIP_NEW_STUDIO = os.getcwd() + "/test/test_file/example_coco.zip"
@@ -14,13 +14,13 @@ DETECTOR_TEST_ZIP_NEW_STUDIO = os.getcwd() + "/test/test_file/example_coco.zip"
 class TestDetectorsAndLabels(object):
     def test_detector_and_labels(self, set_up_client):
         print("DETECTOR_TEST_ZIP_NEW_STUDIO", DETECTOR_TEST_ZIP_NEW_STUDIO)
-        os.system("ls ..")
-        os.system("ls ../..")
+        os.system("ls ..")  # noqa: S605
+        os.system("ls ../..")  # noqa: S605
         detector_id = None
         import_detector_id = None
         redo_detector_id = None
 
-        detector_name = "py-test-detector-{}".format(datetime.now())
+        detector_name = f"py-test-detector-{datetime.now()}"
         label_name = "py-test-label"
         bbox = {"left": 0.2, "top": 0.1, "width": 0.6, "height": 0.8}
 
@@ -52,7 +52,7 @@ class TestDetectorsAndLabels(object):
                 detector_type="general",
                 use_new_studio=True,
             )
-            self.wait_detector_ready_for_edit(detector_id)
+            wait_detector_ready_for_edit(self.api, detector_id)
             label_id = self.create_label_with_images_with_images_test(
                 name=label_name, detector_id=detector_id, image_files=TEST_IMAGE_FILE
             )
@@ -335,22 +335,3 @@ class TestDetectorsAndLabels(object):
 
         print("Info: detector is ready")
         return True
-
-    def wait_detector_ready_for_edit(self, detector_id):
-        print("Info: waiting for pending detector to be ready for editing")
-        res = self.api.get_detector_info(detectorId=detector_id)
-
-        tried_num = 0
-        max_tries = 150
-
-        while res["processing"]:
-            if tried_num > max_tries:
-                pytest.fail("Timeout when waiting for detector to be ready for editing")
-
-            res = self.api.get_detector_info(detectorId=detector_id)
-
-            time.sleep(2)
-
-            tried_num += 1
-
-        print("Info: detector is ready for editing.")

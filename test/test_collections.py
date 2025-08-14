@@ -6,7 +6,7 @@ from test.data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_IMAGE_URL, RANDOM_MONGO_
 from matroid.error import InvalidQueryError, APIError
 from test.helper import print_test_pass
 
-COLLECTION_NAME = "py-test-collection-{}".format(datetime.now())
+COLLECTION_NAME = f"py-test-collection-{datetime.now()}"
 S3_BUCKET_URL = "s3://bucket/m-test-public/"
 
 

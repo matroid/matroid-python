@@ -6,7 +6,7 @@ from version import VERSION
 
 def versions(package_name):
     """returns a list of versions of the package on pypi"""
-    url = "https://pypi.org/pypi/%s/json" % (package_name,)
+    url = "https://pypi.org/pypi/%s/json" % (package_name,)  # noqa: UP031
     data = json.load(urllib.request.urlopen(url))
     versions = list(data["releases"].keys())
     return versions

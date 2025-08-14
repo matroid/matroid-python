@@ -6,7 +6,7 @@ from matroid.src.helpers import api_call
 # https://staging.app.matroid.com/docs/api/documentation#api-Accounts-RefreshToken
 
 
-def retrieve_token(self, options={}):
+def retrieve_token(self, options={}):  # noqa: B006
     """
     Generates an OAuth token. The API client will intelligently refresh the Access Token for you
     However, if you would like to manually expire an existing token and create a new token,
@@ -41,7 +41,7 @@ def retrieve_token(self, options={}):
 
     self.save_token(response)
 
-    return response.json()
+    return self.token
 
 
 # https://staging.app.matroid.com/docs/api/documentation#api-Accounts-GetAccount

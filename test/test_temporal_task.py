@@ -23,7 +23,7 @@ class TestTemporalTask(object):
         url_temporal_task_id = None
         local_temporal_task_id = None
         stream_temporal_task_id = None
-        stream_name = "py-test-stream-{}".format(datetime.now())
+        stream_name = f"py-test-stream-{datetime.now()}"
 
         # set up client
         self.api = set_up_client
@@ -147,9 +147,9 @@ class TestTemporalTask(object):
         res_task_ids = [task["_id"] for task in res["temporal_tasks"]]
 
         for task_id in task_ids:
-            assert (
-                task_id in res_task_ids
-            ), f"Summary ID {task_id} was not found in existing user summaries."
+            assert task_id in res_task_ids, (
+                f"Summary ID {task_id} was not found in existing user summaries."
+            )
 
         assert res["temporal_tasks"] is not None
         print_test_pass()

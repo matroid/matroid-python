@@ -112,7 +112,7 @@ def batch_file_request(
 
         if total_batch_size > MAX_LOCAL_IMAGE_BATCH_SIZE:
             raise error.InvalidQueryError(
-                message="Max batch upload size is %d megabytes."
+                message="Max batch upload size is %d megabytes."  # noqa: UP031
                 % (bytes_to_mb(MAX_LOCAL_IMAGE_BATCH_SIZE))
             )
 
@@ -131,7 +131,7 @@ def check_file_size(file):
 
     if file_size > MAX_LOCAL_IMAGE_SIZE:
         raise error.InvalidQueryError(
-            message="File %s is larger than the limit of %d megabytes"
+            message="File %s is larger than the limit of %d megabytes"  # noqa: UP031
             % (file.name, bytes_to_mb(MAX_LOCAL_IMAGE_SIZE))
         )
 

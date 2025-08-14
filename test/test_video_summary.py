@@ -20,7 +20,7 @@ class TestVideoSummary(object):
         url_video_summary_id = None
         local_video_summary_id = None
         stream_summary_id = None
-        stream_name = "py-test-stream-{}".format(datetime.now())
+        stream_name = f"py-test-stream-{datetime.now()}"
 
         # set up client
         self.api = set_up_client
@@ -218,9 +218,9 @@ class TestVideoSummary(object):
         res_summary_ids = [summary["_id"] for summary in res["summaries"]]
 
         for summary_id in summary_ids:
-            assert (
-                summary_id in res_summary_ids
-            ), f"Summary ID {summary_id} was not found in existing user summaries."
+            assert summary_id in res_summary_ids, (
+                f"Summary ID {summary_id} was not found in existing user summaries."
+            )
 
         assert res["summaries"] is not None
         print_test_pass()
@@ -253,15 +253,15 @@ class TestVideoSummary(object):
 
         assert params["fps"] == fps, "fps set incorrectly"
         assert params["mcLambda"] == mc_lambda, "mcLambda set incorrectly"
-        assert (
-            params["matchingDistance"] == matching_distance
-        ), "matchingDistance set incorrectly"
+        assert params["matchingDistance"] == matching_distance, (
+            "matchingDistance set incorrectly"
+        )
         assert params["nInit"] == n_init, "nInit set incorrectly"
         assert params["nnBudget"] == nn_budget, "nnBudget set incorrectly"
         assert params["maxIouDist"] == max_iou_dist, "maxIouDist set incorrectly"
         assert params["maxAge"] == max_age, "maxAge set incorrectly"
-        assert (
-            params["detectionThreshold"] == detection_threshold
-        ), "detectionThreshold set incorrectly"
+        assert params["detectionThreshold"] == detection_threshold, (
+            "detectionThreshold set incorrectly"
+        )
 
         print_test_pass()

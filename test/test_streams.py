@@ -16,8 +16,9 @@ from test.data import (
     RANDOM_MONGO_ID,
 )
 from matroid.error import InvalidQueryError, APIError
-from test.helper import print_test_pass
+from test.helper import print_test_pass, wait_detector_ready_for_edit
 from matroid.src.sse import _parse_sse_event as orig_parse_sse
+
 
 DETECTOR_TEST_ZIP = os.getcwd() + "/test/test_file/cat-dog-lacroix.zip"
 PUSH_IMAGE_TEST_IMAGE = os.getcwd() + "/test/test_file/cat.jpg"
@@ -35,9 +36,9 @@ class TestStreams(object):
         monitoring_id = None
         monitoring_id_2 = None
 
-        stream_name = "py-test-stream-{}".format(datetime.now())
-        stream_name_2 = "py-test-stream-2-{}".format(datetime.now())
-        stream_name_3 = "py-test-stream-3-{}".format(datetime.now())
+        stream_name = f"py-test-stream-{datetime.now()}"
+        stream_name_2 = f"py-test-stream-2-{datetime.now()}"
+        stream_name_3 = f"py-test-stream-3-{datetime.now()}"
         thresholds = {"cat": 0.5, "dog": 0.6, "car": 0.1}
         task_name = "test-task"
         minDetectionInterval = 90
@@ -458,7 +459,8 @@ class TestStreams(object):
 
         detector_id = res["detectorId"]
 
-        time.sleep(5)
+        wait_detector_ready_for_edit(self.api, detector_id)
+
         res = self.api.sample_stream(
             streamId=stream_id,
             startTime=start_time,
