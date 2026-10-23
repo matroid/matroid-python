@@ -1,12 +1,12 @@
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 import pytest
 
-from test.data import EVERYDAY_OBJECT_DETECTOR_ID, TEST_IMAGE_URL, RANDOM_MONGO_ID
-from matroid.error import InvalidQueryError, APIError
+from test.data import EVERYDAY_OBJECT_DETECTOR_ID, RANDOM_MONGO_ID
+from matroid.error import APIError
 from test.helper import print_test_pass
 
-COLLECTION_NAME = f"py-test-collection-{datetime.now()}"
+COLLECTION_NAME = f"py-test-collection-{datetime.now(tz=timezone.utc)}"
 S3_BUCKET_URL = "s3://bucket/m-test-public/"
 
 
@@ -97,7 +97,8 @@ class TestCollections(object):
         print_test_pass()
 
     def update_collection_index_test(self, task_id):
-        res = self.api.update_collection_index(taskId=task_id, updateIndex=False)
+        # We must update the index so we try to restart the task
+        res = self.api.update_collection_index(taskId=task_id, updateIndex=True)
         assert res["collectionTask"] != None
         collection_task_id = res["collectionTask"]["_id"]
         assert collection_task_id == task_id

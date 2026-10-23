@@ -1,6 +1,6 @@
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 import pytest
 
 from test.data import TEST_IMAGE_FILE, RANDOM_MONGO_ID, TEST_IMAGE_URL
@@ -17,20 +17,11 @@ class TestDetectorsAndLabels(object):
         os.system("ls ..")  # noqa: S605
         os.system("ls ../..")  # noqa: S605
         detector_id = None
-        import_detector_id = None
         redo_detector_id = None
 
-        detector_name = f"py-test-detector-{datetime.now()}"
+        detector_name = f"py-test-detector-{datetime.now(tz=timezone.utc)}"
         label_name = "py-test-label"
         bbox = {"left": 0.2, "top": 0.1, "width": 0.6, "height": 0.8}
-
-        # Info for import_detector_test
-        import_detector_name = "upload_py_gender_facial"
-        detector_type = "facial_recognition"
-        input_tensor = "input_5[128,128,3]"
-        output_tensor = "prob3[2]"
-        labels = ["female", "male"]
-        file_proto = os.getcwd() + "/test/test_file/gender_only_all_android.pb"
 
         # track so they can be deleted
         self.feedback_ids = []
@@ -77,21 +68,11 @@ class TestDetectorsAndLabels(object):
             self.search_detectors_test()
             self.list_detectors_test()
             redo_detector_id = self.redo_detector_test(detector_id=detector_id)
-            import_detector_id = self.import_detector_test(
-                name=import_detector_name,
-                input_tensor=input_tensor,
-                output_tensor=output_tensor,
-                detector_type="facial_recognition",
-                file_proto=file_proto,
-                labels=labels,
-            )
         finally:
             if detector_id:
                 self.delete_detector_test(
                     detector_id, "main detector", finished_training
                 )
-            if import_detector_id:
-                self.delete_detector_test(import_detector_id, "imported detector")
             if redo_detector_id:
                 self.delete_detector_test(redo_detector_id, "redo detector")
 
@@ -285,23 +266,6 @@ class TestDetectorsAndLabels(object):
 
         print_test_pass()
         return redo_detector_id
-
-    def import_detector_test(
-        self, name, input_tensor, output_tensor, detector_type, file_proto, labels
-    ):
-        res = self.api.import_detector(
-            name=name,
-            inputTensor=input_tensor,
-            outputTensor=output_tensor,
-            detectorType=detector_type,
-            fileProto=file_proto,
-            labels=labels,
-        )
-
-        assert res["detectorId"] != None
-
-        print_test_pass()
-        return res["detectorId"]
 
     def delete_detector_test(self, detector_id, detector_type, trained=True):
         if trained:

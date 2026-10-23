@@ -1,3 +1,9 @@
+### 1.5.0
+
+#### Date: Sep 18, 2026
+#### Summary of Changes:
+- removes `import_detector()`. The `POST /detectors/upload` endpoint it called has been retired along with the legacy TensorFlow-only model upload flow. Use the detector import flow in the web app instead.
+
 ### 1.3.1
 
 #### Date: Jan 8, 2024

@@ -4,6 +4,7 @@ import requests
 from matroid import error
 from matroid.src.helpers import api_call, batch_file_request
 
+
 # https://staging.app.matroid.com/docs/api/documentation#api-Images-Classify
 @api_call(error.InvalidQueryError)
 def classify_image(self, detectorId, file=None, url=None, **options):

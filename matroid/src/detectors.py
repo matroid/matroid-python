@@ -137,70 +137,17 @@ def get_detector_info(self, detectorId):
 detector_info = get_detector_info
 
 
-# https://staging.app.matroid.com/docs/api/documentation#api-Detectors-PostDetectorsUpload
-@api_call(error.InvalidQueryError)
-def import_detector(self, name, **options):
-    """
-    Note: certain combination of parameters can be supplied: file_detector, file_proto + file_label (+ file_label_ind), or file_proto + labels (+ label_inds). Parentheses part can be optionally supplied for object detection.
-    """
-    (endpoint, method) = self.endpoints["import_detector"]
-
-    data = {
-        "name": name,
-    }
-
-    def get_data_info():
-        data["inputTensor"] = (options.get("inputTensor"),)
-        data["outputTensor"] = (options.get("outputTensor"),)
-        data["detectorType"] = (options.get("detectorType"),)
-
-    if options.get("fileDetector"):
-        file_paths = {"fileDetector": options.get("fileDetector")}
-    elif options.get("fileProto") and options.get("fileLabel"):
-        file_paths = {
-            "fileProto": options.get("fileProto"),
-            "fileLabel": options.get("fileLabel"),
-            "fileLabelInd": options.get("fileLabelInd"),
-        }
-        get_data_info()
-    elif options.get("fileProto") and options.get("labels"):
-        file_paths = {
-            "fileProto": options.get("fileProto"),
-        }
-        data["labels"] = options.get("labels")
-        data["labelInds"] = options.get("labelInds")
-        get_data_info()
-    else:
-        raise error.InvalidQueryError(message="Invalid parameter combination")
-
-    file_objs = {}
-    for file_keyword, file_path in file_paths.items():
-        file_obj = self.filereader.get_file(file_path)
-        file_objs[file_keyword] = file_obj
-
-    try:
-        headers = {"Authorization": self.token.authorization_header()}
-        return requests.request(
-            method, endpoint, **{"headers": headers, "files": file_objs, "data": data}
-        )
-    except IOError as e:
-        raise e
-    except error.InvalidQueryError as e:
-        raise e
-    except Exception as e:
-        raise error.APIConnectionError(message=e)
-    finally:
-        for file_keyword, file_obj in file_objs.items():
-            if isinstance(file_obj, io.IOBase):
-                file_obj.close()
-
-
 # https://staging.app.matroid.com/docs/api/documentation#api-Detectors-PostDetectorsDetector_idRedo
 @api_call(error.InvalidQueryError)
 def redo_detector(self, detectorId, **options):
     """
     Redo a detector
-    Note: a deep copy of the trained detector with different detector_id will be made
+    Note: a deep copy of the trained detector with different detector_id will be made.
+
+    Optional kwargs:
+      feedbackOnly (bool, default False): retrain using only feedback images.
+      copySharePermissions (bool, default False): copy the parent's user/team
+          shares onto the new detector.
     """
     (endpoint, method) = self.endpoints["redo_detector"]
 
@@ -208,7 +155,12 @@ def redo_detector(self, detectorId, **options):
 
     try:
         headers = {"Authorization": self.token.authorization_header()}
-        data = {"feedbackOnly": "true" if options.get("feedbackOnly") else "false"}
+        data = {
+            "feedbackOnly": "true" if options.get("feedbackOnly") else "false",
+            "copySharePermissions": (
+                "true" if options.get("copySharePermissions") else "false"
+            ),
+        }
         return requests.request(method, endpoint, **{"headers": headers, "data": data})
     except Exception as e:
         raise error.APIConnectionError(message=e)

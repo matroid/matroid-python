@@ -1,13 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import time
 import os
-import sys
 import pytest
-
 from unittest import mock
-
 from urllib3.exceptions import ProtocolError
-
 from test.data import (
     EVERYDAY_OBJECT_DETECTOR_ID,
     TEST_S3_VIDEO_URL,
@@ -15,14 +11,14 @@ from test.data import (
     TEST_VIDEO_URL,
     RANDOM_MONGO_ID,
 )
-from matroid.error import InvalidQueryError, APIError
+from matroid.error import APIError
 from test.helper import print_test_pass, wait_detector_ready_for_edit
 from matroid.src.sse import _parse_sse_event as orig_parse_sse
 
 
 DETECTOR_TEST_ZIP = os.getcwd() + "/test/test_file/cat-dog-lacroix.zip"
 PUSH_IMAGE_TEST_IMAGE = os.getcwd() + "/test/test_file/cat.jpg"
-PUSH_IMAGE_API_STREAM_URL = "api_image_push://example"
+PUSH_IMAGE_API_STREAM_URL = "api_image_push://"
 PUSH_IMAGE_API_STREAM_DEFAULT_IMAGE_SRC = (
     "https://images.pexels.com/photos/1563356/pexels-photo-1563356.jpeg"
 )
@@ -36,9 +32,9 @@ class TestStreams(object):
         monitoring_id = None
         monitoring_id_2 = None
 
-        stream_name = f"py-test-stream-{datetime.now()}"
-        stream_name_2 = f"py-test-stream-2-{datetime.now()}"
-        stream_name_3 = f"py-test-stream-3-{datetime.now()}"
+        stream_name = f"py-test-stream-{datetime.now(tz=timezone.utc)}"
+        stream_name_2 = f"py-test-stream-2-{datetime.now(tz=timezone.utc)}"
+        stream_name_3 = f"py-test-stream-3-{datetime.now(tz=timezone.utc)}"
         thresholds = {"cat": 0.5, "dog": 0.6, "car": 0.1}
         task_name = "test-task"
         minDetectionInterval = 90
@@ -161,8 +157,8 @@ class TestStreams(object):
 
             self.sample_stream_test(
                 stream_id=stream_id,
-                start_time=datetime.now() - timedelta(seconds=2),
-                end_time=datetime.now(),
+                start_time=datetime.now(tz=timezone.utc) - timedelta(seconds=2),
+                end_time=datetime.now(tz=timezone.utc),
             )
 
             self.push_image_test(

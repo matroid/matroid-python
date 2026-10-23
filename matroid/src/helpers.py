@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta, timezone
 import os
 import requests
 
@@ -144,16 +144,15 @@ class Token(object):
     def __init__(self, token_type, token_str, expiration):
         self.token_type = token_type
         self.token_str = token_str
-        self.born = datetime.datetime.now()
+        self.born = datetime.now(tz=timezone.utc)
         self.lifetime = expiration
 
     def authorization_header(self):
         return self.token_type + " " + self.token_str
 
     def expired(self):
-        return (
-            self.born + datetime.timedelta(0, int(self.lifetime))
-            < datetime.datetime.now()
+        return self.born + timedelta(0, int(self.lifetime)) < datetime.now(
+            tz=timezone.utc
         )
 
 
@@ -182,7 +181,6 @@ def get_endpoints(base_url):
         "delete_detector": (base_url + "/detectors/:key", "DELETE"),
         "finalize_detector": (base_url + "/detectors/:key/finalize", "POST"),
         "get_detector_info": (base_url + "/detectors/:key", "GET"),
-        "import_detector": (base_url + "/detectors/upload", "POST"),
         "redo_detector": (base_url + "/detectors/:key/redo", "POST"),
         "detectors": (base_url + "/detectors/search", "GET"),
         "list_detectors": (base_url + "/detectors", "GET"),

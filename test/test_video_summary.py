@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import time
 import pytest
 import random
@@ -20,7 +20,7 @@ class TestVideoSummary(object):
         url_video_summary_id = None
         local_video_summary_id = None
         stream_summary_id = None
-        stream_name = f"py-test-stream-{datetime.now()}"
+        stream_name = f"py-test-stream-{datetime.now(tz=timezone.utc)}"
 
         # set up client
         self.api = set_up_client
@@ -43,8 +43,12 @@ class TestVideoSummary(object):
             time.sleep(90)
             stream_summary_id = self.create_stream_summary_test(
                 streamId=stream_id,
-                startTime=datetime.utcfromtimestamp(int(time.time()) - (60)),
-                endTime=datetime.utcfromtimestamp(int(time.time()) - (30)),
+                startTime=datetime.fromtimestamp(
+                    int(time.time()) - (60), tz=timezone.utc
+                ),
+                endTime=datetime.fromtimestamp(
+                    int(time.time()) - (30), tz=timezone.utc
+                ),
             )
             self.get_stream_summaries_test(streamId=stream_id)
             self.create_summary_with_hyperparameters()
@@ -155,8 +159,8 @@ class TestVideoSummary(object):
                 detectorId=EVERYDAY_OBJECT_DETECTOR_ID,
                 labels=DETECTOR_LABELS,
                 streamId=streamId,
-                startTime=datetime.utcfromtimestamp(
-                    int(time.time()) - (24 * 60 * 60 * 8)
+                startTime=datetime.fromtimestamp(
+                    int(time.time()) - (24 * 60 * 60 * 8), tz=timezone.utc
                 ),
                 endTime=endTime,
                 name="Summary",
@@ -173,11 +177,15 @@ class TestVideoSummary(object):
         )
         assert res["summary"]["feed"] == streamId
         assert (
-            datetime.strptime(res["summary"]["startTime"], "%Y-%m-%dT%H:%M:%S.000Z")
+            datetime.strptime(
+                res["summary"]["startTime"], "%Y-%m-%dT%H:%M:%S.000Z"
+            ).replace(tzinfo=timezone.utc)
             == startTime
         )
         assert (
-            datetime.strptime(res["summary"]["endTime"], "%Y-%m-%dT%H:%M:%S.000Z")
+            datetime.strptime(
+                res["summary"]["endTime"], "%Y-%m-%dT%H:%M:%S.000Z"
+            ).replace(tzinfo=timezone.utc)
             == endTime
         )
         assert res["summary"]["network"] == EVERYDAY_OBJECT_DETECTOR_ID

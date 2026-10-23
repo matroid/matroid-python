@@ -27,7 +27,6 @@ class MatroidAPI(object):
         train_detector,
         get_detector_info,
         detector_info,
-        import_detector,
         redo_detector,
         search_detectors,
         list_detectors,
